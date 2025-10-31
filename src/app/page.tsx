@@ -6,10 +6,10 @@ import TermsSlidingPanel from '@/components/term/term';
 export default function Home() {
   return (
     <>
-      {/* <HomePage/> */}
+      <HomePage/>
       {/* <DropPage /> */}
       {/* <Marketplace /> */}
-      <TermsSlidingPanel />
+      {/* <TermsSlidingPanel /> */}
     </>
   );
 }
