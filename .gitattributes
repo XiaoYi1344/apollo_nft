@@ -1,0 +1,16 @@
+# Tự động xử lý xuống dòng cho tất cả file
+* text=auto
+
+# Ép tất cả file code dùng LF
+*.js  text eol=lf
+*.jsx text eol=lf
+*.ts  text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+
+# Cho phép file Windows script giữ CRLF
+*.bat text eol=crlf
