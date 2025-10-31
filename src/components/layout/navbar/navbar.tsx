@@ -21,6 +21,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import toast, { Toaster } from 'react-hot-toast';
 
 import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 const navItems = ['Drop', 'Marketplace', 'Creator', 'Community'];
 
 interface EthereumProvider {
@@ -69,19 +70,19 @@ const Navbar: React.FC = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Kiểm tra có đang ở trang home không
-  const isHome = pathname === "/" || pathname === "/vi" || pathname === "/en";
+  const isHome = pathname === '/' || pathname === '/vi' || pathname === '/en';
 
   // Logic màu nền
   const backgroundColor = isHome
     ? scrolled
-      ? "rgba(26, 0, 71, 0.95)" // 🔹 Khi cuộn ở home
-      : "rgba(0, 0, 0, 0)" // 🔹 Trong suốt ở home khi chưa cuộn
-    : "rgba(26, 0, 71, 0.95)"; // 🔹 Luôn tím ở trang khác
+      ? 'rgba(26, 0, 71, 0.95)' // 🔹 Khi cuộn ở home
+      : 'rgba(0, 0, 0, 0)' // 🔹 Trong suốt ở home khi chưa cuộn
+    : 'rgba(26, 0, 71, 0.95)'; // 🔹 Luôn tím ở trang khác
 
   // Handle menu open/close
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -148,7 +149,7 @@ const Navbar: React.FC = () => {
           // bgcolor: scrolled
           //   ? 'rgba(26, 0, 71, 0.95)' // 🔹 Khi cuộn: nền tím đậm, hơi mờ
           //   : 'rgba(0, 0, 0, 0)', // 🔹 Khi mới mở: trong suốt
-           bgcolor: backgroundColor,
+          bgcolor: backgroundColor,
           backdropFilter: scrolled ? 'blur(8px)' : 'blur(0px)', // nhẹ nhàng mờ nền khi cuộn
           transition: 'all 0.4s ease',
           boxShadow: scrolled ? '0 0 20px rgba(0,0,0,0.4)' : 'none',
@@ -158,20 +159,20 @@ const Navbar: React.FC = () => {
       >
         <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 3, md: 8 } }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            <span
-              style={{
-                // background: "linear-gradient(90deg, #7a3bff 0%, #8c4aff 40%, #b78eff 100%)",
-                background:
-                  'linear-gradient(90deg, #b78eff 0%, #8c4aff 40%, #4b0082 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                fontWeight: 'bold',
-              }}
-            >
-              Apollo
-            </span>
-
-            <span style={{ color: '#2da1ff' }}>NFT</span>
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <span
+                style={{
+                  background:
+                    'linear-gradient(90deg, #b78eff 0%, #8c4aff 40%, #4b0082 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 'bold',
+                }}
+              >
+                Apollo
+              </span>
+              <span style={{ color: '#2da1ff' }}>NFT</span>
+            </Link>
           </Typography>
 
           {/* <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
