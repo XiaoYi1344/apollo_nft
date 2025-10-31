@@ -8,104 +8,22 @@ import {
   ListItemText,
   Typography,
   Paper,
+  Stack,
+  Divider,
+  Grid,
+  Button,
+  IconButton,
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-
-// ====================== DATA ======================
-const TERMS_DATA = [
-  {
-    id: 1,
-    title: 'Introduction',
-    content: `Welcome to Apollo NFT. This section is a placeholder. Replace with your real Terms text.`,
-  },
-  {
-    id: 2,
-    title: 'Account and Wallet',
-    content: `
-2. Account and Wallet
-
-Mục tiêu chính: Làm rõ rằng "tài khoản" trên nền tảng chính là "ví điện tử" của người dùng, và mọi trách nhiệm bảo mật liên quan đến ví đó hoàn toàn thuộc về người dùng, không thuộc về nền tảng.
-
-2.1. Tạo Tài khoản (Account Creation)
-
-- Để sử dụng các tính năng của Apollo NFT, người dùng phải kết nối một ví điện tử của bên thứ ba được hỗ trợ (ví dụ: MetaMask, Coinbase Wallet).
-- "Tài khoản" trên Apollo NFT được liên kết trực tiếp và định danh bởi địa chỉ ví công khai (public wallet address).
-- Không có quy trình đăng ký bằng email/mật khẩu truyền thống. Việc kết nối ví đồng nghĩa với việc tạo một tài khoản.
-
-Mục đích: Giúp người dùng mới hiểu rõ cơ chế hoạt động của Web3, phân biệt rõ ràng với các nền tảng Web2 truyền thống.
-
-2.2. Ví của Bên Thứ Ba (Third-Party Wallets)
-
-- Apollo NFT không sở hữu, kiểm soát hay chịu trách nhiệm về bất kỳ ví điện tử nào của bên thứ ba.
-- Nền tảng chỉ cung cấp giao diện để tương tác; mọi giao dịch đều do người dùng ký và xác nhận qua nhà cung cấp ví.
-- Apollo NFT miễn trừ trách nhiệm đối với lỗi, lỗ hổng bảo mật hay tổn thất phát sinh từ phần mềm ví của bên thứ ba.
-
-Mục đích: Vạch ra ranh giới trách nhiệm pháp lý rõ ràng.
-
-2.3. Trách nhiệm Bảo mật của Bạn (Your Security Responsibilities)
-
-- Bạn là người duy nhất chịu trách nhiệm về việc bảo mật ví của mình.
-- Trách nhiệm bao gồm:
-  • Bảo vệ an toàn cho các thiết bị truy cập ví.
-  • Giữ bí mật tuyệt đối khóa riêng tư (private keys) và cụm từ khôi phục (seed phrase).
-  • Không chia sẻ khóa riêng tư hoặc seed phrase — Apollo NFT sẽ không bao giờ yêu cầu bạn cung cấp chúng.
-- Người dùng chấp nhận mọi rủi ro nếu thông tin bảo mật bị lộ.
-- Apollo NFT miễn trừ hoàn toàn trách nhiệm đối với bất kỳ tổn thất tài sản nào do ví bị xâm phạm.
-
-Mục đích: Giáo dục người dùng và bảo vệ nền tảng khỏi khiếu nại.
-
-2.4. Hoạt động Tài khoản (Account Activity)
-
-- Người dùng chịu trách nhiệm cho mọi hoạt động diễn ra từ ví của họ (mua, bán, niêm yết, tương tác hợp đồng).
-- Mọi giao dịch đã được ký bởi ví được coi là hành động hợp lệ của người dùng.
-
-2.5. Tạm ngưng hoặc Chấm dứt (Suspension or Termination)
-
-- Apollo NFT có quyền tạm ngưng hoặc cấm vĩnh viễn quyền truy cập đối với tài khoản vi phạm Điều khoản Dịch vụ (ví dụ: rửa tiền, nội dung bất hợp pháp, vi phạm bản quyền).
-- Mục đích: Duy trì môi trường hoạt động lành mạnh và an toàn.
-    `,
-  },
-  {
-    id: 3,
-    title: 'Fees, Payments, and Transactions',
-    content: 'Placeholder for Content & IP. Replace with your real terms.',
-  },
-  {
-    id: 4,
-    title: 'Intellectual Property Rights',
-    content: 'Placeholder for Transactions section.',
-  },
-  {
-    id: 5,
-    title: 'User Conduct',
-    content: 'Placeholder for Fees & Payments.',
-  },
-  {
-    id: 6,
-    title: 'Disclaimers',
-    content: 'Placeholder for Contact information.',
-  },
-    {
-    id: 7,
-    title: 'Linitation of Liability',
-    content: 'Placeholder for Contact information.',
-  },
-    {
-    id: 8,
-    title: 'Governing Law',
-    content: 'Placeholder for Contact information.',
-  },
-    {
-    id: 9,
-    title: 'Contract Us',
-    content: 'Placeholder for Contact information.',
-  },
-];
+import { TERMS_DATA, TermsSection } from './data/termsData';
+import Link from 'next/link';
 
 // ====================== COMPONENT ======================
 export default function TermsSlidingPanel() {
   const [selectedIdx, setSelectedIdx] = useState<number>(0);
   const [prevIdx, setPrevIdx] = useState<number>(0);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleSelect = (newIdx: number) => {
     if (newIdx === selectedIdx) return;
@@ -113,12 +31,7 @@ export default function TermsSlidingPanel() {
     setSelectedIdx(newIdx);
   };
 
-  const getDirection = (
-    current: number,
-    previous: number,
-  ): 'forward' | 'backward' => (current > previous ? 'forward' : 'backward');
-
-  const direction = getDirection(selectedIdx, prevIdx);
+  const direction = selectedIdx > prevIdx ? 'forward' : 'backward';
 
   const variants = {
     enterForward: { x: 300, opacity: 0 },
@@ -128,109 +41,396 @@ export default function TermsSlidingPanel() {
     exitBackward: { x: 300, opacity: 0 },
   };
 
+  const renderContent = (section: TermsSection) => {
+    return (
+      <Box>
+        {/* === CHỈ HIỂN THỊ 1 LẦN === */}
+        {section.id !== 1 && section.title && (
+          <Typography
+            variant="body1"
+            sx={{
+              whiteSpace: 'pre-line',
+              color: '#e0e0e0',
+              mb: 3,
+              fontWeight: 600,
+              fontSize: '1.3rem',
+              letterSpacing: '0.5px',
+            }}
+          >
+            {section.title}
+          </Typography>
+        )}
+
+        {section.explan && (
+          <Typography
+            variant="body1"
+            sx={{
+              whiteSpace: 'pre-line',
+              color: '#e0e0e0',
+              mb: 6,
+              fontWeight: 50,
+              letterSpacing: '0.5px',
+            }}
+          >
+            {section.explan}
+          </Typography>
+        )}
+
+        {/* === MAP ITEMS === */}
+        {section.data?.map((item, idx) => (
+          <Box key={idx} sx={{ mb: 4 }}>
+            {item.subtitle && (
+              <Typography
+                variant="h6"
+                sx={{
+                  // mb: -20,
+                  // fontWeight: 700,
+                  background: 'linear-gradient(to bottom, #60a5fa, #060137)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                {item.subtitle}
+              </Typography>
+            )}
+
+            <Divider sx={{ border: '0.5px solid #fff3', mb: 2 }} />
+
+            {typeof item.content === 'string' ? (
+              <Typography
+                variant="body1"
+                sx={{ whiteSpace: 'pre-line', color: '#e0e0e0', mb: 6 }}
+              >
+                {item.content}
+              </Typography>
+            ) : (
+              <Stack spacing={1.5}>
+                <Box>
+                  <Typography
+                    variant="body1"
+                    sx={{ whiteSpace: 'pre-line', color: '#e0e0e0' }}
+                  >
+                    &bull; Nội dung cần có:
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: '#e0e0e0', ml: 3 }}>
+                    {item.content.info.split('\n').map((line, index) => {
+                      const trimmed = line.trim();
+                      if (!trimmed) return null;
+                      const isSubItem =
+                        trimmed.startsWith('- ') || trimmed.startsWith('* ');
+                      return (
+                        <span
+                          key={index}
+                          style={{
+                            display: 'block',
+                            marginBottom: '0.4rem',
+                            marginLeft: isSubItem ? '2rem' : 0,
+                          }}
+                        >
+                          &bull; {isSubItem ? trimmed.slice(2) : trimmed}
+                        </span>
+                      );
+                    })}
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="body2"
+                  sx={{ color: '#bdbdbd', fontStyle: 'italic' }}
+                >
+                  &bull; Mục đích: {item.content.intent}
+                </Typography>
+              </Stack>
+            )}
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+
   return (
     <Box
       sx={{
-        display: 'flex',
-        gap: 2,
-        height: '290vh',
+        // height: { xs: '285vh', md: '250vh' },
+        mt: 8,
+        px: 8,
+        pb: 12,
+        pt: 15,
         background:
           'linear-gradient(135deg, #080d1a 0%, #182e6f 40%, #45126d 100%)',
-          mt: 8,
-          px: 8,
-          pb:8,
-          pt: 15
       }}
     >
-      {/* Left menu */}
-      <Paper
-        sx={{
-          width: 290,
-          p: 1,
-          background:
-            'linear-gradient(100deg, #311784, #060137)',
-          color: 'white',
-          borderRadius: 3,
-          height: '26%',
-        }}
-        elevation={3}
-      >
-        <Typography variant="h6" sx={{ mb: 1, pl: 1, mt: 2 }}>
-          Table of Contents
-        </Typography>
-        <List>
-          {TERMS_DATA.map((item, idx) => {
-            const selected = idx === selectedIdx;
-            return (
+      <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 2 }}>
+        <IconButton
+          onClick={() => setSidebarOpen(true)}
+          sx={{
+            borderRadius: '50%', // luôn tròn
+            width: 50, // tăng kích thước
+            height: 50,
+            backgroundColor: '#6366f1',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#4f46e5',
+            },
+          }}
+        >
+          ☰
+        </IconButton>
+      </Box>
+
+      <Grid container spacing={2}>
+        {/* Left menu */}
+        <Grid
+          size={{ xs: 12, md: 3 }}
+          sx={{
+            display: { xs: sidebarOpen ? 'block' : 'none', md: 'block' },
+            position: { xs: 'fixed', md: 'static' },
+            zIndex: 1200,
+            top: { xs: 60, md: 0 },
+            left: 0,
+            height: { xs: '75vh', md: '100vh' },
+            width: { xs: '80%', md: '20%' },
+            p: 2,
+          }}
+        >
+          <Paper
+            sx={{
+              height: '100%',
+              overflowY: 'auto',
+              borderRadius: 3,
+              background: 'linear-gradient(100deg, #311784, #060137)',
+              color: '#fff',
+            }}
+            elevation={3}
+          >
+            {/* Close button trên mobile */}
+            <Box
+              sx={{
+                display: { xs: 'flex', md: 'none' },
+                justifyContent: 'flex-end',
+                mb: 2,
+              }}
+            >
+              <Button onClick={() => setSidebarOpen(false)}>✕</Button>
+            </Box>
+
+            <Typography variant="h6" sx={{ mb: 1, pl: 1, mt: 2 }}>
+              Table of Contents
+            </Typography>
+            <List>
+              {/* {TERMS_DATA.map((item, idx) => {
+                const selected = idx === selectedIdx;
+                
+                // return (
+                //   <ListItemButton
+                //     key={item.id}
+                //     selected={selected}
+                //     onClick={() => {
+                //       handleSelect(idx);
+                //       setSidebarOpen(false); // ẩn menu khi chọn trên mobile
+                //     }}
+                //     sx={{
+                //       mb: 0.5,
+                //       borderRadius: 3,
+                //       transition: 'all 0.3s ease',
+                //       bgcolor: selected
+                //         ? 'rgba(128, 90, 213, 0.1)'
+                //         : 'transparent',
+                //       '&:hover': {
+                //         bgcolor: 'rgba(128, 90, 213, 0.08)',
+                //       },
+                //       px: 3,
+                //     }}
+                //   >
+                //     <ListItemText
+                //       primary={`${item.title}`}
+                //       primaryTypographyProps={{
+                //         sx: {
+                //           color: selected ? '#6366f1' : 'rgb(255, 255, 255)',
+                //           opacity: selected ? 1 : 0.7,
+                //           transition: 'all 0.3s ease',
+                //         },
+                //       }}
+                //     />
+                //   </ListItemButton>
+                // );
+
+                if (item.id === 9 && item.content) {
+          return (
+            <Link key={item.id} href={item.content} passHref style={{ textDecoration: 'none' }}>
               <ListItemButton
-                key={item.id}
                 selected={selected}
-                onClick={() => handleSelect(idx)}
+                onClick={() => setSidebarOpen(false)}
                 sx={{
                   mb: 0.5,
                   borderRadius: 3,
                   transition: 'all 0.3s ease',
-                  bgcolor: selected ? 'rgba(128, 90, 213, 0.1)' : 'transparent', // nền nhẹ khi chọn
+                  bgcolor: selected ? 'rgba(128, 90, 213, 0.1)' : 'transparent',
                   '&:hover': {
-                    bgcolor: 'rgba(128, 90, 213, 0.08)', // tím nhạt khi hover
+                    bgcolor: 'rgba(128, 90, 213, 0.08)',
                   },
-                  px: 3
+                  px: 3,
                 }}
               >
                 <ListItemText
-                  primary={`${item.id}. ${item.title}`}
+                  primary={item.title}
                   primaryTypographyProps={{
                     sx: {
                       color: selected ? '#6366f1' : 'rgb(255, 255, 255)',
-                      opacity: selected ? 1 : 0.5,
-                    //   fontWeight: selected ? 600 : 400,
+                      opacity: selected ? 1 : 0.7,
                       transition: 'all 0.3s ease',
                     },
                   }}
                 />
               </ListItemButton>
-            );
-          })}
-        </List>
-      </Paper>
+            </Link>
+          );
+        }
+              })} */}
 
-      {/* Right content panel */}
-      <Box sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={TERMS_DATA[selectedIdx].id}
-            custom={direction}
-            initial={direction === 'forward' ? 'enterForward' : 'enterBackward'}
-            animate="center"
-            exit={direction === 'forward' ? 'exitForward' : 'exitBackward'}
-            variants={variants}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              padding: 24,
+              {TERMS_DATA.map((item, idx) => {
+                const selected = idx === selectedIdx;
+
+                const listItem = (
+                  <ListItemButton
+                    selected={selected}
+                    onClick={() => {
+                      if (item.id !== 9) handleSelect(idx); // chỉ highlight các mục khác
+                      setSidebarOpen(false);
+                    }}
+                    sx={{
+                      mb: 0.5,
+                      borderRadius: 3,
+                      transition: 'all 0.3s ease',
+                      bgcolor: selected
+                        ? 'rgba(128, 90, 213, 0.1)'
+                        : 'transparent',
+                      '&:hover': {
+                        bgcolor: 'rgba(128, 90, 213, 0.08)',
+                      },
+                      px: 3,
+                    }}
+                  >
+                    <ListItemText
+                      primary={item.title}
+                      primaryTypographyProps={{
+                        sx: {
+                          color: selected ? '#6366f1' : 'rgb(255, 255, 255)',
+                          opacity: selected ? 1 : 0.7,
+                          transition: 'all 0.3s ease',
+                        },
+                      }}
+                    />
+                  </ListItemButton>
+                );
+
+                // Nếu là id 9 thì bọc Link
+                if (item.id === 9 && item.content) {
+                  return (
+                    <Link
+                      key={item.id}
+                      href={item.content}
+                      passHref
+                      style={{ textDecoration: 'none' }}
+                    >
+                      {listItem}
+                    </Link>
+                  );
+                }
+
+                // Các id khác thì render bình thường
+                return (
+                  <React.Fragment key={item.id}>{listItem}</React.Fragment>
+                );
+              })}
+            </List>
+          </Paper>
+        </Grid>
+
+        {/* Right content panel */}
+        {/* <Grid size={{ xs: 12, md: 9 }}>
+          <Box
+            sx={{
+              position: 'relative',
+              overflow: 'hidden',
+              color: 'white',
+              pb: -1,
+           height: 'auto',  // hoặc bỏ hoàn toàn
+    width: '100%',
             }}
           >
-            <Paper
-              sx={{ height: '100%', p: 3, overflowY: 'auto' }}
-              elevation={6}
-            >
-              <Typography variant="h4" gutterBottom>
-                {TERMS_DATA[selectedIdx].title}
-              </Typography>
+            <AnimatePresence initial={false} custom={direction}>
+              {TERMS_DATA[selectedIdx] && (
+                <motion.div
+                  key={TERMS_DATA[selectedIdx].id}
+                  custom={direction}
+                  initial={
+                    direction === 'forward' ? 'enterForward' : 'enterBackward'
+                  }
+                  animate="center"
+                  exit={
+                    direction === 'forward' ? 'exitForward' : 'exitBackward'
+                  }
+                  variants={variants}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    padding: 24,
+                  }}
+                >
+                  <Paper
+                    sx={{
+                      height: '100%',
+                      p: 3,
+                      overflowY: 'auto',
+                      background: 'linear-gradient(100deg, #311784, #060137)',
+                    }}
+                    elevation={6}
+                  >
+                    {renderContent(TERMS_DATA[selectedIdx])}
+                  </Paper>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Box>
+        </Grid> */}
 
-              <Typography
-                variant="body1"
-                component="div"
-                sx={{ whiteSpace: 'pre-line' }}
-              >
-                {TERMS_DATA[selectedIdx].content}
-              </Typography>
-            </Paper>
-          </motion.div>
-        </AnimatePresence>
-      </Box>
+        <Grid size={{ xs: 12, md: 9 }}>
+          <Box sx={{ position: 'relative', width: '100%', color: 'white' }}>
+            <AnimatePresence initial={false} custom={direction}>
+              {TERMS_DATA[selectedIdx] && (
+                <motion.div
+                  key={TERMS_DATA[selectedIdx].id}
+                  custom={direction}
+                  initial={
+                    direction === 'forward' ? 'enterForward' : 'enterBackward'
+                  }
+                  animate="center"
+                  exit={
+                    direction === 'forward' ? 'exitForward' : 'exitBackward'
+                  }
+                  variants={variants}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  style={{ width: '100%' }}
+                  layout
+                >
+                  <Paper
+                    sx={{
+                      p: 3,
+                      overflowY: 'auto', // scroll khi cần
+                      background: 'linear-gradient(100deg, #311784, #060137)',
+                    }}
+                    elevation={6}
+                  >
+                    {renderContent(TERMS_DATA[selectedIdx])}
+                  </Paper>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 }
