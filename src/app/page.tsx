@@ -1,3 +1,4 @@
+import Page from '@/components/creator/page';
 import HomePage from '@/components/home/homePage';
 import TermsSlidingPanel from '@/components/term/term';
 
@@ -6,10 +7,11 @@ import TermsSlidingPanel from '@/components/term/term';
 export default function Home() {
   return (
     <>
-      <HomePage/>
+      {/* <HomePage/> */}
       {/* <DropPage /> */}
       {/* <Marketplace /> */}
       {/* <TermsSlidingPanel /> */}
+      <Page />
     </>
   );
 }
