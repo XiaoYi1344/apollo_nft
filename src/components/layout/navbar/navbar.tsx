@@ -508,7 +508,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import WalletModal from './WalletModal';
 
 const navItems = ['Drop', 'Marketplace', 'Creator', 'Community'];

@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   Box,
   Avatar,
@@ -10,6 +10,7 @@ import {
   CardMedia,
   CardContent,
 } from '@mui/material';
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import { Creator } from './data/creatorsData';
 
 interface Props {
@@ -141,6 +142,21 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
                 }}
               >
                 Chia sẻ
+              </Button>
+
+              <Button
+                variant="outlined"
+                onClick={onBack}
+                sx={{
+                  color: '#cfcfff',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  textTransform: 'none',
+                  fontSize: 13,
+                  px: 2.5,
+                  py: 0.5,
+                }}
+              >
+                <ArrowCircleLeftIcon />
               </Button>
 
               {/* Icon mạng xã hội */}

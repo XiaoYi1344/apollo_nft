@@ -76,15 +76,15 @@ const WalletModal: React.FC<WalletModalProps> = ({
     }
   };
 
-  const disconnectWallet = () => {
-    setAccount('');
-    setWalletState('disconnect');
+//   const disconnectWallet = () => {
+//     setAccount('');
+//     setWalletState('disconnect');
 
-    //Giữ trạng thái disconnect 2 giây rồi về select
-    setTimeout(() => {
-      setWalletState('select');
-    }, 2000);
-  };
+//     //Giữ trạng thái disconnect 2 giây rồi về select
+//     setTimeout(() => {
+//       setWalletState('select');
+//     }, 2000);
+//   };
 
   const handleRetry = async () => {
     const { ethereum } = window;
