@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Typography, Stack } from '@mui/material';
+import { Box, Button, Typography, Stack, Grid } from '@mui/material';
 // import { styled } from '@mui/system';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -52,14 +52,14 @@ const TopSection = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
         spacing={2}
-        sx={{ position: 'relative', zIndex: 2, maxWidth: 780 }}
+        sx={{ position: 'relative', zIndex: 2, maxWidth: { xs: 500, md: 780 } }}
       >
         <Typography
           variant="h2"
           sx={{
             fontWeight: 800,
             lineHeight: 1.0,
-            fontSize: { xs: '2.5rem', md: '5.1rem' },
+            fontSize: { xs: '2.1rem', md: '5.1rem' },
             position: 'relative', // 👈 cần để định vị icon
             display: 'inline-block',
           }}
@@ -79,7 +79,7 @@ const TopSection = () => {
           Gallery
           <Box
             sx={{
-              display: 'inline-flex',
+              display: { xs: 'none', md: 'inline-flex' },
               alignItems: 'center',
               position: 'relative',
               top: '-14px',
@@ -101,71 +101,94 @@ const TopSection = () => {
 
         <Box
           sx={{
-            display: 'flex',
+            position: 'relative',
+            mt: 6,
+            px: { xs: 2, md: 8 },
           }}
         >
-          <Button
-            variant="contained"
-            sx={{
-              alignSelf: 'flex-start',
-              borderRadius: '50%',
-              width: 100,
-              height: 100,
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              textTransform: 'none',
-              background:
-                'linear-gradient(125deg, #A100EB 0%, #793CDF 40%, #3605FF 100%)',
-              boxShadow: '0 0 25px rgba(140,74,255,0.5)',
-              display: 'flex',
-              position: 'relative',
-            }}
-          >
-            <ArrowOutwardIcon
-              sx={{
-                transform: 'rotate(90deg)',
-                fontSize: 28,
-                position: 'absolute',
-                top: 29,
-                right: 10,
-              }}
-            />
-            <Typography
-              sx={{
-                fontWeight: 400,
-                fontSize: '0.68rem',
-                textAlign: 'center',
-                mt: 2,
-                color: '#fff',
-              }}
-            >
-              Discover NFT
-            </Typography>
-          </Button>
+          <Grid container spacing={3} alignItems="center">
+            {/* Đoạn mô tả */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'rgba(255,255,255,0.8)',
+                  lineHeight: 1.6,
+                  fontSize: { xs: '0.95rem', md: '0.9rem' },
+                  maxWidth: 360,
+                  mx: { xs: 'auto', md: 0 },
+                  textAlign: { xs: 'center', md: 'left' },
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                The Largest NFT Marketplace. Automatic and truly unique digital
+                creation. Signed and issued by the creator, made possible by
+                blockchain technology.
+              </Typography>
+            </Grid>
 
-          <Typography
-            variant="body1"
-            sx={{
-              position: 'absolute',
-              bottom: 105,
-              left: 130,
-              color: 'rgba(255,255,255,0.7)',
-              lineHeight: 1.6,
-              fontSize: { xs: '0.9rem', md: '0.8rem' },
-              flex: 1,
-              width: 350,
-              display: '-webkit-box',
-              WebkitLineClamp: 3, // 👈 Giới hạn 3 dòng
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            The Largest NFT Marketplace. Automatic and truly unique digital
-            creation. Signed and issued by the creator, made possible by
-            blockchain technology.
-          </Typography>
+            {/* Nút Discover NFT */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: { xs: 'center', md: 'flex-start' },
+                }}
+              >
+                <Button
+                  variant="contained"
+                  sx={{
+                    borderRadius: {xs:'30%', md:'50%'},
+                    width: {xs:60, md:100},
+                    height: {xs:30, md:100},
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textTransform: 'none',
+                    background: {
+                      xs: '#3605FF',
+                      md: 'linear-gradient(125deg, #A100EB 0%, #793CDF 40%, #3605FF 100%)',
+                    },
+                    boxShadow: '0 0 25px rgba(140,74,255,0.5)',
+                    display: 'flex',
+                    position: 'relative',
+                    '&:hover': {
+                      boxShadow: '0 0 40px rgba(140,74,255,0.8)',
+                      transform: 'scale(1.05)',
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  <ArrowOutwardIcon
+                    sx={{
+                      transform: 'rotate(90deg)',
+                      fontSize: 28,
+                      position: 'absolute',
+                      top: {xs:-10, md:29},
+                      right: 10,
+                      display: { xs: 'none', md: 'block' }, // 👈 ẩn ở mobile, hiện ở tablet/desktop
+                    }}
+                  />
+
+                  <Typography
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: '0.68rem',
+                      textAlign: 'center',
+                      mt: 2,
+                      color: '#fff',
+                    }}
+                  >
+                    Discover NFT
+                  </Typography>
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
         </Box>
 
         {/* Stats */}
