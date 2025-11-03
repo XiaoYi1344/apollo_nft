@@ -180,6 +180,7 @@ export default function SuperHotDrop() {
                     {/* === CARD CONTENT === */}
                     <CardContent>
                       <Typography
+                
                         sx={{ color: '#1a1432', fontWeight: 600, mb: 0.5 }}
                       >
                         {item.name}

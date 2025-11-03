@@ -413,7 +413,7 @@ const TopSection = () => {
       component="section"
       sx={{
         position: 'relative',
-        minHeight: {xs: '30vh', sm:'60vh', md: '100vh'},
+        minHeight: { xs: '30vh', sm: '60vh', md: '100vh' },
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -421,7 +421,7 @@ const TopSection = () => {
         overflow: 'hidden',
         color: 'white',
         py: { xs: 9 },
-        mb:-10
+        mb: -10,
       }}
     >
       {/* Hiệu ứng vầng sáng */}
@@ -584,17 +584,26 @@ const TopSection = () => {
         </Grid>
 
         {/* STATS */}
-        <Stack direction="row" spacing={6} sx={{ pt: 4, }}>
+        <Stack direction="row" spacing={6} sx={{ pt: 4 }}>
           {[
             { num: '25.1k', label: 'Artwork' },
             { num: '15.6k', label: 'Artist' },
             { num: '10.2k', label: 'Auction' },
           ].map((item) => (
             <Stack key={item.label}>
-              <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize:{xs:'0.7rem', md:'1.4rem'} }}>
+              <Typography
+                sx={{
+                  color: 'rgba(255,255,255,0.6)',
+                  fontSize: { xs: '0.7rem', md: '1.4rem' },
+                }}
+              >
                 {item.label}
               </Typography>
-              <Typography variant="h5" fontWeight={700} sx={{ fontSize:{xs:'1.3rem', md:'2.0rem'} }}>
+              <Typography
+                variant="h5"
+                fontWeight={700}
+                sx={{ fontSize: { xs: '1.3rem', md: '2.0rem' } }}
+              >
                 {item.num}
               </Typography>
             </Stack>
@@ -602,7 +611,7 @@ const TopSection = () => {
         </Stack>
 
         {/* NFT IMAGE (MOBILE) */}
-        <Box
+        <Stack
           component={motion.div}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -622,8 +631,8 @@ const TopSection = () => {
               key={src}
               sx={{
                 position: 'absolute',
-                top: ['25px', '105px','60px'][i],
-                right: ['70px','-25px','17px'][i],
+                top: ['25px', '105px', '60px'][i],
+                right: ['70px', '-25px', '17px'][i],
                 width: ['208px', '210px', '210px'][i],
                 height: ['251px', '253px', '257px'][i],
                 borderRadius: '20px',
@@ -639,24 +648,24 @@ const TopSection = () => {
               />
             </Box>
           ))}
-        </Box>
+        </Stack>
       </Stack>
 
-       {/* NFT IMAGE (tablet) */}
-      <Box
+      {/* NFT IMAGE (tablet) */}
+      <Stack
         component={motion.div}
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.2 }}
-         sx={(theme) => ({
-    display: { xs: 'none', sm: 'block' },
-    [theme.breakpoints.up('md')]: {
-      display: 'none', // 👈 ẩn khi lên md+
-    },
-    position: 'relative',
-    width: 400,
-    height: 500,
-  })}
+        sx={(theme) => ({
+          display: { xs: 'none', sm: 'block' },
+          [theme.breakpoints.up('md')]: {
+            display: 'none', // 👈 ẩn khi lên md+
+          },
+          position: 'relative',
+          width: 400,
+          height: 500,
+        })}
       >
         <Box
           sx={{
@@ -701,7 +710,7 @@ const TopSection = () => {
             position: 'relative',
             top: '15%',
             right: '-35%',
-           width: 200,
+            width: 200,
             height: 300,
             borderRadius: '24px',
             overflow: 'hidden',
@@ -715,7 +724,7 @@ const TopSection = () => {
             style={{ objectFit: 'cover' }}
           />
         </Box>
-      </Box>
+      </Stack>
 
       {/* NFT IMAGE (DESKTOP) */}
       <Box
@@ -788,8 +797,6 @@ const TopSection = () => {
           />
         </Box>
       </Box>
-
-      
     </Box>
   );
 };

@@ -49,6 +49,7 @@ const Scrol = () => {
             }}
           >
             <Typography
+            component="div"
               sx={{
                 fontFamily: '"Montserrat", sans-serif',
                 fontWeight: 800,

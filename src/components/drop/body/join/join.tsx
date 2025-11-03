@@ -6,7 +6,7 @@ import React from 'react';
 
 const JoinSection = () => {
   return (
-    <Box sx={{ py: 8}}>
+    <Box sx={{ py: 8 }}>
       <Box
         sx={{
           position: 'relative',
@@ -82,11 +82,12 @@ const JoinSection = () => {
 
         <Typography
           sx={{
-            fontSize: { xs: '1.6rem', md: '1.0rem' },
+            fontSize: { xs: '1rem', md: '1.6rem' },
             color: '#fff',
             mb: 2,
             textAlign: 'center',
-            width: 630,
+            maxWidth: { xs: '90%', md: 630 },
+            mx: 'auto',
           }}
         >
           Gặp gỡ đội ngũ của chúng tôi, các nghệ sĩ và những nhà sưu tầm khác.

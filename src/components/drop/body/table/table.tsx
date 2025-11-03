@@ -267,6 +267,7 @@ export default function SuperHotDrop() {
                     {/* === CARD CONTENT === */}
                     <CardContent>
                       <Typography
+                    
                         sx={{
                           color: '#1a1432',
                           fontWeight: 600,
@@ -288,6 +289,7 @@ export default function SuperHotDrop() {
                       >
                         {/* RIGHT: COUNT */}
                         <Typography
+                      
                           sx={{ color: '#9E9E9F', fontSize: '0.9rem' }}
                         >
                           {item.from}
@@ -303,6 +305,7 @@ export default function SuperHotDrop() {
                         }}
                       >
                         <Typography
+                      
                           sx={{
                             color: '#A100EB',
                             mt: 0.2,

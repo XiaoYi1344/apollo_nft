@@ -7,41 +7,28 @@ import {
   Card,
   CardContent,
   Button,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 
 const features = [
-  {
-    img: '/home/body/Wallet (4).jpg',
-    title: 'Eka Prakasa',
-  },
-  {
-    img: '/home/body/Wallet (5).jpg',
-    title: 'Emil Tirtayasa Sinaga',
-  },
-  {
-    img: '/home/body/Wallet (1).jpg',
-    title: 'Dodo Opung Utama',
-  },
-  {
-    img: '/home/body/Wallet (2).jpg',
-    title: 'Emil Nainggolan',
-  },
-  {
-    img: '/home/body/Wallet (3).jpg',
-    title: 'Eja Nainggolan',
-  },
-  {
-    img: '/home/body/Wallet (6).jpg',
-    title: 'Among Suryono',
-  },
+  { img: '/home/body/Wallet (4).jpg', title: 'Eka Prakasa' },
+  { img: '/home/body/Wallet (5).jpg', title: 'Emil Tirtayasa Sinaga' },
+  { img: '/home/body/Wallet (1).jpg', title: 'Dodo Opung Utama' },
+  { img: '/home/body/Wallet (2).jpg', title: 'Emil Nainggolan' },
+  { img: '/home/body/Wallet (3).jpg', title: 'Eja Nainggolan' },
+  { img: '/home/body/Wallet (6).jpg', title: 'Among Suryono' },
 ];
 
 export default function Creator() {
-  const router = useRouter();
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const displayedFeatures = isXs ? features.slice(0, 3) : features;
+
   return (
-    <Box sx={{ py: 8, px: { xs: 2, md: 8 },}}>
+    <Box sx={{ py: 8, px: { xs: 2, md: 8 } }}>
       <Typography
         variant="h4"
         sx={{ color: 'white', fontWeight: 700, textAlign: 'start', mb: 3 }}
@@ -50,7 +37,7 @@ export default function Creator() {
       </Typography>
 
       <Grid container spacing={3} justifyContent="center">
-        {features.map((item, i) => (
+        {displayedFeatures.map((item, i) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
             <Card
               sx={{
@@ -79,7 +66,7 @@ export default function Creator() {
                     height: 64,
                     position: 'relative',
                     borderRadius: 3,
-                    overflow: 'hidden', // ✅
+                    overflow: 'hidden',
                   }}
                 >
                   <Image
@@ -93,10 +80,7 @@ export default function Creator() {
                 <Box>
                   <Typography
                     variant="h6"
-                    sx={{
-                      fontSize: { xs: '2.5rem', md: '1.4rem' },
-                      fontWeight: 600,
-                    }}
+                    sx={{ fontSize: '1.2rem', fontWeight: 600 }}
                   >
                     {item.title}
                   </Typography>
@@ -105,7 +89,7 @@ export default function Creator() {
                     sx={{
                       color: 'rgba(255,255,255,0.8)',
                       pt: 1,
-                      fontSize: { xs: '2.5rem', md: '1.0rem' },
+                      fontSize: '1rem',
                     }}
                   >
                     13.2K
@@ -116,11 +100,15 @@ export default function Creator() {
           </Grid>
         ))}
       </Grid>
-      {/* === VIEW MORE BUTTON === */}
+
+      {/* === WATCH VIDEO BUTTON === */}
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <Button
           variant="contained"
-          onClick={() => router.push('/explore')}
+          component="a"
+          href="https://www.youtube.com/watch?v=example" // ✅ link video
+          target="_blank"
+          rel="noopener noreferrer"
           sx={{
             px: 4,
             py: 1.5,
@@ -134,7 +122,7 @@ export default function Creator() {
             },
           }}
         >
-          View More
+          Watch Video
         </Button>
       </Box>
     </Box>
