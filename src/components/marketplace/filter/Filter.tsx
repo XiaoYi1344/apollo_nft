@@ -26,10 +26,10 @@ export default function FilterPanel() {
   return (
     <Box
       sx={{
-        p: 3,
+        px: 3,
         borderRadius: 3,
         color: 'white',
-        width: 340,
+        width: {xs: 300, sm: 310, md: 340},
         fontFamily: 'Inter, sans-serif',
       }}
     >

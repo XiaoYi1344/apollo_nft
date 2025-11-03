@@ -13,7 +13,7 @@ const Scrol = () => {
         width: '110%',
         overflow: 'hidden',
         position: 'relative',
-        transform: 'rotate(-5deg)',
+        transform: {sm:'rotate(-4.5deg)'},
         background: 'linear-gradient(90deg, #6200EA, #8C50AC)',
         pointerEvents: 'none',
     zIndex: 0,

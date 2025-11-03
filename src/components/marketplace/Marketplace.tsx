@@ -1,5 +1,5 @@
 'use client';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 
 import FilterPanel from './filter/Filter';
 import NFTTable from './table/NFT';
@@ -30,7 +30,7 @@ const Marketplace = () => {
         }}
       />
 
-      <Box sx={{ px: 6, pt: 10 }}>
+      <Box sx={{ px: 4, pt: 10 }}>
         <Box
           sx={{
             display: 'flex',
@@ -62,11 +62,20 @@ const Marketplace = () => {
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={4}>
-          <FilterPanel />
+        <Stack direction="row">
+          <Grid container spacing={1}>
+            <Grid size={{ xs: 12, sm: 5, md: 3}}>
+              <FilterPanel />
+          
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 7, md: 9}}>
+             
           <Box sx={{ flex: 1 }}>
             <NFTTable />
           </Box>
+            </Grid>
+          </Grid>
         </Stack>
       </Box>
     </Box>

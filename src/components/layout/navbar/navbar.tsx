@@ -762,9 +762,24 @@ const Navbar: React.FC = () => {
 
           {/* NAVIGATION + WALLET BUTTON (ẩn khi mobile) */}
           {!isMobile && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between', // 👈 trái-phải rõ ràng
+                width: '100%',
+              }}
+            >
               {/* Navigation */}
-              <Box sx={{ display: 'flex', gap: 3 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center', // 👈 căn giữa các item trong nhóm
+                  alignItems: 'center',
+                  gap: 3,
+                  flex: 1, // 👈 giúp nav chiếm không gian giữa
+                }}
+              >
                 {navItems.map((item) => {
                   const link = `/${item.toLowerCase()}`;
                   const active = pathname === link;

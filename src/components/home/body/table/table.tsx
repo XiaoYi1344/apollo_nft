@@ -70,7 +70,7 @@ export default function SuperHotDrop() {
     <Box
       sx={{
         py: 8,
-        px: { xs: 2, md: 8 },
+        px: { xs: 2, md: 7 },
       }}
     >
       <Typography variant="h4" sx={{ color: 'white', fontWeight: 700, mb: 4 }}>
@@ -78,35 +78,49 @@ export default function SuperHotDrop() {
       </Typography>
 
       {/* === CATEGORY CHIPS === */}
-      <Stack direction="row" spacing={2} sx={{ mb: 6, flexWrap: 'wrap' }}>
+      <Grid container spacing={1} sx={{ mb: 6, flexWrap: 'wrap' }}>
         {categories.map((cat) => (
-          <Chip
-            key={cat}
-            label={cat}
-            clickable
-            onClick={() => handleSelect(cat)}
-            sx={{
-              color: selected === cat ? '#fff' : '#aaa',
-              background:
-                selected === cat
-                  ? 'linear-gradient(90deg, #A100EB, #3605FF)'
-                  : '#793CDF',
-              px: 2,
-              fontWeight: 600,
-              transition: '0.3s',
-              '&:hover': {
+          <Grid key={cat}>
+            <Chip
+              label={cat}
+              clickable
+              onClick={() => handleSelect(cat)}
+              sx={{
+                width: '100%',
+                color: selected === cat ? '#fff' : '#aaa',
                 background:
-                  'linear-gradient(90deg, #A100EB 0%, #793CDF 40%, #3605FF 100%)',
-                color: '#fff',
-              },
-            }}
-          />
+                  selected === cat
+                    ? 'linear-gradient(90deg, #A100EB, #3605FF)'
+                    : '#793CDF',
+                px: 2,
+                py: 1,
+                fontWeight: 600,
+                '& .MuiChip-label': {
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                },
+                '&:hover': {
+                  background:
+                    'linear-gradient(90deg, #A100EB 0%, #793CDF 40%, #3605FF 100%)',
+                  color: '#fff',
+                },
+              }}
+            />
+          </Grid>
         ))}
-      </Stack>
+      </Grid>
 
       {/* === NFT GRID ANIMATION === */}
       <Box
-        sx={{ position: 'relative', minHeight: 970, overflow: 'hidden', mt:1}}
+        sx={{
+          position: 'relative',
+          minHeight: 980,
+          overflow: 'hidden',
+          pt: 1,
+          pl: 0.6,
+        }}
       >
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -123,7 +137,7 @@ export default function SuperHotDrop() {
             transition={{ duration: 0.5, ease: 'easeInOut' }}
             style={{ position: 'absolute', width: '100%' }}
           >
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
               {nftData[selected].map((item, i) => (
                 <Grid size={{ xs: 12, sm: 6, md: 3 }} key={i}>
                   <Card
@@ -136,7 +150,7 @@ export default function SuperHotDrop() {
                       '&:hover': {
                         transform: 'scale(1.03)',
                       },
-                      width:330
+                      width: 336,
                     }}
                   >
                     {/* === IMAGE === */}
