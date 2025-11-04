@@ -76,9 +76,9 @@ const nftData = [
     collection: 'Space Kitties',
   },
   {
-    name: 'ApeCrypto #7234',
+    name: 'Neon Guardian #2847',
     price: '1.50 ETH',
-    img: '/marketplace/img5.jpg',
+    img: '/marketplace/nft_test.png',
     likes: '8.1k',
     collection: 'ApeCrypto',
   },
