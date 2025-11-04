@@ -20,13 +20,13 @@ export const metadata: Metadata = {
   description: 'Landing Apollo NFT Community',
   icons: {
     icon: [
-      { rel: 'icon', url: '/digital-wallet.png', type: 'image/png' },
-      { rel: 'shortcut icon', url: '/digital-wallet.png', type: 'image/png' },
+      { rel: 'icon', url: '/favicon.ico', type: 'image/x-icon' }, // cho trình duyệt
+      { rel: 'icon', url: '/digital-wallet.png', type: 'image/png' }, // fallback PNG
+      { rel: 'shortcut icon', url: '/favicon.ico', type: 'image/x-icon' },
     ],
-    apple: { url: '/digital-wallet.png' },
+    apple: { url: '/digital-wallet.png' }, // cho Apple devices
   },
 };
-
 
 export default function RootLayout({
   children,
