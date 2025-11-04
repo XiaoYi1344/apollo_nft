@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import { Creator } from './data/creatorsData';
+import toast from 'react-hot-toast';
 
 interface Props {
   creator: Creator | null;
@@ -211,9 +212,10 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
           sx={{
             color: '#fff',
             textTransform: 'none',
-            fontSize: { xs: 13, sm: 14 },
-            '&:hover': { color: '#b78eff' },
-            alignSelf: { xs: 'flex-end', sm: 'center' },
+            fontSize: { xs: 13, sm: 14 }, // Font size nhỏ trên mobile (xs), tăng nhẹ trên sm
+            '&:hover': { color: '#b78eff' }, // Màu hover
+            alignSelf: { xs: 'flex-end', md: 'center' }, // Trên xs căn sang phải, md trở lên căn giữa
+            my: 4, // margin top & bottom
           }}
         >
           Xuất sang Trang tính
@@ -222,19 +224,70 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
         <Grid container spacing={3}>
           {creator.items.map((it) => (
             <Grid size={{ xs: 12, sm: 6, md: 3 }} key={it.id}>
-              <Card sx={{ bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 2 }}>
+              <Card
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.03)',
+                  borderRadius: 3,
+                  overflow: 'hidden',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-6px)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                  },
+                }}
+              >
                 <CardMedia
                   component="img"
                   image={it.img}
                   alt={it.title}
-                  sx={{ height: 160, objectFit: 'cover' }}
+                  sx={{
+                    height: 300,
+                    objectFit: 'cover',
+                  }}
                 />
-                <CardContent>
-                  <Typography sx={{ color: '#fff', fontWeight: 700 }}>
+                <CardContent sx={{ bgcolor: '#1a1a2e' }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ color: '#fff', fontWeight: 700 }}
+                  >
                     {it.title}
                   </Typography>
-                  <Typography sx={{ color: '#9b9bbf', fontSize: 12 }}>
-                    {it.price}
+                  <Typography
+                    component="div"
+                    sx={{
+                      fontSize: 15,
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                    }}
+                  >
+                    Giá:{' '}
+                    <Typography
+                      component="span"
+                      sx={{ color: '#b78eff', ml: 0.5, fontWeight: 600 }}
+                    >
+                      {it.price}
+                    </Typography>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      onClick={() => toast.success('Đã thêm vào giỏ hàng')}
+                      sx={{
+                        textTransform: 'none',
+                        fontSize: 13,
+                        ml: -1,
+                        // py: 0.3,
+                        // px: 1.2,
+                        borderRadius: 2,
+                        background: 'transparent',
+                        boxShadow:'none',
+                        '&:hover': { opacity: 0.9 },
+                        color:'#05F500'
+                      }}
+                    >
+                      (Mua ngay)
+                    </Button>
                   </Typography>
                 </CardContent>
               </Card>
