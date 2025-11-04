@@ -257,9 +257,12 @@ export default function SuperHotDrop() {
                         src={item.img}
                         alt={item.name}
                         fill
+                        sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                         style={{
                           objectFit: 'cover',
                           transition: 'transform 0.6s ease',
+                          width: 'auto',
+    height: 'auto',
                         }}
                       />
                     </Box>

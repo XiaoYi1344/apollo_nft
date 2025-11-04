@@ -17,86 +17,8 @@ import Image from 'next/image';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
-
-const nftData = [
-  {
-    name: 'CosmoCat #123',
-    price: '0.75 ETH',
-    img: '/marketplace/img.jpg',
-    likes: '1.2k',
-    collection: 'Space Kitties',
-  },
-  {
-    name: 'TinBot #789',
-    price: '1.20 ETH',
-    img: '/marketplace/img1.jpg',
-    likes: '3.4k',
-    collection: 'Retro Bots',
-  },
-  {
-    name: 'ApeCrypto #8821',
-    price: '0.95 ETH',
-    img: '/marketplace/img2.jpg',
-    likes: '5.6k',
-    collection: 'ApeCrypto',
-  },
-  {
-    name: 'Sunset Hill #45',
-    price: '0.45 ETH',
-    img: '/marketplace/img3.jpg',
-    likes: '980',
-    collection: 'Pixel Worlds',
-  },
-  {
-    name: 'StarGazer #456',
-    price: '0.82 ETH',
-    img: '/marketplace/img4.jpg',
-    likes: '2.1k',
-    collection: 'Space Kitties',
-  },
-  {
-    name: 'ApeCrypto #7234',
-    price: '1.50 ETH',
-    img: '/marketplace/img5.jpg',
-    likes: '8.1k',
-    collection: 'ApeCrypto',
-  },
-  {
-    name: 'RustyBot #101',
-    price: '0.99 ETH',
-    img: '/marketplace/img6.jpg',
-    likes: '1.8k',
-    collection: 'Retro Bots',
-  },
-  {
-    name: 'OracleCat #777',
-    price: '2.50 ETH',
-    img: '/marketplace/img7.jpg',
-    likes: '11.2k',
-    collection: 'Space Kitties',
-  },
-  {
-    name: 'Neon Guardian #2847',
-    price: '1.50 ETH',
-    img: '/marketplace/nft_test.png',
-    likes: '8.1k',
-    collection: 'ApeCrypto',
-  },
-  {
-    name: 'Sunset Hill #45',
-    price: '0.45 ETH',
-    img: '/marketplace/img3.jpg',
-    likes: '980',
-    collection: 'Pixel Worlds',
-  },
-  {
-    name: 'ApeCrypto #8821',
-    price: '0.95 ETH',
-    img: '/marketplace/img2.jpg',
-    likes: '5.6k',
-    collection: 'ApeCrypto',
-  },
-];
+import Link from 'next/link';
+import { nftData } from './data/nftData';
 
 const SORT_OPTIONS = ['Latest', 'Price: Low to High', 'Price: High to Low'];
 
@@ -183,72 +105,92 @@ const NFTTable = () => {
       <Grid container spacing={3} marginBottom={14}>
         {nftData.slice(0, visibleCount).map((nft, index) => (
           <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
-            <Card
-              sx={{
-                bgcolor: 'rgba(255,255,255)',
-                borderRadius: 3,
-                overflow: 'hidden',
-                color: 'black',
-                transition: '0.3s',
-                '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: '0 10px 20px rgba(0,0,0,0.3)',
-                },
-              }}
+            <Link
+              href={`/marketplace/${nft.id}`}
+              style={{ textDecoration: 'none' }}
             >
-              <Image
-                src={nft.img}
-                alt={nft.name}
-                width={400}
-                height={300}
-                style={{ width: '100%', height: 'auto' }}
-              />
-              <CardContent>
-                <Typography variant="subtitle2" sx={{ opacity: 0.5 }}>
-                  {nft.collection}
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                  {nft.name}
-                </Typography>
-                <Box
-                  sx={{
-                    mt: 1.2,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 549.5, fontSize: '1.0rem' }}
-                  >
-                    {nft.price}
+              <Card
+                sx={{
+                  bgcolor: 'rgba(255,255,255)',
+                  borderRadius: 3,
+                  overflow: 'hidden',
+                  color: 'black',
+                  transition: '0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-6px)',
+                    boxShadow: '0 10px 20px rgba(0,0,0,0.3)',
+                  },
+                }}
+              >
+                {Array.isArray(nft.img) ? (
+                  nft.img.map((file, index) => (
+                    <Image
+                      key={index}
+                      src={URL.createObjectURL(file)}
+                      alt={nft.name}
+                      width={400}
+                      height={300}
+                      style={{ width: '100%', height: 'auto' }}
+                    />
+                  ))
+                ) : (
+                  <Image
+                    src={nft.img}
+                    alt={nft.name}
+                    width={400}
+                    height={300}
+                    style={{ width: 'auto',
+    height: 'auto', }}
+                  />
+                )}
+
+                <CardContent>
+                  <Typography variant="subtitle2" sx={{ opacity: 0.5 }}>
+                    {nft.collection}
                   </Typography>
-                  <Typography
-                    variant="body2"
+                  <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                    {nft.name}
+                  </Typography>
+                  <Box
                     sx={{
-                      fontWeight: 400,
-                      fontSize: '0.82rem',
-                      opacity: 0.5,
+                      mt: 1.2,
                       display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.3,
+                      justifyContent: 'space-between',
                     }}
                   >
-                    <FavoriteBorderIcon
-                      sx={{ fontSize: '0.85rem', strokeWidth: 1 }}
-                    />
-                    {nft.likes}
-                  </Typography>
-                </Box>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ mt: 2, bgcolor: '#9230FF', textTransform: 'none' }}
-                >
-                  Buy Now
-                </Button>
-              </CardContent>
-            </Card>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 549.5, fontSize: '1.0rem' }}
+                    >
+                      {nft.price}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 400,
+                        fontSize: '0.82rem',
+                        opacity: 0.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.3,
+                      }}
+                    >
+                      <FavoriteBorderIcon
+                        sx={{ fontSize: '0.85rem', strokeWidth: 1 }}
+                      />
+                      {nft.likes}
+                    </Typography>
+                  </Box>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 2, bgcolor: '#9230FF', textTransform: 'none' }}
+                  >
+                    Buy Now
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
           </Grid>
         ))}
 

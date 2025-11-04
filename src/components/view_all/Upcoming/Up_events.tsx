@@ -1,0 +1,793 @@
+// 'use client';
+// import React, { useState } from 'react';
+// import {
+//   Box,
+//   Button,
+//   Card,
+//   CardContent,
+//   Chip,
+//   Stack,
+//   Typography,
+// } from '@mui/material';
+// import Image from 'next/image';
+
+// import GroupsIcon from '@mui/icons-material/Groups';
+// import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+// import GavelIcon from '@mui/icons-material/Gavel';
+// import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+// import SchoolIcon from '@mui/icons-material/School';
+
+// import {
+//   events,
+//   timeline,
+//   type,
+//   getButtonLabel,
+//   EventType,
+//   getTimelineColor,
+// } from './data/eventsData';
+
+// // 🎨 Color map for buttons
+// const buttonColors: Record<string, string> = {
+//   LIVE: '#9333ea',
+//   UPCOMING: '#1f2937',
+//   ENDED: '#1f2937',
+// };
+
+// // 🧠 Function to get event icon by type
+// const getEventTypeIcon = (type: string) => {
+//   switch (type.toUpperCase()) {
+//     case 'AMA':
+//     case 'MEETUP':
+//       return <GroupsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     case 'DROP':
+//       return <AccessTimeFilledIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     case 'AUCTION':
+//       return <GavelIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     case 'CONTEST':
+//       return <EmojiEventsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     case 'WORKSHOP':
+//       return <SchoolIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     default:
+//       return <GroupsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//   }
+// };
+
+// // 📊 Function to return viewer label text
+// const getEventTypeText = (type: string, number: string | number) => {
+//   switch (type.toUpperCase()) {
+//     case 'AMA':
+//       return `${number} joined`; // AMA → joined
+//     case 'MEETUP':
+//       return `${number} attended`; // MEETUP → attended
+//     case 'DROP':
+//       return `in ${number} days`;
+//     case 'AUCTION':
+//       return `${number} items`;
+//     case 'CONTEST':
+//       return 'Winner announced';
+//     case 'WORKSHOP':
+//       return `${number} spots left`;
+//     default:
+//       return `${number} joined`;
+//   }
+// };
+
+// // 🧩 Main component
+// export const Up_events: React.FC = () => {
+//   const [selectedTimeline, setSelectedTimeline] = useState<number>(1);
+//   const [selectedType, setSelectedType] = useState<number>(1);
+
+//   // ✅ Filter events
+//   const filteredEvents = events.filter((e) => {
+//     const timelineName = timeline.find((t) => t.id === selectedTimeline)?.name;
+//     const typeName = type.find((t) => t.id === selectedType)?.name;
+
+//     const matchTimeline =
+//       (e.timeline === 'UPCOMING' && timelineName === 'Upcoming Events') ||
+//       (e.timeline === 'LIVE' && timelineName === 'Live Now') ||
+//       (e.timeline === 'ENDED' && timelineName === 'Past Events') ||
+//       selectedTimeline === 1;
+
+//     const matchType =
+//   e.type.toLowerCase() === typeName?.toLowerCase() || selectedType === 1;
+//     return matchTimeline && matchType;
+//   });
+
+//   return (
+//     <Stack
+//       sx={{
+//         color: '#fff',
+//         px: { xs: 2, sm: 4.3 },
+//         p: 3,
+//         background: 'linear-gradient(90deg,#070a12, #0e1637,#230b36)',
+//       }}
+//     >
+//       <Typography
+//         variant="h5"
+//         sx={{
+//           fontWeight: 700,
+//           mb: 1,
+//           textAlign: 'center',
+//           fontSize: { xs: '1.0rem', sm: '1.4rem', md: '2.2rem' },
+//           mt: 10
+//         }}
+//       >
+//         Event Calendar
+//       </Typography>
+//       <Typography
+//         sx={{
+//           color: 'rgba(255,255,255,0.7)',
+//           mb: 8,
+//           mx: 'auto', // ✅ centers the text block horizontally
+//           textAlign: 'center',
+//           fontSize: { xs: '1rem', sm: '1.2rem', md: '1.4rem' },
+//           lineHeight: 1.6,
+//           fontWeight: 500,
+//           width: 630,
+//           maxWidth: '90%', // ✅ makes it responsive on smaller screens
+//         }}
+//       >
+//         Discover and join exciting events, AMAs, drops, auctions, and workshops
+//         in our vibrant community.
+//       </Typography>
+
+//       {/* Filters */}
+//       <Stack
+//         direction={{ xs: 'column', sm: 'row' }}
+//         spacing={5}
+//         justifyContent="start"
+//         alignItems={{ xs: 'flex-start', sm: 'center' }}
+//         sx={{ mb: 4, ml: 3 }}
+//       >
+//         {/* Timeline Filter */}
+//         <Box>
+//           {timeline.map((t) => (
+//             <Button
+//               key={t.id}
+//               onClick={() => setSelectedTimeline(t.id)}
+//               sx={{
+//                 color: selectedTimeline === t.id ? '#fff' : '#aaa',
+//                 bgcolor: selectedTimeline === t.id ? '#9333ea' : '#1f2937',
+//                 textTransform: 'none',
+//                 borderRadius: 2,
+//                 px:1.2,
+//                 mx: 0.5,
+//                 // fontWeight: 600,
+//                 fontSize: '0.9rem',
+//                 transition: 'all 0.2s ease',
+//                 '&:hover': {
+//                   bgcolor:
+//                     selectedTimeline === t.id
+//                       ? '#9333ea' // Giữ màu tím khi đã chọn
+//                       : 'rgba(147, 51, 234, 0.2)', // Hover màu tím mờ khi chưa chọn
+//                   opacity: selectedTimeline === t.id ? 0.9 : 1, // Giảm nhẹ độ sáng khi hover
+//                 },
+//               }}
+//             >
+//               {t.name}
+//             </Button>
+//           ))}
+//         </Box>
+
+//         {/* Type Filter */}
+//         <Box>
+//           {type.map((tp) => (
+//             <Button
+//               key={tp.id}
+//               onClick={() => setSelectedType(tp.id)}
+//               sx={{
+//                  bgcolor: selectedType === tp.id ? '#6366F1' : '#1f2937',
+//                 color: selectedType === tp.id ? '#fff' : '#aaa',
+//                 textTransform: 'none',
+//                 borderRadius: 2,
+//                 px:1.2,
+//                 mx: 0.5,
+//                 // fontWeight: 600,
+//                 fontSize: '0.9rem',
+//                 transition: 'all 0.2s ease',
+//                 '&:hover': {
+//                   bgcolor:
+//                     selectedTimeline === tp.id
+//                       ? '#6366F1' // Giữ màu tím khi đã chọn
+//                       : 'rgba(99, 102, 241, 0.2)', // Hover màu tím mờ khi chưa chọn
+//                   opacity: selectedTimeline === tp.id ? 0.9 : 1, // Giảm nhẹ độ sáng khi hover
+//                 },
+//               }}
+//             >
+//               {tp.name}
+//             </Button>
+//           ))}
+//         </Box>
+//       </Stack>
+
+//       {/* Cards */}
+//       <Stack
+//         direction="row"
+//         flexWrap="wrap"
+//         gap={3}
+//         justifyContent="center"
+//         alignItems="stretch"
+//       >
+//         {filteredEvents.map((e: EventType) => (
+//           <Card
+//             key={e.id}
+//             sx={{
+//               width: { xs: '100%', sm: 300, md: 450 },
+//               borderRadius: 3,
+//               bgcolor: '#141545',
+//               border: '1px solid rgba(255,255,255,0.08)',
+//               overflow: 'hidden',
+//               position: 'relative',
+//               transition: 'transform 0.3s ease',
+//               '&:hover': { transform: 'translateY(-4px)' },
+//             }}
+//           >
+//             {/* Image with gradient overlay */}
+//             <Box sx={{ position: 'relative', height: 220 }}>
+//               <Image
+//                 src={e.img}
+//                 alt={e.name}
+//                 fill
+//                 style={{ objectFit: 'cover' }}
+//               />
+//               <Box
+//                 sx={{
+//                   position: 'absolute',
+//                   inset: 0,
+//                   background:
+//                     'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.9))',
+//                 }}
+//               />
+//               {/* LIVE Badge */}
+//               {/* 🔴 Timeline Badge (LIVE có hiệu ứng pulse) */}
+//               <Box
+//                 sx={{
+//                   position: 'absolute',
+//                   top: 12,
+//                   left: 12,
+//                 }}
+//               >
+//                 {e.timeline === 'LIVE' ? (
+//                   <Box
+//                     sx={{
+//                       display: 'flex',
+//                       alignItems: 'center',
+//                       gap: 0.8,
+//                       bgcolor: '#9333EA',
+//                       px: 1.5,
+//                       py: 0.4,
+//                       borderRadius: '20px',
+//                       color: '#fff',
+//                       fontWeight: 700,
+//                       fontSize: '0.75rem',
+//                       textTransform: 'uppercase',
+//                       letterSpacing: '0.05em',
+//                       zIndex: 2,
+//                       boxShadow: '0 0 10px rgba(147, 51, 234, 0.6)',
+//                     }}
+//                   >
+//                     {/* 🔘 Animated white pulse circle */}
+//                     <Box
+//                       sx={{
+//                         width: 8,
+//                         height: 8,
+//                         borderRadius: '50%',
+//                         backgroundColor: '#fff',
+//                         position: 'relative',
+//                         '&::before': {
+//                           content: '""',
+//                           position: 'absolute',
+//                           inset: 0,
+//                           borderRadius: '50%',
+//                           backgroundColor: 'rgba(255, 255, 255, 0.6)',
+//                           animation: 'pulseDot 1.4s infinite ease-out',
+//                         },
+//                         '@keyframes pulseDot': {
+//                           '0%': {
+//                             transform: 'scale(1)',
+//                             opacity: 1,
+//                           },
+//                           '70%': {
+//                             transform: 'scale(2)',
+//                             opacity: 0,
+//                           },
+//                           '100%': {
+//                             transform: 'scale(1)',
+//                             opacity: 0,
+//                           },
+//                         },
+//                       }}
+//                     />
+//                     LIVE
+//                   </Box>
+//                 ) : (
+//                   <Chip
+//                     label={e.timeline}
+//                     sx={{
+//                       bgcolor: getTimelineColor(e.timeline),
+//                       color: '#fff',
+//                       //   fontWeight: 700,
+//                       textTransform: 'uppercase',
+//                       fontSize: '0.75rem',
+//                       borderRadius: '20px',
+//                       px: 1.5,
+//                       boxShadow:
+//                         (e.timeline as string) === 'LIVE'
+//                           ? '0 0 12px rgba(147, 51, 234, 0.8)'
+//                           : 'none',
+//                     }}
+//                   />
+//                 )}
+//               </Box>
+//             </Box>
+
+//             {/* Content */}
+//             <CardContent sx={{ p: 3, pb: 1 }}>
+//               <Typography
+//                 sx={{
+//                   color: '#A1A1AA',
+//                   fontSize: '0.9rem',
+//                   letterSpacing: '0.05em',
+//                   mb: 1,
+//                 }}
+//               >
+//                 {e.time}
+//               </Typography>
+
+//               <Typography
+//   sx={{
+//     color: '#fff',
+//     fontWeight: 600,
+//     fontSize: '1.4rem',
+//     fontFamily: `'Poppins', 'Roboto', sans-serif`,
+//     mb: 1.2,
+//   }}
+// >
+//   {e.name}
+// </Typography>
+
+//               <Stack
+//                 direction="row"
+//                 justifyContent="space-between"
+//                 spacing={0.7}
+//               >
+//                 <Chip
+//                   label={e.type}
+//                   sx={{
+//                     bgcolor: '#1f2937',
+//                     color: '#fff',
+//                     // fontWeight: 700,
+//                     textTransform: 'uppercase',
+//                     fontSize: '0.75rem',
+//                     borderRadius: '20px',
+//                     px: 1,
+//                   }}
+//                 />
+//                 <Box
+//                   sx={{
+//                     display: 'flex',
+//                     flexDirection: 'row',
+//                     alignItems: 'center',
+//                   }}
+//                 >
+//                   {getEventTypeIcon(e.type)}
+//                   <Typography
+//                     sx={{ color: '#A1A1AA', fontSize: '0.85rem', mx: 0.7 }}
+//                   >
+//                     {getEventTypeText(e.type, e.viewer)}
+//                   </Typography>
+//                 </Box>
+//               </Stack>
+//             </CardContent>
+
+//             {/* Button */}
+//             <Box sx={{ px: 3, pb: 3 }}>
+//               <Button
+//                 fullWidth
+//                 href={e.link}
+//                 sx={{
+//                   bgcolor: buttonColors[e.timeline],
+//                   color: '#fff',
+//                   textTransform: 'none',
+//                   //   fontWeight: 700,
+//                   borderRadius: 2,
+//                   py: 1.2,
+//                   fontSize: '0.9rem',
+//                   '&:hover': { opacity: 0.9 },
+//                 }}
+//               >
+//                 {getButtonLabel(e.timeline)}
+//               </Button>
+//             </Box>
+//           </Card>
+//         ))}
+//       </Stack>
+//     </Stack>
+//   );
+// };
+
+'use client';
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  Grid,
+} from '@mui/material';
+import Image from 'next/image';
+
+import GroupsIcon from '@mui/icons-material/Groups';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+import GavelIcon from '@mui/icons-material/Gavel';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import SchoolIcon from '@mui/icons-material/School';
+
+import {
+  events,
+  timeline,
+  type,
+  getButtonLabel,
+  EventType,
+  getTimelineColor,
+} from './data/eventsData';
+
+const buttonColors: Record<string, string> = {
+  LIVE: '#9333ea',
+  UPCOMING: '#1f2937',
+  ENDED: '#1f2937',
+};
+
+// 🧠 Icon logic
+const getEventTypeIcon = (type: string) => {
+  switch (type.toUpperCase()) {
+    case 'AMA':
+    case 'MEETUP':
+      return <GroupsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+    case 'DROP':
+      return <AccessTimeFilledIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+    case 'AUCTION':
+      return <GavelIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+    case 'CONTEST':
+      return <EmojiEventsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+    case 'WORKSHOP':
+      return <SchoolIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+    default:
+      return <GroupsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+  }
+};
+
+// 📊 Text logic
+const getEventTypeText = (type: string, number: string | number) => {
+  switch (type.toUpperCase()) {
+    case 'AMA':
+      return `${number} joined`;
+    case 'MEETUP':
+      return `${number} attended`;
+    case 'DROP':
+      return `in ${number} days`;
+    case 'AUCTION':
+      return `${number} items`;
+    case 'CONTEST':
+      return 'Winner announced';
+    case 'WORKSHOP':
+      return `${number} spots left`;
+    default:
+      return `${number} joined`;
+  }
+};
+
+export const Up_events: React.FC = () => {
+  const [selectedTimeline, setSelectedTimeline] = useState<number>(1);
+  const [selectedType, setSelectedType] = useState<number>(1);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600–900px
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // >900px
+
+  // ✅ Filter events
+  const filteredEvents = events.filter((e) => {
+    const timelineName = timeline.find((t) => t.id === selectedTimeline)?.name;
+    const typeName = type.find((t) => t.id === selectedType)?.name;
+
+    const matchTimeline =
+      (e.timeline === 'UPCOMING' && timelineName === 'Upcoming Events') ||
+      (e.timeline === 'LIVE' && timelineName === 'Live Now') ||
+      (e.timeline === 'ENDED' && timelineName === 'Past Events') ||
+      selectedTimeline === 1;
+
+    const matchType =
+      e.type.toLowerCase() === typeName?.toLowerCase() || selectedType === 1;
+
+    return matchTimeline && matchType;
+  });
+
+  return (
+    <Stack
+      sx={{
+        color: '#fff',
+        px: { xs: 2, sm: 4, md: 6 },
+        py: { xs: 3, sm: 5, md: 8 },
+        background: 'linear-gradient(90deg,#070a12, #0e1637,#230b36)',
+      }}
+    >
+      {/* 🏷️ Title */}
+      <Typography
+        variant="h5"
+        sx={{
+          fontWeight: 700,
+          textAlign: 'center',
+          fontSize: { xs: '1.3rem', sm: '1.8rem', md: '2.4rem' },
+          mt: { xs: 6, md: 10 },
+          mb: 1,
+        }}
+      >
+        Event Calendar
+      </Typography>
+      <Typography
+        sx={{
+          color: 'rgba(255,255,255,0.7)',
+          mb: { xs: 5, sm: 8 },
+          mx: 'auto',
+          textAlign: 'center',
+          fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.3rem' },
+          lineHeight: 1.6,
+          fontWeight: 400,
+          width: { xs: '95%', sm: 600, md: 750 },
+        }}
+      >
+        Discover and join exciting events, AMAs, drops, auctions, and workshops
+        in our vibrant community.
+      </Typography>
+
+      {/* 🎛 Filters */}
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={5}
+        justifyContent="start"
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        sx={{ mb: 5, ml: { sm: 3 } }}
+      >
+        {/* Timeline buttons */}
+        <Box>
+          {timeline.map((t) => (
+            <Button
+              key={t.id}
+              onClick={() => setSelectedTimeline(t.id)}
+              sx={{
+                color: selectedTimeline === t.id ? '#fff' : '#aaa',
+                bgcolor: selectedTimeline === t.id ? '#9333ea' : '#1f2937',
+                textTransform: 'none',
+                borderRadius: 2,
+                px: 1.5,
+                mx: 0.5,
+                fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                '&:hover': {
+                  bgcolor:
+                    selectedTimeline === t.id
+                      ? '#9333ea'
+                      : 'rgba(147,51,234,0.2)',
+                  opacity: selectedTimeline === t.id ? 0.9 : 1,
+                },
+              }}
+            >
+              {t.name}
+            </Button>
+          ))}
+        </Box>
+
+        {/* Type buttons */}
+        <Box>
+          {type.map((tp) => (
+            <Button
+              key={tp.id}
+              onClick={() => setSelectedType(tp.id)}
+              sx={{
+                bgcolor: selectedType === tp.id ? '#6366F1' : '#1f2937',
+                color: selectedType === tp.id ? '#fff' : '#aaa',
+                textTransform: 'none',
+                borderRadius: 2,
+                px: 1.5,
+                mx: 0.5,
+                fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                '&:hover': {
+                  bgcolor:
+                    selectedType === tp.id ? '#6366F1' : 'rgba(99,102,241,0.2)',
+                  opacity: selectedType === tp.id ? 0.9 : 1,
+                },
+              }}
+            >
+              {tp.name}
+            </Button>
+          ))}
+        </Box>
+      </Stack>
+
+      {/* Cards Grid */}
+      <Grid container spacing={3} justifyContent="center" alignItems="stretch">
+        {filteredEvents.map((e: EventType) => (
+          <Grid
+            size={{ xs: 12, sm: 6, md: 4 }}
+            key={e.id}
+            // item
+            // xs={12}   // Mobile: 1 cột
+            // sm={6}    // Tablet: 2 cột
+            // md={4}    // Desktop: 3 cột
+          >
+            <Card
+              sx={{
+                borderRadius: 3,
+                bgcolor: '#141545',
+                border: '1px solid rgba(255,255,255,0.08)',
+                overflow: 'hidden',
+                position: 'relative',
+                transition: 'transform 0.3s ease',
+                '&:hover': { transform: 'translateY(-4px)' },
+                // opacity:'0.8'
+              }}
+            >
+              {/* 🔹 Image */}
+              <Box sx={{ position: 'relative', height: { xs: 180, sm: 220 } }}>
+                <Image
+                  src={e.img}
+                  alt={e.name}
+                  fill
+                  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
+                  style={{ objectFit: 'cover' }}
+                />
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    background:
+                      'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.9))',
+                  }}
+                />
+                {/* 🔴 LIVE pulse badge */}
+                <Box sx={{ position: 'absolute', top: 12, left: 12 }}>
+                  {e.timeline === 'LIVE' ? (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.8,
+                        bgcolor: '#9333EA',
+                        px: 1.5,
+                        py: 0.4,
+                        borderRadius: '20px',
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        zIndex: 2,
+                        boxShadow: '0 0 10px rgba(147, 51, 234, 0.6)',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          backgroundColor: '#fff',
+                          position: 'relative',
+                          '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            inset: 0,
+                            borderRadius: '50%',
+                            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                            animation: 'pulseDot 1.4s infinite ease-out',
+                          },
+                          '@keyframes pulseDot': {
+                            '0%': { transform: 'scale(1)', opacity: 1 },
+                            '70%': { transform: 'scale(2)', opacity: 0 },
+                            '100%': { transform: 'scale(1)', opacity: 0 },
+                          },
+                        }}
+                      />
+                      LIVE
+                    </Box>
+                  ) : (
+                    <Chip
+                      label={e.timeline}
+                      sx={{
+                        bgcolor: getTimelineColor(e.timeline),
+                        color: '#fff',
+                        textTransform: 'uppercase',
+                        fontSize: '0.75rem',
+                        borderRadius: '20px',
+                        px: 1.5,
+                      }}
+                    />
+                  )}
+                </Box>
+              </Box>
+
+              {/* 🔹 Content */}
+              <CardContent sx={{ p: { xs: 2.2, sm: 3 }, pb: 1 }}>
+                <Typography
+                  sx={{
+                    color: '#A1A1AA',
+                    fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                    mb: 1,
+                  }}
+                >
+                  {e.time}
+                </Typography>
+
+                <Typography
+                  sx={{
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                    fontFamily: `'Poppins', 'Inter', sans-serif`,
+                    mb: 1.2,
+                  }}
+                >
+                  {e.name}
+                </Typography>
+
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  spacing={0.7}
+                //   pt={1}
+                >
+                  <Chip
+                    label={e.type}
+                    sx={{
+                      bgcolor: '#1f2937',
+                      color: '#fff',
+                      textTransform: 'uppercase',
+                      fontSize: '0.7rem',
+                      borderRadius: '20px',
+                      px: 1,
+                    }}
+                  />
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {getEventTypeIcon(e.type)}
+                    <Typography
+                      sx={{
+                        color: '#A1A1AA',
+                        fontSize: { xs: '0.8rem', sm: '0.85rem' },
+                        mx: 0.7,
+                      }}
+                    >
+                      {getEventTypeText(e.type, e.viewer)}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </CardContent>
+
+              {/* 🔹 Button */}
+              <Box sx={{ px: { xs: 2.2, sm: 3 }, pb: 3, mt:-1 }}>
+                <Button
+                  fullWidth
+                  href={e.link}
+                  sx={{
+                    bgcolor: buttonColors[e.timeline],
+                    color: '#fff',
+                    textTransform: 'none',
+                    borderRadius: 2,
+                    py: 1.2,
+                    fontSize: '0.9rem',
+                    '&:hover': { opacity: 0.9 },
+                  }}
+                >
+                  {getButtonLabel(e.timeline)}
+                </Button>
+              </Box>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Stack>
+  );
+};

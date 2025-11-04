@@ -73,7 +73,11 @@ export default function NFT() {
                     alt={item.title}
                     width={32}
                     height={32}
-                    style={{ objectFit: 'contain' }}
+                    style={{
+                      objectFit: 'contain',
+                      width: 'auto',
+                      height: 'auto',
+                    }}
                   />
                 </Box>
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>

@@ -68,7 +68,13 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
           display: 'block',
         }}
       />
-      <Box sx={{ px: 7, pb: 6 }}>
+      <Box
+        sx={{
+          px: 7,
+          pb: 6,
+          background: 'linear-gradient(90deg,#070a12, #0e1637,#230b36)',
+        }}
+      >
         <Box sx={{ position: 'relative', mb: 10, mt: -10 }}>
           {/* Banner */}
 
@@ -281,9 +287,9 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
                         // px: 1.2,
                         borderRadius: 2,
                         background: 'transparent',
-                        boxShadow:'none',
+                        boxShadow: 'none',
                         '&:hover': { opacity: 0.9 },
-                        color:'#05F500'
+                        color: '#05F500',
                       }}
                     >
                       (Mua ngay)

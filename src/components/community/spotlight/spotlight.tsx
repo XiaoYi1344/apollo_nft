@@ -123,6 +123,7 @@ const Spotlight = () => {
                 src={item.img}
                 alt={`Spotlight ${item.id}`}
                 fill
+                sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                 style={{ objectFit: 'cover' }}
               />
             </Box>

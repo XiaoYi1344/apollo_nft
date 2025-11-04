@@ -172,7 +172,7 @@ const Community = () => {
 
         <Button
           variant="text"
-          href="/community/new_update"
+          href="/view/upcoming"
           rel="noopener noreferrer"
           sx={{
             color: '#5f61e7',

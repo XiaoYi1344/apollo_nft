@@ -493,6 +493,7 @@ const JoinSection = () => {
                   src="/home/body/image-removebg-preview.png"
                   alt="BTC"
                   fill
+                  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                   style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
                 />
               </Box>
@@ -536,6 +537,7 @@ const JoinSection = () => {
                   src="/home/body/BNB-removebg-preview.png"
                   alt="BNB"
                   fill
+                  sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                   style={{ objectFit: 'contain' }}
                 />
               </Box>

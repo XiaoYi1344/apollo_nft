@@ -36,6 +36,7 @@ const JoinSection = () => {
             src="/drop/btc.png"
             alt="BTC"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{
               objectFit: 'contain',
               filter: 'brightness(0)', // chuyển hoàn toàn sang đen
@@ -59,6 +60,7 @@ const JoinSection = () => {
             src="/drop/vector.png"
             alt="BTC"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{
               objectFit: 'contain',
               filter: 'brightness(0)', // chuyển hoàn toàn sang đen

@@ -67,8 +67,10 @@ export default function NewsUpdate() {
                     src={e.img}
                     alt={e.name}
                     fill
+                    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                     style={{ objectFit: 'cover' }}
                   />
+
                   <Stack
                     direction="row"
                     spacing={1}
@@ -197,8 +199,10 @@ export default function NewsUpdate() {
                 src={e.img}
                 alt={e.name}
                 fill
+                sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                 style={{ objectFit: 'cover' }}
               />
+
               <Stack
                 direction="row"
                 spacing={1}

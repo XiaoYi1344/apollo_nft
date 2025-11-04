@@ -79,6 +79,7 @@ const TopSection = () => {
               src="/drop/sparkle.png"
               alt="Sparkle"
               fill
+              sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
               style={{ objectFit: 'contain' }}
             />
           </Box>
@@ -171,6 +172,7 @@ const TopSection = () => {
             src="/drop/top.png"
             alt="NFT Background Left"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
           />
         </Box>

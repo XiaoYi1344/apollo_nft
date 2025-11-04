@@ -97,7 +97,12 @@ export default function Connect() {
                         alt={data.name}
                         width={35}
                         height={35}
-                        style={{ objectFit: 'contain', filter: 'brightness(1.1)' }}
+                        style={{
+                          objectFit: 'contain',
+                          filter: 'brightness(1.1)',
+                          width: 'auto',
+                          height: 'auto',
+                        }}
                       />
                       <Typography
                         variant="subtitle1"
@@ -168,7 +173,7 @@ export default function Connect() {
                     )}
                   </Box>
                 );
-              })
+              }),
             )}
           </Stack>
         </Marquee>

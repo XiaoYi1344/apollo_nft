@@ -644,6 +644,7 @@ const TopSection = () => {
                 src={`/home/hero/${src}`}
                 alt={`NFT ${i}`}
                 fill
+                sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                 style={{ objectFit: 'cover' }}
               />
             </Box>
@@ -683,6 +684,7 @@ const TopSection = () => {
             src="/home/hero/top 2.jpg"
             alt="NFT Back Left"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
           />
         </Box>
@@ -702,6 +704,7 @@ const TopSection = () => {
             src="/home/hero/top 3.jpg"
             alt="NFT Back Right"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
           />
         </Box>
@@ -721,6 +724,7 @@ const TopSection = () => {
             src="/home/hero/top1.jpg"
             alt="NFT Main"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
           />
         </Box>
@@ -755,6 +759,7 @@ const TopSection = () => {
             src="/home/hero/top 2.jpg"
             alt="NFT Back Left"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
           />
         </Box>
@@ -774,6 +779,7 @@ const TopSection = () => {
             src="/home/hero/top 3.jpg"
             alt="NFT Back Right"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
           />
         </Box>
@@ -793,6 +799,7 @@ const TopSection = () => {
             src="/home/hero/top1.jpg"
             alt="NFT Main"
             fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
           />
         </Box>

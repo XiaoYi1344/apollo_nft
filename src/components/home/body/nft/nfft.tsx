@@ -61,6 +61,7 @@ export default function NFT() {
                     src={item.img}
                     alt={item.title}
                     fill
+                    sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                     style={{ objectFit: 'contain' }}
                   />
                 </Box>
