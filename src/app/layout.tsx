@@ -20,11 +20,11 @@ export const metadata: Metadata = {
   description: 'Landing Apollo NFT Community',
   icons: {
     icon: [
-      { rel: 'icon', url: '/favicon.ico', type: 'image/x-icon' }, // cho trình duyệt
+      { rel: 'icon', url: '/favicon.ico', type: 'image/x-icon' }, // trình duyệt
       { rel: 'icon', url: '/digital-wallet.png', type: 'image/png' }, // fallback PNG
       { rel: 'shortcut icon', url: '/favicon.ico', type: 'image/x-icon' },
     ],
-    apple: { url: '/digital-wallet.png' }, // cho Apple devices
+    apple: { url: '/digital-wallet.png' }, // Apple devices
   },
 };
 
