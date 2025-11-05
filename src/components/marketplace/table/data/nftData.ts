@@ -2,9 +2,27 @@ export type NFT = {
   id: number;
   name: string;
   price: string;
+  price_sold?: string;
   img: File[] | string;
-  likes: string;
+  likes?: string;
   collection: string;
+  creator?: string;
+  owner?: string;
+  contract?: string;
+  tokenId?: string | number;
+  blockchain?: string;
+  properties?: {
+    trait_type: string;
+    value: string;
+    rarity: string;
+  }[];
+  activity?: {
+    type: 'listed' | 'sold' | 'minted';
+    actor?: string; // ai thao tác
+    target?: string; // đến ai (chỉ sold)
+    price?: string; // giá
+    time: string; // '2h ago', '1d ago'...
+  }[];
 };
 
 export const nftData: NFT[] = [
@@ -78,6 +96,73 @@ export const nftData: NFT[] = [
     price: '1.50 ETH',
     img: '/marketplace/nft_test.png',
     likes: '8.1k',
-    collection: 'ApeCrypto',
+    collection: 'Cyber Punks',
+    creator: '@CyberArtist',
+    owner: '@NFTCollector',
+    contract: '0x495f...7b5e',
+    tokenId: 2847,
+    blockchain: 'Ethereum',
+    properties: [
+      {
+        trait_type: 'Background',
+        value: 'Neon City',
+        rarity: '12% have this trait',
+      },
+      { trait_type: 'Eyes', value: 'Cyber Glow', rarity: '8% have this trait' },
+      {
+        trait_type: 'Headgear',
+        value: 'Neural Crown',
+        rarity: '5% have this trait',
+      },
+      {
+        trait_type: 'Rarity',
+        value: 'Legendary',
+        rarity: '2% have this trait',
+      },
+    ],
+    activity: [
+      {
+        type: 'listed',
+        actor: '@NFTCollector',
+        price: '1.5 ETH',
+        time: '2 hours ago',
+      },
+      {
+        type: 'sold',
+        actor: '@CyberArtist',
+        target: '@NFTCollector',
+        price: '1.2 ETH',
+        time: '1 day ago',
+      },
+      { type: 'minted', actor: '@CyberArtist', time: '3 days ago' },
+    ],
+  },
+  {
+    id: 10,
+    name: 'Cyber Warior #1234',
+    price: '0.8 ETH',
+    img: '/marketplace/warior.png',
+    collection: 'Cyber Punks',
+  },
+  {
+    id: 11,
+    name: 'Neon Android #5678',
+    price: '1.2 ETH',
+    img: '/marketplace/android.png',
+    collection: 'Cyber Punks',
+  },
+  {
+    id: 12,
+    name: 'Data Hacker #9012',
+    price: '0.9 ETH',
+    img: '/marketplace/hacker.png',
+    collection: 'Cyber Punks',
+  },
+  {
+    id: 13,
+    name: 'Cyber Samurai #3456',
+    price: '2.1 ETH',
+    img: '/marketplace/samurai.png',
+    collection: 'Cyber Punks',
   },
 ];

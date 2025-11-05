@@ -11,7 +11,7 @@ const Marketplace = () => {
       sx={{
         position: 'relative',
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #18022d, #090011)',
+        background: '#110929',
         color: 'white',
         overflow: 'hidden',
       }}
@@ -20,12 +20,12 @@ const Marketplace = () => {
       <Box
         className="glow"
         sx={{
-          '--glow-size': '1000px',
+          '--glow-size': '900px',
           '--glow-left': '-30%',
-          '--glow-top': '10%',
-          '--glow-color1': 'rgba(122,47,241,0.5)',
-          '--glow-color2': 'rgba(255,0,200,0.1)',
-          '--glow-blur': '180px',
+          '--glow-top': '-1%',
+           '--glow-color1': 'rgba(214,34,218,0.6)',
+            '--glow-color2': 'rgba(214,34,218,0.4)',
+          '--glow-blur': '100px',
           '--glow-opacity': '0.6',
         }}
       />

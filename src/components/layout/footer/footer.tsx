@@ -38,6 +38,7 @@ const Footer = () => {
         py: 6,
         color: '#fff',
         backdropFilter: 'blur(4px)', // mờ nhẹ giống navbar
+         bgcolor: showGlow ? 'transparent' : 'rgba(17,9,41,1)',
       }}
     >
       {/* 🔹 Hiệu ứng glow khi ở trang chủ */}

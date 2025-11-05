@@ -6,7 +6,7 @@ import React from 'react';
 
 const JoinSection = () => {
   return (
-    <Box sx={{ py: 8 }}>
+    <Box sx={{ pt: 8 }}>
       <Box
         sx={{
           position: 'relative',

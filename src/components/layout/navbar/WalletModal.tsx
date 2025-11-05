@@ -76,15 +76,15 @@ const WalletModal: React.FC<WalletModalProps> = ({
     }
   };
 
-//   const disconnectWallet = () => {
-//     setAccount('');
-//     setWalletState('disconnect');
+  //   const disconnectWallet = () => {
+  //     setAccount('');
+  //     setWalletState('disconnect');
 
-//     //Giữ trạng thái disconnect 2 giây rồi về select
-//     setTimeout(() => {
-//       setWalletState('select');
-//     }, 2000);
-//   };
+  //     //Giữ trạng thái disconnect 2 giây rồi về select
+  //     setTimeout(() => {
+  //       setWalletState('select');
+  //     }, 2000);
+  //   };
 
   const handleRetry = async () => {
     const { ethereum } = window;
@@ -98,7 +98,7 @@ const WalletModal: React.FC<WalletModalProps> = ({
   };
 
   useEffect(() => {
-      if (walletState === 'disconnect' || walletState === 'main') return; //Đừng override khi đang disconnect
+    if (walletState === 'disconnect' || walletState === 'main') return; //Đừng override khi đang disconnect
 
     if (account) setWalletState('info');
     else setWalletState('select');
@@ -209,7 +209,19 @@ const WalletModal: React.FC<WalletModalProps> = ({
                   <Button
                     fullWidth
                     onClick={connectWallet}
-                    className="flex items-center justify-start gap-3 px-4 py-2 rounded-xl bg-[#1F1639] hover:bg-[#2A1C52] transition"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start', // căn trái
+                      gap: 1.5, // khoảng cách giữa icon và chữ
+                      px: 3, // bỏ padding trái/phải
+                      py: 1.5,
+                      borderRadius: 2,
+                      bgcolor: '#1F1639',
+                      '&:hover': {
+                        bgcolor: '#2A1C52',
+                      },
+                    }}
                   >
                     <Image
                       src="/icons/metamask.svg"
@@ -217,16 +229,37 @@ const WalletModal: React.FC<WalletModalProps> = ({
                       width={28}
                       height={28}
                     />
-                    <span className="font-semibold text-white text-base">
+                    <span
+                      style={{
+                        marginLeft: 8,
+                        fontWeight: 600,
+                        color: '#fff',
+                        fontSize: 16,
+                      }}
+                    >
                       MetaMask
                     </span>
                   </Button>
 
-                  {/* Coinbase */}
+                  {/* Coinbase Wallet */}
                   <Button
-                    disabled
                     fullWidth
-                    className="flex items-center justify-start gap-3 px-4 py-2 rounded-xl bg-[#1F1639] opacity-60 cursor-not-allowed"
+                    disabled
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start', // căn trái
+                      gap: 1.5,
+                      px: 3,
+                      py: 1.5,
+                      borderRadius: 2,
+                      bgcolor: '#1a1230',
+                      opacity: 0.6,
+                      cursor: 'not-allowed',
+                      '&:hover': {
+                        bgcolor: '#1F1639', // hover không đổi màu khi disabled
+                      },
+                    }}
                   >
                     <Image
                       src="/icons/coinbase.svg"
@@ -234,16 +267,37 @@ const WalletModal: React.FC<WalletModalProps> = ({
                       width={28}
                       height={28}
                     />
-                    <span className="font-semibold text-white text-base">
+                    <span
+                      style={{
+                        marginLeft: 8,
+                        fontWeight: 600,
+                        color: '#fff',
+                        fontSize: 16,
+                      }}
+                    >
                       Coinbase Wallet
                     </span>
                   </Button>
 
                   {/* WalletConnect */}
                   <Button
-                    disabled
                     fullWidth
-                    className="flex items-center justify-start gap-3 px-4 py-2 rounded-xl bg-[#1F1639] opacity-60 cursor-not-allowed"
+                    disabled
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                      gap: 1.5,
+                      px: 3,
+                      py: 1.5,
+                      borderRadius: 2,
+                      bgcolor: '#1a1230',
+                      opacity: 0.6,
+                      cursor: 'not-allowed',
+                      '&:hover': {
+                        bgcolor: '#1F1639',
+                      },
+                    }}
                   >
                     <Image
                       src="/icons/walletconnect.svg"
@@ -251,10 +305,18 @@ const WalletModal: React.FC<WalletModalProps> = ({
                       width={28}
                       height={28}
                     />
-                    <span className="font-semibold text-white text-base">
+                    <span
+                      style={{
+                        marginLeft: 8,
+                        fontWeight: 600,
+                        color: '#fff',
+                        fontSize: 16,
+                      }}
+                    >
                       WalletConnect
                     </span>
                   </Button>
+
                 </Stack>
 
                 <Typography
@@ -406,179 +468,182 @@ const WalletModal: React.FC<WalletModalProps> = ({
             )}
 
             {/* ===================== INFO (CONNECTED SUCCESSFULLY) ===================== */}
-{walletState === 'info' && (
-  <>
-    <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-green-500/20 text-green-400"
-    >
-      <CheckCircleIcon sx={{ fontSize: 36 }} />
-    </motion.div>
+            {walletState === 'info' && (
+              <>
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-green-500/20 text-green-400"
+                >
+                  <CheckCircleIcon sx={{ fontSize: 36 }} />
+                </motion.div>
 
-    <Typography variant="body1" sx={{ color: '#ccc', mb: 3 }}>
-      Your wallet has been securely connected to <b>Apollo NFT</b>.
-    </Typography>
+                <Typography variant="body1" sx={{ color: '#ccc', mb: 3 }}>
+                  Your wallet has been securely connected to <b>Apollo NFT</b>.
+                </Typography>
 
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 2,
-        background: 'rgba(255,255,255,0.05)',
-        borderRadius: '12px',
-        padding: '16px',
-        mb: 3,
-      }}
-    >
-      <Image
-        src="/icons/avatar.png"
-        alt="avatar"
-        width={40}
-        height={40}
-        className="rounded-full"
-      />
-      <Box textAlign="left" flex={1}>
-        <Typography variant="body2" sx={{ color: '#bcb9d3' }}>
-          Address: {account.slice(0, 6)}...{account.slice(-4)}
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#4BFB9B', fontWeight: 600 }}>
-          Balance: 1.25 ETH
-        </Typography>
-      </Box>
-    </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                    background: 'rgba(255,255,255,0.05)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    mb: 3,
+                  }}
+                >
+                  <Image
+                    src="/icons/avatar.png"
+                    alt="avatar"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                  <Box textAlign="left" flex={1}>
+                    <Typography variant="body2" sx={{ color: '#bcb9d3' }}>
+                      Address: {account.slice(0, 6)}...{account.slice(-4)}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: '#4BFB9B', fontWeight: 600 }}
+                    >
+                      Balance: 1.25 ETH
+                    </Typography>
+                  </Box>
+                </Box>
 
-    {/* Nút mở main */}
-    <Button
-      onClick={() => setWalletState('main')}
-      fullWidth
-      sx={{
-        mt: 1.5,
-        background: 'rgba(255,255,255,0.08)',
-        borderRadius: '10px',
-        color: '#fff',
-        fontWeight: 600,
-        textTransform: 'none',
-        py: 1.2,
-        '&:hover': { background: 'rgba(255,255,255,0.15)' },
-      }}
-    >
-      Open Main
-    </Button>
+                {/* Nút mở main */}
+                <Button
+                  onClick={() => setWalletState('main')}
+                  fullWidth
+                  sx={{
+                    mt: 1.5,
+                    background: 'rgba(255,255,255,0.08)',
+                    borderRadius: '10px',
+                    color: '#fff',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    py: 1.2,
+                    '&:hover': { background: 'rgba(255,255,255,0.15)' },
+                  }}
+                >
+                  Open Main
+                </Button>
 
-    {/* Nút bắt đầu khám phá (disconnect ở đây giữ nguyên nếu bạn muốn reset sau khi nhấn) */}
-    <Button
-      onClick={() => setWalletState('disconnect')}
-      fullWidth
-      sx={{
-        mt: 1.5,
-        background: 'linear-gradient(90deg, #8C4AFF 0%, #2DA1FF 100%)',
-        borderRadius: '10px',
-        color: '#fff',
-        fontWeight: 600,
-        textTransform: 'none',
-        py: 1.2,
-        '&:hover': { opacity: 0.9 },
-      }}
-    >
-      Start Exploring
-    </Button>
-  </>
-)}
+                {/* Nút bắt đầu khám phá (disconnect ở đây giữ nguyên nếu bạn muốn reset sau khi nhấn) */}
+                <Button
+                  onClick={() => setWalletState('disconnect')}
+                  fullWidth
+                  sx={{
+                    mt: 1.5,
+                    background:
+                      'linear-gradient(90deg, #8C4AFF 0%, #2DA1FF 100%)',
+                    borderRadius: '10px',
+                    color: '#fff',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    py: 1.2,
+                    '&:hover': { opacity: 0.9 },
+                  }}
+                >
+                  Start Exploring
+                </Button>
+              </>
+            )}
 
+            {walletState === 'main' && (
+              <>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Wallet Status
+                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: 2,
+                    borderRadius: '10px',
+                    background: '#2a2b3d',
+                    mb: 3,
+                  }}
+                >
+                  <Typography sx={{ color: '#f87171', fontWeight: 500 }}>
+                    Disconnected
+                  </Typography>
+                  <IconButton
+                    onClick={() => setWalletState('disconnect')}
+                    sx={{
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      color: '#f87171',
+                      '&:hover': { background: 'rgba(255, 255, 255, 0.15)' },
+                    }}
+                  >
+                    <PowerSettingsNewIcon />
+                  </IconButton>
+                </Box>
 
-{walletState === 'main' && (
-  <>
-    <Typography variant="h6" sx={{ mb: 2 }}>
-      Wallet Status
-    </Typography>
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        p: 2,
-        borderRadius: '10px',
-        background: '#2a2b3d',
-        mb: 3,
-      }}
-    >
-      <Typography sx={{ color: '#f87171', fontWeight: 500 }}>
-        Disconnected
-      </Typography>
-      <IconButton
-        onClick={() => setWalletState('disconnect')}
-        sx={{
-          background: 'rgba(255, 255, 255, 0.08)',
-          color: '#f87171',
-          '&:hover': { background: 'rgba(255, 255, 255, 0.15)' },
-        }}
-      >
-        <PowerSettingsNewIcon />
-      </IconButton>
-    </Box>
+                <Button
+                  fullWidth
+                  onClick={connectWallet}
+                  sx={{
+                    background:
+                      'linear-gradient(90deg, #4B6CFB 0%, #9C5CFF 100%)',
+                    borderRadius: '10px',
+                    color: '#fff',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    py: 1.2,
+                    '&:hover': { opacity: 0.9 },
+                  }}
+                >
+                  Connect MetaMask Wallet
+                </Button>
+              </>
+            )}
 
-    <Button
-      fullWidth
-      onClick={connectWallet}
-      sx={{
-        background:
-          'linear-gradient(90deg, #4B6CFB 0%, #9C5CFF 100%)',
-        borderRadius: '10px',
-        color: '#fff',
-        fontWeight: 600,
-        textTransform: 'none',
-        py: 1.2,
-        '&:hover': { opacity: 0.9 },
-      }}
-    >
-      Connect MetaMask Wallet
-    </Button>
-  </>
-)}
+            {/* ===================== DISCONNECT MODAL ===================== */}
+            {walletState === 'disconnect' && (
+              <>
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-b from-orange-400 to-pink-500 text-white"
+                >
+                  <WarningAmberRoundedIcon sx={{ fontSize: 36 }} />
+                </motion.div>
 
-{/* ===================== DISCONNECT MODAL ===================== */}
-{walletState === 'disconnect' && (
-  <>
-    <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-b from-orange-400 to-pink-500 text-white"
-    >
-      <WarningAmberRoundedIcon sx={{ fontSize: 36 }} />
-    </motion.div>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                  Wallet Disconnected
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: '#bcb9d3', mb: 4, fontSize: '14px' }}
+                >
+                  You have disconnected your wallet. Connect again to continue.
+                </Typography>
 
-    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-      Wallet Disconnected
-    </Typography>
-    <Typography
-      variant="body2"
-      sx={{ color: '#bcb9d3', mb: 4, fontSize: '14px' }}
-    >
-      You have disconnected your wallet. Connect again to continue.
-    </Typography>
-
-    <Button
-      fullWidth
-      onClick={handleRetry}
-      sx={{
-        background: 'linear-gradient(90deg, #4B6CFB 0%, #9C5CFF 100%)',
-        borderRadius: '10px',
-        color: '#fff',
-        fontWeight: 600,
-        textTransform: 'none',
-        fontSize: '15px',
-        py: 1.2,
-        '&:hover': { opacity: 0.9 },
-      }}
-    >
-      Reconnect Wallet
-    </Button>
-  </>
-)}
-
+                <Button
+                  fullWidth
+                  onClick={handleRetry}
+                  sx={{
+                    background:
+                      'linear-gradient(90deg, #4B6CFB 0%, #9C5CFF 100%)',
+                    borderRadius: '10px',
+                    color: '#fff',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    fontSize: '15px',
+                    py: 1.2,
+                    '&:hover': { opacity: 0.9 },
+                  }}
+                >
+                  Reconnect Wallet
+                </Button>
+              </>
+            )}
           </Paper>
         </motion.div>
       </Box>

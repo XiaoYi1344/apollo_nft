@@ -257,12 +257,12 @@ export default function SuperHotDrop() {
                         src={item.img}
                         alt={item.name}
                         fill
-                        sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
+                        // sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
                         style={{
                           objectFit: 'cover',
                           transition: 'transform 0.6s ease',
-                          width: 'auto',
-    height: 'auto',
+                          // width: 'auto',
+                          // height: 'auto',
                         }}
                       />
                     </Box>
@@ -270,7 +270,6 @@ export default function SuperHotDrop() {
                     {/* === CARD CONTENT === */}
                     <CardContent>
                       <Typography
-                    
                         sx={{
                           color: '#1a1432',
                           fontWeight: 600,
@@ -292,7 +291,6 @@ export default function SuperHotDrop() {
                       >
                         {/* RIGHT: COUNT */}
                         <Typography
-                      
                           sx={{ color: '#9E9E9F', fontSize: '0.9rem' }}
                         >
                           {item.from}
@@ -308,7 +306,6 @@ export default function SuperHotDrop() {
                         }}
                       >
                         <Typography
-                      
                           sx={{
                             color: '#A100EB',
                             mt: 0.2,

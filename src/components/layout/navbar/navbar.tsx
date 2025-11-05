@@ -716,12 +716,15 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const isHome = pathname === '/' || pathname === '/vi' || pathname === '/en';
+  const isHome =
+    pathname === '/drop' ||
+    pathname === '/community' ||
+    pathname === '/view/upcoming';
   const backgroundColor = isHome
     ? scrolled
-      ? 'rgba(26, 0, 71, 0.95)'
-      : 'rgba(0, 0, 0, 0)'
-    : 'rgba(26, 0, 71, 0.95)';
+      ? 'rgba(0, 0, 0, 0)'
+      : 'rgba(26, 0, 71, 0.95)'
+    : 'rgba(0, 0, 0, 0)';
 
   return (
     <>
