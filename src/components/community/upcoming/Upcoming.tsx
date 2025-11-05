@@ -202,7 +202,7 @@ export default function UpcomingEvents() {
       <Box
         sx={{
           display: { xs: 'grid', sm: 'none' },
-          gridTemplateColumns: '1fr 1fr',
+          gridTemplateColumns: '1fr',
           gap: 2,
           mt: 2,
           px: 2,

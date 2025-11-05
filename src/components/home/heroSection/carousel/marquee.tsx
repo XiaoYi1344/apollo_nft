@@ -106,8 +106,20 @@ import Image from 'next/image';
 const partners = [
   { name: 'Coinbase', img: '/home/hero/logo.webp', width: 150, height: 60 },
   { name: 'Spotify', img: '/home/hero/logo6.png', width: 160, height: 60 },
-  { name: 'Slack', img: '/home/hero/logo2.png', width: 57, height: 40, text: 'Slack' },
-  { name: 'Dropbox', img: '/home/hero/logo3.png', width: 45, height: 40, text: 'Dropbox' },
+  {
+    name: 'Slack',
+    img: '/home/hero/logo2.png',
+    width: 57,
+    height: 40,
+    text: 'Slack',
+  },
+  {
+    name: 'Dropbox',
+    img: '/home/hero/logo3.png',
+    width: 45,
+    height: 40,
+    text: 'Dropbox',
+  },
   { name: 'Webflow', img: '/home/hero/logo4.png', width: 130, height: 60 },
   { name: 'Zoom', img: '/home/hero/logo5.png', width: 100, height: 40 },
 ];
@@ -132,17 +144,20 @@ export default function PartnersMarquee() {
                   '&:hover': { opacity: 1, transform: 'scale(1.05)' },
                 }}
               >
-                <Image
-                  src={p.img}
-                  alt={p.name}
-                  width={p.width}
-                  height={p.height}
-                  style={{
-                    objectFit: 'contain',
-                    filter: 'brightness(1.1)',
-                    marginRight: p.text ? 8 : 0,
-                  }}
-                />
+                <Box
+  component="img"
+  src={p.img}
+  alt={p.name}
+  sx={{
+    width: p.width,
+    height: 'auto',           // preserves aspect ratio
+    objectFit: 'contain',
+    filter: 'brightness(1.1)',
+    mr: p.text ? 1 : 0,       // margin-right if text exists
+  }}
+/>
+
+
                 {p.text && (
                   <Typography
                     variant="body2"
@@ -186,13 +201,20 @@ export default function PartnersMarquee() {
                 '&:hover': { opacity: 1 },
               }}
             >
-              <Image
-                src={p.img}
-                alt={p.name}
-                width={p.width / 1.3} // thu nhỏ 1 chút cho mobile
-                height={p.height / 1.3}
-                style={{ objectFit: 'contain', filter: 'brightness(1.1)' }}
-              />
+              <Box
+  component="img"
+  src={p.img}
+  alt={p.name}
+  sx={{
+    width: Math.round(p.width / 1.3),
+    height: 'auto',            // giữ tỉ lệ ảnh
+    objectFit: 'contain',
+    filter: 'brightness(1.1)',
+  }}
+/>
+
+
+
               {p.text && (
                 <Typography
                   variant="caption"

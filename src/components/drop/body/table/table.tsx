@@ -181,29 +181,37 @@ export default function SuperHotDrop() {
 
       {/* === CATEGORY CHIPS === */}
       <Stack
-        direction="row"
-        spacing={2}
-        sx={{ mb: 6, flexWrap: 'wrap', justifyContent: 'center' }}
-      >
-        {categories.map((cat) => (
-          <Chip
-            key={cat}
-            label={cat}
-            clickable
-            onClick={() => handleSelect(cat)}
-            sx={{
-              color: selected === cat ? '#fff' : '#000',
-              background: selected === cat ? '#A100EB' : '#fff',
-              px: 2,
-              transition: '0.3s',
-              '&:hover': {
-                background: '#A100EB',
-                color: '#fff',
-              },
-            }}
-          />
-        ))}
-      </Stack>
+  direction={{ xs: 'row', sm: 'row', md: 'row' }} // vẫn là hàng ngang, nhưng có wrap
+  spacing={{ xs: 1, sm: 1.5, md: 2 }} // spacing nhỏ hơn trên mobile
+  sx={{
+    mb: { xs: 3, md: 6 },
+    flexWrap: 'wrap',
+    justifyContent: 'center', // mobile: center, desktop: trái
+    rowGap: { xs: 1, sm: 1.5 }, // thêm khoảng cách giữa các dòng khi wrap
+    px: { xs: 1, sm: 2, md: 0 }, // thêm padding ngang cho mobile
+  }}
+>
+  {categories.map((cat) => (
+    <Chip
+      key={cat}
+      label={cat}
+      clickable
+      onClick={() => handleSelect(cat)}
+      sx={{
+        color: selected === cat ? '#fff' : '#000',
+        background: selected === cat ? '#A100EB' : '#fff',
+        px: { xs: 1.5, sm: 2, md: 2.5 }, // padding thay đổi theo màn hình
+        fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
+        borderRadius: '12px',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          background: '#A100EB',
+          color: '#fff',
+        },
+      }}
+    />
+  ))}
+</Stack>
 
       {/* === NFT GRID ANIMATION === */}
       <Box
@@ -257,12 +265,11 @@ export default function SuperHotDrop() {
                         src={item.img}
                         alt={item.name}
                         fill
-                        // sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
+                        priority={i === 1} // chỉ set priority cho ảnh LCP (ví dụ ảnh thứ 2 trong danh sách)
+                        sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 330px"
                         style={{
                           objectFit: 'cover',
                           transition: 'transform 0.6s ease',
-                          // width: 'auto',
-                          // height: 'auto',
                         }}
                       />
                     </Box>

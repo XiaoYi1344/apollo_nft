@@ -77,7 +77,7 @@ const Community = () => {
           sx={{
             position: 'absolute',
             left: { xs: '6%', md: '5%' },
-            bottom: { xs: '8%', md: '38%' },
+            bottom: { xs: '22%', md: '38%' },
             zIndex: 3, // đảm bảo cao hơn ảnh và glow
             textAlign: 'left',
             px: { xs: 2, sm: 3 },
@@ -89,7 +89,7 @@ const Community = () => {
             sx={{
               fontWeight: 800,
               lineHeight: 1.2,
-              fontSize: { xs: '1.8rem', sm: '2.6rem', md: '4rem' },
+              fontSize: { xs: '1.5rem', sm: '2.6rem', md: '4rem' },
             }}
           >
             Welcome to the{' '}
@@ -226,7 +226,7 @@ const Community = () => {
 
         <Button
           variant="text"
-          href="/community/new_update"
+          href="/view/news"
           rel="noopener noreferrer"
           sx={{
             color: '#5f61e7',

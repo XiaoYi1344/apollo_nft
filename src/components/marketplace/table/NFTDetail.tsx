@@ -484,9 +484,9 @@ export default function NFTDetail() {
                           bgcolor: 'rgba(31,41,55,0.5)',
                           borderRadius: 2,
                           py: 3,
-                          pr: 6,
-                          pl: 9,
-                          minWidth: 140,
+                          pr: {xs:1, md: 6},
+                          pl: {xs:1, md: 9},
+                          minWidth: { xs:160, md: 140},
                           flex: '1 1 70px',
                           border: '1.2px solid #2A2A4A',
                         }}

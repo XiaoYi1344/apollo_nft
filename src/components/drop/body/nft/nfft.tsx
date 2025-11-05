@@ -57,29 +57,31 @@ export default function NFT() {
                 }}
               >
                 <Box
-                  sx={{
-                    width: 70,
-                    height: 70,
-                    position: 'relative',
-                    backgroundColor: '#f3e8ff',
-                    borderRadius: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Image
-                    src={item.img}
-                    alt={item.title}
-                    width={32}
-                    height={32}
-                    style={{
-                      objectFit: 'contain',
-                      width: 'auto',
-                      height: 'auto',
-                    }}
-                  />
-                </Box>
+  sx={{
+    width: 70,
+    height: 70,
+    backgroundColor: '#f3e8ff',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    '& img': {
+      objectFit: 'contain', // áp dụng cho <img> bên trong next/image
+      width: '32px', // giữ nguyên width
+      height: '32px', // giữ nguyên height
+    },
+  }}
+>
+  <Image
+    src={item.img}
+    alt={item.title}
+    width={32}
+    height={32}
+  />
+</Box>
+
+
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
                   {item.title}
                 </Typography>

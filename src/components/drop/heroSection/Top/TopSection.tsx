@@ -15,7 +15,7 @@ const TopSection = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        px: { xs: 4, md: 10 },
+        px: { xs: 2, md: 10 },
         overflow: 'hidden',
         // background:
         //   "linear-gradient(135deg, #2b006b 0%, #1a0047 40%, #080018 100%)",
@@ -49,14 +49,19 @@ const TopSection = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
         spacing={2}
-        sx={{ position: 'relative', zIndex: 2, maxWidth: 780, mt: -15 }}
+        sx={{
+          position: 'relative',
+          zIndex: 2,
+          maxWidth: { xs: 300, sm: 780 },
+          mt: { xs: 1, sm: -15 },
+        }}
       >
         <Typography
           variant="h2"
           sx={{
             fontWeight: 800,
             lineHeight: 1.0,
-            fontSize: { xs: '2.5rem', md: '3.5rem' },
+            fontSize: { xs: '1.6rem', md: '3.5rem' },
             position: 'relative', // 👈 cần để định vị icon
             display: 'inline-block',
           }}
@@ -64,7 +69,7 @@ const TopSection = () => {
           Create Your Own NFT Dream Gallery
           <Box
             sx={{
-              display: 'inline-flex',
+              display: { xs: 'none', md: 'inline-flex' },
               alignItems: 'center',
               position: 'relative',
               top: '-14px',
@@ -103,7 +108,45 @@ const TopSection = () => {
           artists.
         </Typography>
 
-        {/* Stats */}
+        <Box
+          component={motion.div}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2 }}
+          sx={{
+            position: 'relative',
+            width: { xs: 280, md: 391 }, // dùng width chính xác của ảnh chính
+            height: { xs: 230, md: 494 },
+            borderRadius: '24px',
+            mx: 'auto', // căn giữa theo parent
+            display: { xs: 'block', md: 'none' },
+          }}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 4,
+              left: '56%', // đặt 50% parent width
+              transform: 'translateX(-50%)', // căn giữa layer
+              width: { xs: 160, md: 391 },
+              height: { xs: 220, md: 494 },
+              borderRadius: '20px',
+              overflow: 'hidden',
+              zIndex: 0,
+              boxShadow: '0 4px 30px rgba(0,0,0,0.3)',
+            }}
+          >
+            <Image
+              src="/drop/top.png"
+              alt="NFT Background Left"
+              fill
+              sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
+              style={{ objectFit: 'cover' }}
+            />
+          </Box>
+        </Box>
+
+        {/* number */}
         <Stack
           direction="row"
           sx={{
@@ -113,7 +156,7 @@ const TopSection = () => {
             alignItems: 'center',
             width: '100%', // chiếm toàn bộ width của parent
             maxWidth: 600, // giới hạn chiều rộng
-            px: 6,
+            px: { xs: 1, sm: 6 },
             mx: 'auto', // căn giữa container
           }}
         >
@@ -123,13 +166,17 @@ const TopSection = () => {
             { num: '10.2K', label: 'Auction' },
           ].map((item) => (
             <Stack key={item.label} alignItems="center">
-              <Typography variant="h5" fontWeight={700} fontSize= '2.3rem'>
+              <Typography
+                variant="h5"
+                fontWeight={700}
+                fontSize={{ xs: '1.5rem', sm: '2.3rem' }}
+              >
                 {item.num}
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ color: 'rgba(255,255,255,0.6)' }}
-                fontSize= '0.9rem'
+                fontSize="0.9rem"
               >
                 {item.label}
               </Typography>
@@ -146,22 +193,21 @@ const TopSection = () => {
         transition={{ duration: 1.2 }}
         sx={{
           position: 'relative',
-          width: { xs: 280, md: 391 }, // dùng width chính xác của ảnh chính
-          height: { xs: 360, md: 494 },
+          width: 391, // dùng width chính xác của ảnh chính
+          height: 494,
           borderRadius: '24px',
           mx: 'auto', // căn giữa theo parent
           display: { xs: 'none', md: 'block' },
         }}
       >
-        {/* Layer 1 (Back Left) */}
         <Box
           sx={{
             position: 'absolute',
             top: -80,
             left: '50%', // đặt 50% parent width
             transform: 'translateX(-50%)', // căn giữa layer
-            width: 391,
-            height: 494,
+            width: { xs: 160, md: 391 },
+            height: { xs: 220, md: 494 },
             borderRadius: '20px',
             overflow: 'hidden',
             zIndex: 0,
@@ -176,8 +222,6 @@ const TopSection = () => {
             style={{ objectFit: 'cover' }}
           />
         </Box>
-
-        {/* Bạn thêm các layer khác tương tự, dùng left 50% + transform translateX(-50%) để căn giữa */}
       </Box>
     </Box>
   );

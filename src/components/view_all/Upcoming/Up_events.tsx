@@ -524,7 +524,7 @@ export const Up_events: React.FC = () => {
           fontWeight: 700,
           textAlign: 'center',
           fontSize: { xs: '1.3rem', sm: '1.8rem', md: '2.4rem' },
-          mt: { xs: 6, md: 10 },
+          mt: { xs: 8, md: 10 },
           mb: 1,
         }}
       >
@@ -549,13 +549,25 @@ export const Up_events: React.FC = () => {
       {/* 🎛 Filters */}
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
-        spacing={5}
-        justifyContent="start"
-        alignItems={{ xs: 'flex-start', sm: 'center' }}
-        sx={{ mb: 5, ml: { sm: 3 } }}
+        spacing={{ xs: 3, sm: 5 }} // 👈 giảm khoảng cách dọc trên mobile
+        justifyContent={{ xs: 'center', sm: 'flex-start' }} // 👈 căn giữa trên mobile
+        alignItems={{ xs: 'center', sm: 'center' }}
+        sx={{
+          mb: { xs: 4, sm: 5 },
+          ml: { sm: 3 },
+          flexWrap: { xs: 'wrap', sm: 'nowrap' }, // 👈 tránh tràn nút trên màn nhỏ
+          textAlign: { xs: 'center', sm: 'left' },
+        }}
       >
         {/* Timeline buttons */}
-        <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap', // 👈 Cho phép xuống dòng khi hẹp
+            justifyContent: { xs: 'center', sm: 'flex-start' },
+            gap: { xs: 1, sm: 1.5 },
+          }}
+        >
           {timeline.map((t) => (
             <Button
               key={t.id}
@@ -565,9 +577,9 @@ export const Up_events: React.FC = () => {
                 bgcolor: selectedTimeline === t.id ? '#9333ea' : '#1f2937',
                 textTransform: 'none',
                 borderRadius: 2,
-                px: 1.5,
-                mx: 0.5,
-                fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                px: { xs: 1.5, sm: 2 },
+                py: { xs: 0.5, sm: 0.7 },
+                fontSize: { xs: '0.75rem', sm: '0.9rem' },
                 '&:hover': {
                   bgcolor:
                     selectedTimeline === t.id
@@ -583,7 +595,14 @@ export const Up_events: React.FC = () => {
         </Box>
 
         {/* Type buttons */}
-        <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: { xs: 'center', sm: 'flex-start' },
+            gap: { xs: 1, sm: 1.5 },
+          }}
+        >
           {type.map((tp) => (
             <Button
               key={tp.id}
@@ -593,9 +612,9 @@ export const Up_events: React.FC = () => {
                 color: selectedType === tp.id ? '#fff' : '#aaa',
                 textTransform: 'none',
                 borderRadius: 2,
-                px: 1.5,
-                mx: 0.5,
-                fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                px: { xs: 1.5, sm: 2 },
+                py: { xs: 0.5, sm: 0.7 },
+                fontSize: { xs: '0.75rem', sm: '0.9rem' },
                 '&:hover': {
                   bgcolor:
                     selectedType === tp.id ? '#6366F1' : 'rgba(99,102,241,0.2)',
@@ -738,7 +757,7 @@ export const Up_events: React.FC = () => {
                   direction="row"
                   justifyContent="space-between"
                   spacing={0.7}
-                //   pt={1}
+                  //   pt={1}
                 >
                   <Chip
                     label={e.type}
@@ -767,7 +786,7 @@ export const Up_events: React.FC = () => {
               </CardContent>
 
               {/* 🔹 Button */}
-              <Box sx={{ px: { xs: 2.2, sm: 3 }, pb: 3, mt:-1 }}>
+              <Box sx={{ px: { xs: 2.2, sm: 3 }, pb: 3, mt: -1 }}>
                 <Button
                   fullWidth
                   href={e.link}

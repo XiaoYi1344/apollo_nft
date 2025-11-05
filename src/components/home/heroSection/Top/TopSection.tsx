@@ -463,16 +463,23 @@ const TopSection = () => {
           }}
         >
           Create Your <br />
-          Own{' '}
-          <span
-            style={{
-              background: 'linear-gradient(90deg,#A100EB,#3605FF)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            NFT DREAM
-          </span>{' '}
+          Own <span className="gradient-text">NFT DREAM</span>
+          <style jsx>{`
+            .gradient-text {
+              background: linear-gradient(90deg, #a100eb, #3605ff);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: blue; /* mobile mặc định */
+              font-weight: 700;
+            }
+
+            @media (min-width: 600px) {
+              .gradient-text {
+                -webkit-text-fill-color: transparent; /* từ sm trở lên */
+                font-weight: 700;
+                font-size: 5.1rem;
+              }
+            }
+          `}</style>
           <br />
           Gallery
           <Box
@@ -492,6 +499,7 @@ const TopSection = () => {
               src="/home/hero/star.png"
               alt="Sparkle"
               fill
+              sizes="32px"
               style={{ objectFit: 'contain' }}
             />
           </Box>
@@ -573,7 +581,7 @@ const TopSection = () => {
                 maxWidth: 330,
                 position: { xs: 'none', md: 'relative' },
                 top: { xs: 0, md: '-19px' },
-                textAlign: { xs: 'center', md: 'left' },
+                textAlign: 'left',
               }}
             >
               The Largest NFT Marketplace. Automatic and truly unique digital
@@ -582,33 +590,6 @@ const TopSection = () => {
             </Typography>
           </Grid>
         </Grid>
-
-        {/* STATS */}
-        <Stack direction="row" spacing={6} sx={{ pt: 4 }}>
-          {[
-            { num: '25.1k', label: 'Artwork' },
-            { num: '15.6k', label: 'Artist' },
-            { num: '10.2k', label: 'Auction' },
-          ].map((item) => (
-            <Stack key={item.label}>
-              <Typography
-                sx={{
-                  color: 'rgba(255,255,255,0.6)',
-                  fontSize: { xs: '0.7rem', md: '1.4rem' },
-                }}
-              >
-                {item.label}
-              </Typography>
-              <Typography
-                variant="h5"
-                fontWeight={700}
-                sx={{ fontSize: { xs: '1.3rem', md: '2.0rem' } }}
-              >
-                {item.num}
-              </Typography>
-            </Stack>
-          ))}
-        </Stack>
 
         {/* NFT IMAGE (MOBILE) */}
         <Stack
@@ -650,6 +631,33 @@ const TopSection = () => {
             </Box>
           ))}
         </Stack>
+
+        {/* STATS */}
+        <Stack direction="row" spacing={6} sx={{ pt: 4 }}>
+          {[
+            { num: '25.1k', label: 'Artwork' },
+            { num: '15.6k', label: 'Artist' },
+            { num: '10.2k', label: 'Auction' },
+          ].map((item) => (
+            <Stack key={item.label}>
+              <Typography
+                sx={{
+                  color: 'rgba(255,255,255,0.6)',
+                  fontSize: { xs: '0.9rem', md: '1.4rem' },
+                }}
+              >
+                {item.label}
+              </Typography>
+              <Typography
+                variant="h5"
+                fontWeight={700}
+                sx={{ fontSize: { xs: '1.7rem', md: '2.0rem' } }}
+              >
+                {item.num}
+              </Typography>
+            </Stack>
+          ))}
+        </Stack>
       </Stack>
 
       {/* NFT IMAGE (tablet) */}
@@ -686,6 +694,7 @@ const TopSection = () => {
             fill
             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
+            priority={true}
           />
         </Box>
         <Box
@@ -761,6 +770,7 @@ const TopSection = () => {
             fill
             sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
             style={{ objectFit: 'cover' }}
+            priority={true}
           />
         </Box>
         <Box

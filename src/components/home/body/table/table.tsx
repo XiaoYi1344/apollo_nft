@@ -154,32 +154,34 @@ export default function SuperHotDrop() {
                   >
                     {/* === IMAGE === */}
                     <Box
-                      sx={{
-                        position: 'relative',
-                        height: 320,
-                        mx: 1,
-                        mt: 1,
-                        borderRadius: 3,
-                        overflow: 'hidden', // 👈 Giúp bo góc thật, không bị tràn ảnh
-                        // boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-                        transition: 'transform 0.4s ease, box-shadow 0.4s ease',
-                      }}
-                    >
-                      <Image
-                        src={item.img}
-                        alt={item.name}
-                        fill
-                        style={{
-                          objectFit: 'cover',
-                          transition: 'transform 0.6s ease',
-                        }}
-                      />
-                    </Box>
+  sx={{
+    position: 'relative',
+    height: 320,
+    mx: 1,
+    mt: 1,
+    borderRadius: 3,
+    overflow: 'hidden',
+    transition: 'transform 0.4s ease, box-shadow 0.4s ease',
+  }}
+>
+  <Image
+    src={item.img}
+    alt={item.name}
+    fill
+    sizes="(max-width: 600px) 100vw, 
+           (max-width: 1200px) 50vw, 
+           25vw"
+    style={{
+      objectFit: 'cover',
+      transition: 'transform 0.6s ease',
+    }}
+  />
+</Box>
+
 
                     {/* === CARD CONTENT === */}
                     <CardContent>
                       <Typography
-                
                         sx={{ color: '#1a1432', fontWeight: 600, mb: 0.5 }}
                       >
                         {item.name}
@@ -224,9 +226,10 @@ export default function SuperHotDrop() {
                               alt="ETH"
                               width={45}
                               height={22}
-                              style={{ objectFit: 'contain' }}
+                              style={{ objectFit: 'contain' }} // no width/height in style
                             />
                           </Box>
+
                           <Typography
                             sx={{
                               color: '#0DD108',

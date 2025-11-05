@@ -74,6 +74,7 @@ export default function Creator() {
                     alt={item.title}
                     fill
                     style={{ objectFit: 'contain' }}
+                    sizes="(max-width: 600px) 48px, (max-width: 900px) 64px, 64px"
                   />
                 </Box>
 

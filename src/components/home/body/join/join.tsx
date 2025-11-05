@@ -217,7 +217,6 @@
 
 // export default JoinSection;
 
-
 // 'use client';
 
 // import { Box, Button, Typography } from '@mui/material';
@@ -255,7 +254,7 @@
 //             left: -55,
 //           }}
 //         />
-        
+
 //         {/* Text + Button */}
 //         <Typography
 //           sx={{
@@ -316,7 +315,13 @@
 
 'use client';
 
-import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 
@@ -494,7 +499,10 @@ const JoinSection = () => {
                   alt="BTC"
                   fill
                   sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 450px"
-                  style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+                  style={{
+                    objectFit: 'contain',
+                    filter: 'brightness(0) invert(1)',
+                  }}
                 />
               </Box>
             </Box>
@@ -553,11 +561,14 @@ const JoinSection = () => {
             zIndex: 3,
           }}
         >
-          <Image
+          <Box
+            component="img"
             src="/home/body/ETH-removebg-preview.png"
             alt="ETH"
-            width={100}
-            height={100}
+            sx={{
+              width: 100,
+              height: 'auto', // duy trì tỉ lệ gốc
+            }}
           />
         </Box>
 

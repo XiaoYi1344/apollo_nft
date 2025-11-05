@@ -10,9 +10,9 @@ import {
   CardMedia,
   CardContent,
 } from '@mui/material';
-import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import { Creator } from './data/creatorsData';
 import toast from 'react-hot-toast';
+import { ArrowBack, Instagram, Twitter } from '@mui/icons-material';
 
 interface Props {
   creator: Creator | null;
@@ -75,10 +75,8 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
           background: 'linear-gradient(90deg,#070a12, #0e1637,#230b36)',
         }}
       >
-        <Box sx={{ position: 'relative', mb: 10, mt: -10 }}>
-          {/* Banner */}
-
-          {/* Avatar nổi ra khỏi banner */}
+        {/* <Box sx={{ position: 'relative', mb: 10, mt: -10 }}>
+    
           <Box
             sx={{
               position: 'absolute',
@@ -99,7 +97,7 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
             />
           </Box>
 
-          {/* Thông tin và nút */}
+
           <Box
             sx={{
               position: 'absolute',
@@ -110,7 +108,7 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
               gap: 1,
             }}
           >
-            {/* Tên và ví */}
+
             <Box>
               <Typography variant="h5" sx={{ color: '#fff', fontWeight: 800 }}>
                 {creator.name}
@@ -120,7 +118,6 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
               </Typography>
             </Box>
 
-            {/* Hàng nút + icon */}
             <Box
               sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 0.5 }}
             >
@@ -166,7 +163,7 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
                 <ArrowCircleLeftIcon />
               </Button>
 
-              {/* Icon mạng xã hội */}
+
               <Box
                 sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}
               >
@@ -212,20 +209,250 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
             </Box>
           ))}
         </Box>
-        <Button
-          variant="text"
-          onClick={handleExport}
+        
+        <Box
           sx={{
-            color: '#fff',
-            textTransform: 'none',
-            fontSize: { xs: 13, sm: 14 }, // Font size nhỏ trên mobile (xs), tăng nhẹ trên sm
-            '&:hover': { color: '#b78eff' }, // Màu hover
-            alignSelf: { xs: 'flex-end', md: 'center' }, // Trên xs căn sang phải, md trở lên căn giữa
-            my: 4, // margin top & bottom
+            display: 'flex',
+            justifyContent: 'center', // căn giữa ngang
+            alignItems: 'center', // nếu muốn giữa dọc luôn
+            width: '100%',
+            my: 4,
           }}
         >
-          Xuất sang Trang tính
-        </Button>
+          <Button
+            variant="text"
+            onClick={handleExport}
+            sx={{
+              color: '#fff',
+              textTransform: 'none',
+              fontSize: { xs: 13, sm: 14 },
+              '&:hover': { color: '#b78eff' },
+            }}
+          >
+            Xuất sang Trang tính
+          </Button>
+        </Box> */}
+        <Box
+          sx={{
+            position: 'relative',
+            mb: { xs: 6, md: 10 },
+            mt: { xs: -6, md: -10 },
+          }}
+        >
+          {/* Avatar nổi ra khỏi banner */}
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: { xs: 130, md: -48 },
+              left: { xs: '50%', md: 32 },
+              transform: { xs: 'translateX(-50%)', md: 'none' }, // căn giữa avatar trên mobile
+              zIndex: 2,
+            }}
+          >
+            <Avatar
+              src={creator.avatar}
+              alt={creator.name}
+              sx={{
+                width: { xs: 80, md: 96 },
+                height: { xs: 80, md: 96 },
+                border: '4px solid rgba(255,255,255,0.12)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+              }}
+            />
+          </Box>
+
+          {/* Thông tin và nút */}
+          <Box
+            sx={{
+              position: 'absolute',
+              left: { xs: '50%', md: 150 },
+              bottom: { xs: 40, md: -45 },
+              transform: { xs: 'translateX(-50%)', md: 'none' },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: { xs: 'center', md: 'flex-start' },
+              gap: 1,
+              textAlign: { xs: 'center', md: 'left' },
+            }}
+          >
+            {/* Tên và ví */}
+            <Box>
+              <Typography
+                variant="h5"
+                sx={{
+                  color: '#fff',
+                  fontWeight: 800,
+                  fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.5rem' },
+                }}
+              >
+                {creator.name}
+              </Typography>
+              <Typography
+                sx={{ color: '#9b9bbf', fontSize: { xs: 12, sm: 13 } }}
+              >
+                {creator.username}
+              </Typography>
+            </Box>
+
+            {/* Hàng nút + icon */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: { xs: 1, sm: 1.5 },
+                mt: 0.5,
+                // flexWrap: 'wrap', // cho phép xuống dòng nếu hẹp
+                justifyContent: { xs: 'center', md: 'flex-start' },
+              }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  textTransform: 'none',
+                  background: 'linear-gradient(90deg,#7a3bff,#b78eff)',
+                  fontSize: { xs: 12, sm: 13 },
+                  px: { xs: 2, sm: 2.5 },
+                  py: { xs: 0.4, sm: 0.5 },
+                }}
+              >
+                Follow
+              </Button>
+
+              <Button
+                variant="outlined"
+                sx={{
+                  color: '#cfcfff',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  textTransform: 'none',
+                  fontSize: { xs: 12, sm: 13 },
+                  px: { xs: 2, sm: 2.5 },
+                  py: { xs: 0.4, sm: 0.5 },
+                  whiteSpace: 'nowrap', // 👈 đảm bảo không xuống dòng
+                  minWidth: 'auto', // 👈 cho phép co giãn vừa nội dung
+                }}
+              >
+                Chia sẻ
+              </Button>
+
+              {/* Icon mạng xã hội */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  ml: { xs: 0.5, sm: 1 },
+                }}
+              >
+                <Twitter sx={{ color: '#cfcfff' }} />
+                <Instagram sx={{ color: '#cfcfff' }} />
+              </Box>
+            </Box>
+          </Box>
+
+          <Button
+            variant="outlined"
+            onClick={onBack}
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: '#cfcfff',
+              border: 'none',
+              textTransform: 'none',
+              fontSize: { xs: 12, sm: 13 },
+              px: { xs: 2, sm: 2.5 },
+              py: { xs: 0.4, sm: 0.5 },
+              ml: { xs: -6, sm: 1 },
+              mt: { xs: 0.5, sm: 0 },
+              minWidth: 'auto',
+            }}
+          >
+            <ArrowBack fontSize="small" /> Quay lại
+          </Button>
+        </Box>
+
+        {/* Bio */}
+        <Typography
+          sx={{
+            color: '#cfcfff',
+            mb: { xs: 2, md: 3 },
+            pt: { xs: 3, md: 10 },
+            textAlign: { xs: 'left', md: 'left' },
+            px: { md: 0 },
+            mx: { xs: -3 },
+          }}
+        >
+          {creator.bio}
+        </Typography>
+
+        {/* Stats */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'repeat(2, 1fr)', // 👈 2 cột trên mobile
+              sm: 'repeat(4, 1fr)', // 👈 4 cột từ sm trở lên
+            },
+            gap: { xs: 2, sm: 3 },
+            mb: { xs: 3, md: 4 },
+            px: { sm: 6, md: 15 },
+            mx:{ xs: -6 },
+            justifyItems: 'center', // căn giữa nội dung trong từng ô
+            textAlign: { xs: 'center', md: 'left' },
+          }}
+        >
+          {[
+            { label: 'TOTAL REVENUE', value: creator.totalVolume },
+            { label: 'FOLLOWERS', value: creator.followers },
+            { label: 'NUMBER OF WORKS', value: creator.works },
+            { label: 'FLOOR PRICE', value: creator.floorPrice },
+          ].map((stat) => (
+            <Box key={stat.label}>
+              <Typography
+                sx={{
+                  color: '#9b9bbf',
+                  fontWeight: 700,
+                  fontSize: { xs: 14, md: 16 },
+                }}
+              >
+                {stat.value}
+              </Typography>
+              <Typography
+                sx={{
+                  color: '#9b9bbf',
+                  fontSize: { xs: 11, md: 12 },
+                }}
+              >
+                {stat.label}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+
+        {/* Button giữa màn hình */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            my: 4,
+            px: { xs: 2, md: 0 },
+          }}
+        >
+          <Button
+            variant="text"
+            onClick={handleExport}
+            sx={{
+              color: '#fff',
+              textTransform: 'none',
+              fontSize: { xs: 13, sm: 14 },
+              '&:hover': { color: '#b78eff' },
+            }}
+          >
+            Xuất sang Trang tính
+          </Button>
+        </Box>
 
         <Grid container spacing={3}>
           {creator.items.map((it) => (
