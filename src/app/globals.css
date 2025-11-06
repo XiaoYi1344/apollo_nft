@@ -155,7 +155,7 @@ a {
 }
 
 .neon-crystal.hover .cursor-ring {
-  transform: scale(2) rotate(15deg);
+  transform: scale(6) rotate(15deg);
   border-color: rgba(168, 85, 247, 0.6);
   filter: drop-shadow(0 0 12px #22d3ee)
           drop-shadow(0 0 25px #a855f7);

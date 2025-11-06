@@ -5,6 +5,10 @@ import Navbar from '@/components/layout/navbar/navbar';
 import Footer from '@/components/layout/footer/footer';
 import { Box } from '@mui/material';
 import CustomCursor from '@/components/CustomMouses';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ClientProvider } from './ClientProvider';
+
+const queryClient = new QueryClient();
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -62,7 +66,9 @@ export default function RootLayout({
 
           {/* Nội dung nổi trên glow */}
           <Box sx={{ position: 'relative', zIndex: 1 }}>
-            {children}
+             <ClientProvider>
+          {children}
+        </ClientProvider>
             <Footer />
           </Box>
         </Box>
