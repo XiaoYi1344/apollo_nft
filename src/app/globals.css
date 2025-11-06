@@ -55,3 +55,158 @@ body {
 .bg-nft-dark {
   background: linear-gradient(180deg, #0b021a, #140e2e);
 }
+/* Ẩn con trỏ gốc */
+body,
+button,
+a {
+  cursor: none !important;
+}
+
+/* -----------------------------
+ 🌌 NEON CRYSTAL CURSOR BASE
+------------------------------ */
+.neon-crystal {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+/* 💎 Hình tinh thể */
+.crystal-shape {
+  fill: none;
+  stroke: #00ffff;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px #00ffff)
+    drop-shadow(0 0 12px #7b5cf7);
+  animation: colorShift 5s linear infinite;
+  transform-origin: center;
+  transition: all 0.4s ease;
+}
+
+/* ✨ Chấm sáng trung tâm */
+.center-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 255, 255, 0.9) 0%,
+    rgba(0, 255, 255, 0.2) 60%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 15px #0ff,
+    0 0 25px #7b5cf7;
+  transition: all 0.4s ease;
+}
+
+/* 🌀 Vòng quỹ đạo xoay quanh */
+.cursor-ring {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  width: 64px;
+  height: 64px;
+  border: 2px solid rgba(0, 255, 255, 0.4);
+  border-radius: 50%;
+  filter: drop-shadow(0 0 10px #0ff);
+  animation: spin 6s linear infinite;
+  transition: all 0.4s ease;
+}
+
+/* --------------------------------
+ 🌠 Hover: phát sáng mạnh & to ra
+---------------------------------- */
+.neon-crystal.hover {
+  transform: scale(1.15) rotate3d(1, 1, 0, 15deg);
+}
+
+.neon-crystal.hover .crystal-shape {
+  stroke: #a855f7; /* tím neon nhẹ hơn */
+  transform: scale(1.2) rotate(15deg);
+  filter: drop-shadow(0 0 12px #a855f7)
+          drop-shadow(0 0 25px #22d3ee)
+          drop-shadow(0 0 40px rgba(168, 85, 247, 0.5));
+  animation-duration: 3s;
+  opacity: 0.95;
+}
+
+.neon-crystal.hover .center-glow {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: radial-gradient(
+    circle,
+    rgba(34, 211, 238, 0.9) 20%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 20px #22d3ee,
+    0 0 35px #a855f7;
+  transition: all 0.4s ease-out;
+}
+
+.neon-crystal.hover .cursor-ring {
+  transform: scale(2) rotate(15deg);
+  border-color: rgba(168, 85, 247, 0.6);
+  filter: drop-shadow(0 0 12px #22d3ee)
+          drop-shadow(0 0 25px #a855f7);
+  animation: spin 3s linear infinite;
+  opacity: 0.85;
+}
+
+
+/* --------------------------------
+ 💥 Click: nảy và sáng bừng
+---------------------------------- */
+.neon-crystal.click {
+  transform: scale(1.3);
+}
+
+.neon-crystal.click .crystal-shape {
+  filter: drop-shadow(0 0 25px #00ffff)
+    drop-shadow(0 0 45px #ff00ff);
+}
+
+/* -----------------------------
+ 🌈 Animation: Đổi màu dần
+------------------------------ */
+@keyframes colorShift {
+  0% {
+    stroke: #00ffff;
+    filter: drop-shadow(0 0 8px #00ffff);
+  }
+  33% {
+    stroke: #ff00ff;
+    filter: drop-shadow(0 0 10px #ff00ff);
+  }
+  66% {
+    stroke: #7b5cf7;
+    filter: drop-shadow(0 0 12px #7b5cf7);
+  }
+  100% {
+    stroke: #00ffff;
+    filter: drop-shadow(0 0 8px #00ffff);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Đảm bảo con trỏ không chặn event */
+.neon-crystal,
+.cursor-core,
+.cursor-ring,
+.cursor-crystal {
+  pointer-events: none;
+}

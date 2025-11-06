@@ -72,7 +72,7 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
         sx={{
           px: 7,
           pb: 6,
-          background: 'linear-gradient(90deg,#070a12, #0e1637,#230b36)',
+          background: 'linear-gradient(90deg,#111827, #1E3A8A,#581C87)',
         }}
       >
         {/* <Box sx={{ position: 'relative', mb: 10, mt: -10 }}>
@@ -243,8 +243,8 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
           <Box
             sx={{
               position: 'absolute',
-              bottom: { xs: 130, md: -48 },
-              left: { xs: '50%', md: 32 },
+              bottom: { xs: 130, md: -90 },
+              left: { xs: '50%', md: 60 },
               transform: { xs: 'translateX(-50%)', md: 'none' }, // căn giữa avatar trên mobile
               zIndex: 2,
             }}
@@ -265,13 +265,13 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
           <Box
             sx={{
               position: 'absolute',
-              left: { xs: '50%', md: 150 },
-              bottom: { xs: 40, md: -45 },
+              left: { xs: '50%', md: 175 },
+              bottom: { xs: 40, md: -90 },
               transform: { xs: 'translateX(-50%)', md: 'none' },
               display: 'flex',
               flexDirection: 'column',
               alignItems: { xs: 'center', md: 'flex-start' },
-              gap: 1,
+              gap: 1.5,
               textAlign: { xs: 'center', md: 'left' },
             }}
           >
@@ -362,7 +362,7 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
               fontSize: { xs: 12, sm: 13 },
               px: { xs: 2, sm: 2.5 },
               py: { xs: 0.4, sm: 0.5 },
-              ml: { xs: -6, sm: 1 },
+              ml: { xs: -6, sm: 1, md:-6 },
               mt: { xs: 0.5, sm: 0 },
               minWidth: 'auto',
             }}
@@ -396,7 +396,7 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack }) => {
             gap: { xs: 2, sm: 3 },
             mb: { xs: 3, md: 4 },
             px: { sm: 6, md: 15 },
-            mx:{ xs: -6 },
+            mx: { xs: -6 },
             justifyItems: 'center', // căn giữa nội dung trong từng ô
             textAlign: { xs: 'center', md: 'left' },
           }}

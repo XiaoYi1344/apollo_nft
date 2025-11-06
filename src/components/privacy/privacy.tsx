@@ -15,8 +15,11 @@ import {
   IconButton,
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TERMS_DATA, TermsSection } from './data/termsData';
+import { TERMS_DATA, TermsSection } from './data/privacyData';
 import Link from 'next/link';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { HardDriveDownload } from 'lucide-react';
 
 // ====================== COMPONENT ======================
 export default function TermsSlidingPanel() {
@@ -41,6 +44,38 @@ export default function TermsSlidingPanel() {
     exitBackward: { x: 300, opacity: 0 },
   };
 
+  // ================= Export logic =================
+  const handleExport = () => {
+    const exportData = TERMS_DATA.map((section) => ({
+      ID: section.id,
+      Title: section.title,
+      Explanation: section.explan || '',
+      Items: section.data
+        ?.map((item) => {
+          if (typeof item.content === 'string') return item.content;
+          if (typeof item.content === 'object') return item.content.info;
+          return '';
+        })
+        .join('\n---\n'),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Terms');
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'Apollo_Privacy_Terms.xlsx');
+  };
+
+  // ================= Auto-update Date =================
+  const formattedDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
   const renderContent = (section: TermsSection) => {
     return (
       <Box>
@@ -85,9 +120,7 @@ export default function TermsSlidingPanel() {
                 sx={{
                   // mb: -20,
                   // fontWeight: 700,
-                  background: 'linear-gradient(to bottom, #60a5fa, #060137)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: '#fff',
                 }}
               >
                 {item.subtitle}
@@ -99,7 +132,7 @@ export default function TermsSlidingPanel() {
             {typeof item.content === 'string' ? (
               <Typography
                 variant="body1"
-                sx={{ whiteSpace: 'pre-line', color: '#e0e0e0', mb: 6 }}
+                sx={{ whiteSpace: 'pre-line', color: '#fff6' }}
               >
                 {item.content}
               </Typography>
@@ -116,18 +149,20 @@ export default function TermsSlidingPanel() {
                     {item.content.info.split('\n').map((line, index) => {
                       const trimmed = line.trim();
                       if (!trimmed) return null;
-                      const isSubItem =
+
+                      const isBullet =
                         trimmed.startsWith('- ') || trimmed.startsWith('* ');
+
                       return (
                         <span
                           key={index}
                           style={{
                             display: 'block',
                             marginBottom: '0.4rem',
-                            marginLeft: isSubItem ? '2rem' : 0,
+                            marginLeft: isBullet ? '2rem' : 0,
                           }}
                         >
-                          &bull; {isSubItem ? trimmed.slice(2) : trimmed}
+                          {isBullet ? `• ${trimmed.slice(2)}` : trimmed}
                         </span>
                       );
                     })}
@@ -164,6 +199,29 @@ export default function TermsSlidingPanel() {
         },
       }}
     >
+      <Box sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+        <Typography
+          variant="h4"
+          sx={{
+            mb: 1,
+            fontWeight: 700,
+            color: '#fff',
+          }}
+        >
+          Privacy Policy
+        </Typography>
+
+        <Typography
+          variant="body2"
+          sx={{
+            color: '#9ca3af',
+            mb: 4,
+            fontStyle: 'italic',
+          }}
+        >
+          Last updated: {formattedDate}
+        </Typography>
+      </Box>
       <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 2 }}>
         <IconButton
           onClick={() => setSidebarOpen(true)}
@@ -194,7 +252,7 @@ export default function TermsSlidingPanel() {
             zIndex: 1200,
             top: { xs: 60, md: 0 },
             left: 0,
-            height: { xs: '92vh', sm: '62vh', md: '80vh' },
+            height: { xs: '92vh', sm: '62vh', md: '70vh' },
             width: { xs: '80%', md: '20%' },
             p: 1,
           }}
@@ -217,7 +275,7 @@ export default function TermsSlidingPanel() {
               sx={{
                 display: { xs: 'flex', md: 'none' },
                 justifyContent: 'flex-end',
-                mb: 2,
+                pt: 1,
               }}
             >
               <Button onClick={() => setSidebarOpen(false)}>✕</Button>
@@ -235,76 +293,6 @@ export default function TermsSlidingPanel() {
               Table of Contents
             </Typography>
             <List>
-              {/* {TERMS_DATA.map((item, idx) => {
-                const selected = idx === selectedIdx;
-                
-                // return (
-                //   <ListItemButton
-                //     key={item.id}
-                //     selected={selected}
-                //     onClick={() => {
-                //       handleSelect(idx);
-                //       setSidebarOpen(false); // ẩn menu khi chọn trên mobile
-                //     }}
-                //     sx={{
-                //       mb: 0.5,
-                //       borderRadius: 3,
-                //       transition: 'all 0.3s ease',
-                //       bgcolor: selected
-                //         ? 'rgba(128, 90, 213, 0.1)'
-                //         : 'transparent',
-                //       '&:hover': {
-                //         bgcolor: 'rgba(128, 90, 213, 0.08)',
-                //       },
-                //       px: 3,
-                //     }}
-                //   >
-                //     <ListItemText
-                //       primary={`${item.title}`}
-                //       primaryTypographyProps={{
-                //         sx: {
-                //           color: selected ? '#6366f1' : 'rgb(255, 255, 255)',
-                //           opacity: selected ? 1 : 0.7,
-                //           transition: 'all 0.3s ease',
-                //         },
-                //       }}
-                //     />
-                //   </ListItemButton>
-                // );
-
-                if (item.id === 9 && item.content) {
-          return (
-            <Link key={item.id} href={item.content} passHref style={{ textDecoration: 'none' }}>
-              <ListItemButton
-                selected={selected}
-                onClick={() => setSidebarOpen(false)}
-                sx={{
-                  mb: 0.5,
-                  borderRadius: 3,
-                  transition: 'all 0.3s ease',
-                  bgcolor: selected ? 'rgba(128, 90, 213, 0.1)' : 'transparent',
-                  '&:hover': {
-                    bgcolor: 'rgba(128, 90, 213, 0.08)',
-                  },
-                  px: 3,
-                }}
-              >
-                <ListItemText
-                  primary={item.title}
-                  primaryTypographyProps={{
-                    sx: {
-                      color: selected ? '#6366f1' : 'rgb(255, 255, 255)',
-                      opacity: selected ? 1 : 0.7,
-                      transition: 'all 0.3s ease',
-                    },
-                  }}
-                />
-              </ListItemButton>
-            </Link>
-          );
-        }
-              })} */}
-
               {TERMS_DATA.map((item, idx) => {
                 const selected = idx === selectedIdx;
 
@@ -345,7 +333,7 @@ export default function TermsSlidingPanel() {
                 );
 
                 // Nếu là id 9 thì bọc Link
-                if (item.id === 9 && item.content) {
+                if (item.id === 7 && item.content) {
                   return (
                     <Link
                       key={item.id}
@@ -363,59 +351,27 @@ export default function TermsSlidingPanel() {
                   <React.Fragment key={item.id}>{listItem}</React.Fragment>
                 );
               })}
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={handleExport}
+                startIcon={<HardDriveDownload />} // 👈 Tự động căn trái và có khoảng cách
+                sx={{
+                  mt: 2,
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  background: 'linear-gradient(90deg,#6366f1,#8b5cf6)',
+                  textTransform: 'none',
+                  '&:hover': {
+                    background: 'linear-gradient(90deg,#5b5ce2,#7a3df6)',
+                  },
+                }}
+              >
+                Export to Spreadsheet
+              </Button>
             </List>
           </Paper>
         </Grid>
-
-        {/* Right content panel */}
-        {/* <Grid size={{ xs: 12, md: 9 }}>
-          <Box
-            sx={{
-              position: 'relative',
-              overflow: 'hidden',
-              color: 'white',
-              pb: -1,
-           height: 'auto',  // hoặc bỏ hoàn toàn
-    width: '100%',
-            }}
-          >
-            <AnimatePresence initial={false} custom={direction}>
-              {TERMS_DATA[selectedIdx] && (
-                <motion.div
-                  key={TERMS_DATA[selectedIdx].id}
-                  custom={direction}
-                  initial={
-                    direction === 'forward' ? 'enterForward' : 'enterBackward'
-                  }
-                  animate="center"
-                  exit={
-                    direction === 'forward' ? 'exitForward' : 'exitBackward'
-                  }
-                  variants={variants}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  style={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    padding: 24,
-                  }}
-                >
-                  <Paper
-                    sx={{
-                      height: '100%',
-                      p: 3,
-                      overflowY: 'auto',
-                      background: 'linear-gradient(100deg, #311784, #060137)',
-                    }}
-                    elevation={6}
-                  >
-                    {renderContent(TERMS_DATA[selectedIdx])}
-                  </Paper>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Box>
-        </Grid> */}
 
         <Grid size={{ xs: 12, md: 9 }}>
           <Box
@@ -445,9 +401,10 @@ export default function TermsSlidingPanel() {
                 >
                   <Paper
                     sx={{
-                      p: 3,
+                      p: 4,
                       overflowY: 'auto', // scroll khi cần
                       background: 'linear-gradient(100deg, #311784, #060137)',
+                      borderRadius: 3,
                     }}
                     elevation={6}
                   >

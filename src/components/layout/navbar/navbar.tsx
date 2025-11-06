@@ -721,10 +721,10 @@ const Navbar: React.FC = () => {
     pathname === '/community' ||
     pathname === '/view/upcoming';
   const backgroundColor = isHome
-    ? scrolled
-      ? 'rgba(0, 0, 0, 0)'
-      : 'rgba(26, 0, 71, 0.95)'
-    : 'rgba(0, 0, 0, 0)';
+  ? 'rgba(26, 0, 71, 0.95)' // các trang này luôn nền tím đậm
+  : scrolled
+    ? 'rgba(26, 0, 71, 0.95)' // các trang khác, khi cuộn thì tím
+    : 'rgba(0, 0, 0, 0)'; // khi chưa cuộn thì trong suốt
 
   return (
     <>

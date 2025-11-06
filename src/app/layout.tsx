@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/layout/navbar/navbar';
 import Footer from '@/components/layout/footer/footer';
 import { Box } from '@mui/material';
+import CustomCursor from '@/components/CustomMouses';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,6 +39,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-nft-dark`}
       >
+        <CustomCursor />
         <Navbar />
         <Box sx={{ position: 'relative', overflow: 'hidden' }}>
           {/* Glow dưới nền */}
