@@ -511,7 +511,7 @@ export const Up_events: React.FC = () => {
       sx={{
         position: 'relative',
         overflow: 'hidden',
-        background: 'linear-gradient(95deg,#111827, #1E3A8A,#581C87)',
+        background: 'linear-gradient(120deg,#111827, #1E3A8A,#581C87)',
         '&::after': {
           content: '""',
           position: 'absolute',
