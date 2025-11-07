@@ -416,8 +416,7 @@ import {
   Stack,
   Typography,
   Grid,
-  useMediaQuery,
-  useTheme,
+  // useTheme,
 } from '@mui/material';
 import Image from 'next/image';
 
@@ -486,7 +485,7 @@ export const Up_events: React.FC = () => {
   const [selectedTimeline, setSelectedTimeline] = useState<number>(1);
   const [selectedType, setSelectedType] = useState<number>(1);
 
-  const theme = useTheme();
+  // const theme = useTheme();
   // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // ✅ Filter logic
