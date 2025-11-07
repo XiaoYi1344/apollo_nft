@@ -1362,9 +1362,9 @@ const WalletModal: React.FC<WalletModalProps> = ({
                 sx={{ display:'flex', alignItems:'center', gap:1.5, justifyContent:'flex-start', px:3, py:1.5, borderRadius:2, bgcolor:'#1F1639', '&:hover':{bgcolor:'#2A1C52'} }}>
                 <Image src="/icons/metamask.svg" width={28} height={28} alt="MetaMask"/> MetaMask
               </Button>
-              <Button onClick={() => { connectWallet('pioneer'); setWalletListOpen(false); }}
+              <Button onClick={() => { connectWallet('pione'); setWalletListOpen(false); }}
                 sx={{ display:'flex', alignItems:'center', gap:1.5, justifyContent:'flex-start', px:3, py:1.5, borderRadius:2, bgcolor:'#1F1639', '&:hover':{bgcolor:'#2A1C52'} }}>
-                <Image src="/icons/pione.svg" width={28} height={28} alt="Pioneer Wallet"/> Pioneer Wallet
+                <Image src="/icons/pione.svg" width={28} height={28} alt="Pione Wallet"/> Pione Wallet
               </Button>
               {['coinbase','walletconnect'].map((w) => (
                 <Button key={w} disabled sx={{ display:'flex', alignItems:'center', gap:1.5, justifyContent:'flex-start', px:3, py:1.5, borderRadius:2, bgcolor:'#1a1230', opacity:0.6 }}>
