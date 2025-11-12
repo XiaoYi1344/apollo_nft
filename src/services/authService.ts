@@ -12,5 +12,5 @@ export const verifySignature = async (addressWallet: string, signature: string) 
     addressWallet,
     signature,
   });
-  return res.data; // { accessToken, user }
+  return res.data.data; // { accessToken, user }
 };

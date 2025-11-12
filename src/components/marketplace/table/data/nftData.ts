@@ -1,6 +1,7 @@
 export type NFT = {
   id: number;
   name: string;
+  description?: string; // <-- add this
   price: string;
   price_sold?: string;
   img: File[] | string;
@@ -18,10 +19,10 @@ export type NFT = {
   }[];
   activity?: {
     type: 'listed' | 'sold' | 'minted';
-    actor?: string; // ai thao tác
-    target?: string; // đến ai (chỉ sold)
-    price?: string; // giá
-    time: string; // '2h ago', '1d ago'...
+    actor?: string;
+    target?: string;
+    price?: string;
+    time: string;
   }[];
 };
 

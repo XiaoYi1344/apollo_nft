@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 import CustomCursor from '@/components/CustomMouses';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ClientProvider } from './ClientProvider';
-
+import { WagmiAppProvider } from '@/providers/wagmi-provider';
 const queryClient = new QueryClient();
 
 const geistSans = Geist({
@@ -67,7 +67,7 @@ export default function RootLayout({
           {/* Nội dung nổi trên glow */}
           <Box sx={{ position: 'relative', zIndex: 1 }}>
              <ClientProvider>
-          {children}
+          <WagmiAppProvider>{children}</WagmiAppProvider>
         </ClientProvider>
             <Footer />
           </Box>
