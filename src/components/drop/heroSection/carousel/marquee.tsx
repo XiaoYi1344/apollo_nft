@@ -15,7 +15,7 @@ export default function PartnersMarquee() {
   const liveItems = Array(6).fill('LIVE AUCTION');
 
   return (
-    <Box sx={{ overflow: 'hidden' }}>
+    <Box sx={{ overflow: 'hidden', mt: -3 }}>
       {/* Partners row */}
       {/* <Stack direction="row" spacing={4} justifyContent="center" sx={{ py: 3, mt: 4 }}>
         {partners.map((p, i) => (
@@ -48,6 +48,7 @@ export default function PartnersMarquee() {
                 '&:hover': { opacity: 1, transform: 'scale(1.05)' },
                 whiteSpace: 'nowrap',
                 textAlign: 'center',
+                mt: -3,
               }}
             >
               {p.text}

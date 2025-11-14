@@ -1256,9 +1256,406 @@
 //   );
 // }
 
+// 'use client';
+
+// import { useState } from 'react';
+// import { useParams, useRouter } from 'next/navigation';
+// import {
+//   Box,
+//   Typography,
+//   Button,
+//   Card,
+//   Stack,
+//   Divider,
+//   Collapse,
+// } from '@mui/material';
+// import Image from 'next/image';
+// import {
+//   ArrowBack,
+//   Favorite,
+//   FavoriteBorder,
+//   ExpandLess,
+//   ExpandMore,
+// } from '@mui/icons-material';
+// import { useAllProducts } from '@/hooks/useAllProducts';
+// import { useProductActivity } from '@/hooks/useProductActivity';
+// import { Product, ProductOwner } from '@/services/product_allService';
+// import { ProductActivity } from '@/services/activityService';
+
+// export default function NFTDetail() {
+//   const { id } = useParams();
+//   const router = useRouter();
+//   const { data: products } = useAllProducts();
+//   const nft: Product | undefined = products?.find((p) => p.id === Number(id));
+//   const { data: activity = [] } = useProductActivity(nft?.id ?? 0);
+
+//   const [liked, setLiked] = useState(false);
+//   const [openSections, setOpenSections] = useState({
+//     properties: true,
+//     activity: true,
+//     details: true,
+//     description: true,
+//   });
+
+//   const toggleSection = (section: keyof typeof openSections) =>
+//     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+
+//   if (!nft)
+//     return (
+//       <Box sx={{ textAlign: 'center', color: '#fff', py: 10 }}>
+//         <Typography>NFT not found</Typography>
+//         <Button onClick={() => router.push('/marketplace')}>Back</Button>
+//       </Box>
+//     );
+
+//   // const blockchain = nft.properties[0]?.blockchain || 'N/A';
+//   const ethAmount = nft.price || 0;
+//   const usdPrice = `$${(ethAmount * 2000).toLocaleString()}`;
+//   const creators = Array.isArray(nft.creator)
+//     ? nft.creator
+//     : nft.creator
+//       ? [nft.creator]
+//       : [];
+//   const owners: ProductOwner[] = Array.isArray(nft.ownedBy)
+//     ? nft.ownedBy
+//     : nft.ownedBy
+//       ? [nft.ownedBy]
+//       : [];
+//   const safeActivity: ProductActivity[] = Array.isArray(activity)
+//     ? activity
+//     : [];
+
+//   return (
+//     <Box
+//       sx={{
+//         color: 'white',
+//         px: { xs: 2, md: 6 },
+//         py: { xs: 6, md: 10 },
+//         maxWidth: 1400,
+//         mx: 'auto',
+//         fontFamily: '"Orbitron", sans-serif',
+//       }}
+//     >
+//       {/* Breadcrumb */}
+//       <Typography
+//         onClick={() => router.push('/marketplace')}
+//         sx={{
+//           color: '#B983FF',
+//           display: 'flex',
+//           alignItems: 'center',
+//           gap: 0.8,
+//           mb: 4,
+//           cursor: 'pointer',
+//           fontSize: 14,
+//           '&:hover': { color: '#E0AFFF' },
+//         }}
+//       >
+//         <ArrowBack sx={{ fontSize: 20 }} /> Cyber Punks Collection
+//       </Typography>
+
+//       <Stack
+//         direction={{ xs: 'column', md: 'row' }}
+//         spacing={{ xs: 4, md: 8 }}
+//         alignItems="flex-start"
+//       >
+//         {/* Left: Image + Properties */}
+//         <Box sx={{ flex: 1 }}>
+//           <Card
+//             sx={{
+//               borderRadius: 3,
+//               overflow: 'hidden',
+//               position: 'relative',
+//               border: '2px solid #2A145A',
+//               bgcolor: 'rgba(17,24,39,0.5)',
+//             }}
+//           >
+//             <Image
+//               src={`https://gateway.pinata.cloud/ipfs/${nft.image}`}
+//               alt={nft.name}
+//               width={800}
+//               height={800}
+//               style={{ width: '100%', height: 'auto', borderRadius: '25px' }}
+//               priority
+//             />
+//             <Box
+//               sx={{
+//                 position: 'absolute',
+//                 top: 20,
+//                 right: 20,
+//                 cursor: 'pointer',
+//                 bgcolor: liked ? '#fff' : 'rgba(31,41,55,0.6)',
+//                 p: 1.2,
+//                 borderRadius: '50%',
+//                 transition: 'all 0.3s ease',
+//                 '&:hover': {
+//                   bgcolor: liked ? '#fff' : 'rgba(255,76,253,0.8)',
+//                   transform: 'scale(1.05)',
+//                 },
+//               }}
+//               onClick={() => setLiked(!liked)}
+//             >
+//               {liked ? (
+//                 <Favorite sx={{ fontSize: 25, color: '#FF4CFD' }} />
+//               ) : (
+//                 <FavoriteBorder sx={{ fontSize: 25, color: '#fff' }} />
+//               )}
+//             </Box>
+//           </Card>
+
+//           {/* Properties */}
+//           {nft.properties?.length > 0 && (
+//             <Box
+//               mt={4}
+//               sx={{
+//                 bgcolor: 'rgba(17,24,39,0.5)',
+//                 p: 3,
+//                 borderRadius: 3,
+//                 border: '1px solid #2D155A',
+//               }}
+//             >
+//               <Box
+//                 sx={{
+//                   display: 'flex',
+//                   justifyContent: 'space-between',
+//                   cursor: 'pointer',
+//                 }}
+//                 onClick={() => toggleSection('properties')}
+//               >
+//                 <Typography variant="h6">Properties</Typography>
+//                 {openSections.properties ? (
+//                   <ExpandLess sx={{ color: '#B983FF' }} />
+//                 ) : (
+//                   <ExpandMore sx={{ color: '#B983FF' }} />
+//                 )}
+//               </Box>
+//               <Collapse in={openSections.properties}>
+//                 <Stack mt={2} gap={1}>
+//                   {nft.properties.map((prop, i) => (
+//                     <Box
+//                       key={i}
+//                       sx={{
+//                         display: 'flex',
+//                         justifyContent: 'space-between',
+//                         bgcolor: 'rgba(31,41,55,0.5)',
+//                         p: 2,
+//                         borderRadius: 2,
+//                         border: '1.2px solid #2A2A4A',
+//                       }}
+//                     >
+//                       <Typography variant="caption" sx={{ color: '#fff5' }}>
+//                         {prop.type}
+//                       </Typography>
+//                       <Typography>{prop.name}</Typography>
+//                     </Box>
+//                   ))}
+//                 </Stack>
+//               </Collapse>
+//             </Box>
+//           )}
+//         </Box>
+
+//         {/* Right: Info */}
+//         <Box sx={{ flex: 1 }}>
+//           <Typography variant="h4" fontWeight={600}>
+//             {nft.name}
+//           </Typography>
+
+//           {/* Creator / Owner */}
+//           <Box mt={1} fontSize={14}>
+//             <Typography sx={{ color: '#9CA3AF' }}>
+//               Created by:{' '}
+//               <strong style={{ color: '#FFF', fontWeight: 500 }}>
+//                 @{nft.creator?.userName || 'Unknown'}
+//               </strong>
+//             </Typography>
+//             <Typography sx={{ color: '#9CA3AF' }}>
+//               Owned by:{' '}
+//               <strong style={{ color: '#FFF', fontWeight: 500 }}>
+//                 @{nft.ownedBy?.map((o) => o.userName).join(', ') || 'Unknown'}
+//               </strong>
+//             </Typography>
+//           </Box>
+
+//           {/* Price */}
+//           <Box
+//             sx={{
+//               bgcolor: 'rgba(17,24,39,0.5)',
+//               p: 3,
+//               borderRadius: 3,
+//               mt: 3,
+//               border: '1px solid #2D155A',
+//             }}
+//           >
+//             <Typography sx={{ opacity: 0.6, mb: 1.5, color: '#E5E7EB' }}>
+//               Current Price
+//             </Typography>
+//             <Typography variant="h4" fontWeight={600}>
+//               {ethAmount} ETH{' '}
+//               <Typography sx={{ opacity: 0.6, mb: 1.5, color: '#E5E7EB' }}>
+//                 ({usdPrice})
+//               </Typography>
+//             </Typography>
+//             {/* {nft.isForSale && <Typography sx={{ mt: 1, color: '#fff6' }}>For Sale</Typography>} */}
+//             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
+//               <Button
+//                 variant="contained"
+//                 sx={{
+//                   bgcolor: '#9333ea',
+//                   textTransform: 'none',
+//                   fontWeight: 700,
+//                   width: '100%',
+//                 }}
+//               >
+//                 Buy Now
+//               </Button>
+//               <Button
+//                 variant="outlined"
+//                 sx={{
+//                   borderColor: '#9333ea',
+//                   color: '#9333ea',
+//                   textTransform: 'none',
+//                   fontWeight: 700,
+//                   width: '100%',
+//                 }}
+//               >
+//                 Make Offer
+//               </Button>
+//             </Stack>
+//           </Box>
+
+//           {/* Description */}
+//           <Box
+//             mt={4}
+//             sx={{
+//               bgcolor: 'rgba(17,24,39,0.5)',
+//               p: 3,
+//               borderRadius: 3,
+//               border: '1px solid #2D155A',
+//             }}
+//           >
+//             <Box
+//               sx={{
+//                 display: 'flex',
+//                 justifyContent: 'space-between',
+//                 cursor: 'pointer',
+//               }}
+//               onClick={() => toggleSection('description')}
+//             >
+//               <Typography variant="h6" color="#FFF" sx={{ fontWeight: 400 }}>
+//                 Description
+//               </Typography>
+//               {openSections.description ? (
+//                 <ExpandLess sx={{ color: '#FFF' }} />
+//               ) : (
+//                 <ExpandMore sx={{ color: '#FFF' }} />
+//               )}
+//             </Box>
+//             <Collapse in={openSections.description}>
+//               <Stack mt={2} spacing={1}>
+//                 <Typography sx={{ color: '#D1D5DB', fontWeight: 300 }}>
+//                   Description: {nft.description}
+//                 </Typography>
+//               </Stack>
+//             </Collapse>
+//           </Box>
+
+//           {/* Details */}
+//           <Box
+//             mt={4}
+//             sx={{
+//               bgcolor: 'rgba(17,24,39,0.5)',
+//               p: 3,
+//               borderRadius: 3,
+//               border: '1px solid #2D155A',
+//             }}
+//           >
+//             <Box
+//               sx={{
+//                 display: 'flex',
+//                 justifyContent: 'space-between',
+//                 cursor: 'pointer',
+//               }}
+//               onClick={() => toggleSection('details')}
+//             >
+//               <Typography variant="h6" color='#FFF' sx={{ fontWeight: 400}}>Details</Typography>
+//               {openSections.details ? (
+//                 <ExpandLess sx={{ color: '#FFF' }} />
+//               ) : (
+//                 <ExpandMore sx={{ color: '#FFF' }} />
+//               )}
+//             </Box>
+//             <Collapse in={openSections.details}>
+//               <Stack mt={2} spacing={1} sx={{ color: '#D1D5DB', fontWeight: 300 }}>
+//                 <Typography sx={{ color: '#9CA3AF'}}>
+//                   Contract Address: <strong style={{ color:'#9333ea'}}>{nft.contractAddress}</strong>
+//                 </Typography>
+//                 <Typography sx={{ color: '#9CA3AF'}}>Token ID: {nft.tokenId}</Typography>
+//                 <Typography sx={{ color: '#9CA3AF'}}>Supply: {nft.supply}</Typography>
+//                 <Typography sx={{ color: '#9CA3AF'}}>Blockchain: {nft.blockchain}</Typography>
+//                 {/* <Typography>Supply: {nft.supply}</Typography> */}
+//               </Stack>
+//             </Collapse>
+//           </Box>
+
+//           {/* Activity */}
+//           <Box
+//             mt={5}
+//             sx={{
+//               bgcolor: 'rgba(17,24,39,0.5)',
+//               p: 3,
+//               borderRadius: 3,
+//               border: '1px solid #2D155A',
+//             }}
+//           >
+//             <Box
+//               sx={{
+//                 display: 'flex',
+//                 justifyContent: 'space-between',
+//                 cursor: 'pointer',
+//               }}
+//               onClick={() => toggleSection('activity')}
+//             >
+//               <Typography variant="h6">Activity</Typography>
+//               {openSections.activity ? (
+//                 <ExpandLess sx={{ color: '#B983FF' }} />
+//               ) : (
+//                 <ExpandMore sx={{ color: '#B983FF' }} />
+//               )}
+//             </Box>
+//             <Collapse in={openSections.activity}>
+//               <Stack mt={2} gap={2}>
+//                 {safeActivity.length > 0 ? (
+//                   safeActivity.map((act) => (
+//                     <Box key={act.id}>
+//                       <Box display="flex" gap={1} flexWrap="wrap">
+//                         <Typography fontWeight={700}>
+//                           {act.eventType}
+//                         </Typography>
+//                         <Typography>Price: {act.price}</Typography>
+//                         <Typography>Qty: {act.quantity}</Typography>
+//                         <Typography>From: {act.fromAddress}</Typography>
+//                         <Typography>To: {act.toAddress}</Typography>
+//                         <Typography>
+//                           Date: {new Date(act.createdAt).toLocaleString()}
+//                         </Typography>
+//                       </Box>
+//                       <Divider sx={{ bgcolor: '#2D155A', my: 1 }} />
+//                     </Box>
+//                   ))
+//                 ) : (
+//                   <Typography>No activity yet.</Typography>
+//                 )}
+//               </Stack>
+//             </Collapse>
+//           </Box>
+//         </Box>
+//       </Stack>
+//     </Box>
+//   );
+// }
+
 'use client';
 
-import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   Box,
@@ -1268,6 +1665,7 @@ import {
   Stack,
   Divider,
   Collapse,
+  CircularProgress,
 } from '@mui/material';
 import Image from 'next/image';
 import {
@@ -1277,17 +1675,21 @@ import {
   ExpandLess,
   ExpandMore,
 } from '@mui/icons-material';
-import { useAllProducts } from '@/hooks/useAllProducts';
-import { useProductActivity } from '@/hooks/useProductActivity';
-import { Product, ProductOwner } from '@/services/product_allService';
-import { ProductActivity } from '@/services/activityService';
+import { useState } from 'react';
+import { useProduct } from '@/hooks/useProduct';
+import { useProductActivity } from '@/hooks/useProduct';
+import { ProductActivity } from '@/types/product';
 
 export default function NFTDetail() {
   const { id } = useParams();
   const router = useRouter();
-  const { data: products } = useAllProducts();
-  const nft: Product | undefined = products?.find((p) => p.id === Number(id));
-  const { data: activity = [] } = useProductActivity(nft?.id ?? 0);
+  const productId = Number(id);
+
+  // ✅ Fetch product by ID
+  const { data: nft, isLoading, isError } = useProduct(productId);
+
+  // ✅ Fetch product activity
+  const { data: activity = [] } = useProductActivity(productId);
 
   const [liked, setLiked] = useState(false);
   const [openSections, setOpenSections] = useState({
@@ -1300,7 +1702,14 @@ export default function NFTDetail() {
   const toggleSection = (section: keyof typeof openSections) =>
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
 
-  if (!nft)
+  if (isLoading)
+    return (
+      <Box sx={{ textAlign: 'center', color: '#fff', py: 10 }}>
+        <CircularProgress color="secondary" />
+      </Box>
+    );
+
+  if (isError || !nft)
     return (
       <Box sx={{ textAlign: 'center', color: '#fff', py: 10 }}>
         <Typography>NFT not found</Typography>
@@ -1308,19 +1717,15 @@ export default function NFTDetail() {
       </Box>
     );
 
-  // const blockchain = nft.properties[0]?.blockchain || 'N/A';
   const ethAmount = nft.price || 0;
   const usdPrice = `$${(ethAmount * 2000).toLocaleString()}`;
+
   const creators = Array.isArray(nft.creator)
     ? nft.creator
     : nft.creator
       ? [nft.creator]
       : [];
-  const owners: ProductOwner[] = Array.isArray(nft.ownedBy)
-    ? nft.ownedBy
-    : nft.ownedBy
-      ? [nft.ownedBy]
-      : [];
+
   const safeActivity: ProductActivity[] = Array.isArray(activity)
     ? activity
     : [];
@@ -1329,8 +1734,8 @@ export default function NFTDetail() {
     <Box
       sx={{
         color: 'white',
-        px: { xs: 2, md: 6 },
-        py: { xs: 6, md: 10 },
+        px: { xs: 2, sm:4, md: 6 },
+        py: { xs: 6, sm:3, md: 10 },
         maxWidth: 1400,
         mx: 'auto',
         fontFamily: '"Orbitron", sans-serif',
@@ -1354,12 +1759,17 @@ export default function NFTDetail() {
       </Typography>
 
       <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={{ xs: 4, md: 8 }}
-        alignItems="flex-start"
+        direction={{ xs: 'column', sm: 'column', md: 'row' }}
+        spacing={{ xs: 3, sm: 4, md: 8 }}
+        alignItems={{ xs: 'center', sm: 'center', md: 'flex-start' }}
       >
-        {/* Left: Image + Properties */}
-        <Box sx={{ flex: 1 }}>
+        {/* Left */}
+        <Box
+          sx={{
+            flex: { xs: 'unset', sm: 1, md: 1 },
+            width: { xs: '100%', sm: '90%', md: '50%' }, 
+          }}
+        >
           <Card
             sx={{
               borderRadius: 3,
@@ -1374,17 +1784,24 @@ export default function NFTDetail() {
               alt={nft.name}
               width={800}
               height={800}
-              style={{ width: '100%', height: 'auto', borderRadius: '25px' }}
+              style={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: '25px',
+                objectFit: 'cover',
+              }}
               priority
             />
+
+            {/* Like button */}
             <Box
               sx={{
-                position: 'absolute',
-                top: 20,
-                right: 20,
-                cursor: 'pointer',
-                bgcolor: liked ? '#fff' : 'rgba(31,41,55,0.6)',
-                p: 1.2,
+                 position: 'absolute',
+          top: { xs: 10, sm: 15, md: 20 },
+          right: { xs: 10, sm: 15, md: 20 },
+          cursor: 'pointer',
+          bgcolor: liked ? '#fff' : 'rgba(31,41,55,0.6)',
+          p: { xs: 0.8, sm: 1, md: 1.2 },
                 borderRadius: '50%',
                 transition: 'all 0.3s ease',
                 '&:hover': {
@@ -1395,10 +1812,10 @@ export default function NFTDetail() {
               onClick={() => setLiked(!liked)}
             >
               {liked ? (
-                <Favorite sx={{ fontSize: 25, color: '#FF4CFD' }} />
-              ) : (
-                <FavoriteBorder sx={{ fontSize: 25, color: '#fff' }} />
-              )}
+          <Favorite sx={{ fontSize: { xs: 20, sm: 23, md: 25 }, color: '#FF4CFD' }} />
+        ) : (
+          <FavoriteBorder sx={{ fontSize: { xs: 20, sm: 23, md: 25 }, color: '#fff' }} />
+        )}
             </Box>
           </Card>
 
@@ -1408,7 +1825,7 @@ export default function NFTDetail() {
               mt={4}
               sx={{
                 bgcolor: 'rgba(17,24,39,0.5)',
-                p: 3,
+                 p: { xs: 2, sm: 2.5, md: 3 },
                 borderRadius: 3,
                 border: '1px solid #2D155A',
               }}
@@ -1428,6 +1845,7 @@ export default function NFTDetail() {
                   <ExpandMore sx={{ color: '#B983FF' }} />
                 )}
               </Box>
+
               <Collapse in={openSections.properties}>
                 <Stack mt={2} gap={1}>
                   {nft.properties.map((prop, i) => (
@@ -1454,14 +1872,23 @@ export default function NFTDetail() {
           )}
         </Box>
 
-        {/* Right: Info */}
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="h4" fontWeight={600}>
-            {nft.name}
-          </Typography>
+        {/* Right */}
+        <Box sx={{ flex: { xs: 'unset', sm: 1, md: 1 },
+      width: { xs: '100%', sm: '90%', md: '50%' }, // Full width trên sm, 50% trên md
+      mt: { xs: 3, sm: 3, md: 0 }, // margin top khi stacked
+       }}>
+          <Typography
+  fontWeight={600}
+  sx={{
+    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, // xs < sm < md
+  }}
+>
+  {nft.name}
+</Typography>
 
-          {/* Creator / Owner */}
-          <Box mt={1} fontSize={14}>
+
+          {/* Creator */}
+          <Box mt={1} fontSize={{ xs: 12, sm: 14, md: 14 }}>
             <Typography sx={{ color: '#9CA3AF' }}>
               Created by:{' '}
               <strong style={{ color: '#FFF', fontWeight: 500 }}>
@@ -1471,39 +1898,42 @@ export default function NFTDetail() {
             <Typography sx={{ color: '#9CA3AF' }}>
               Owned by:{' '}
               <strong style={{ color: '#FFF', fontWeight: 500 }}>
-                @{nft.ownedBy?.map((o) => o.userName).join(', ') || 'Unknown'}
+                {Array.isArray(nft.ownedBy)
+                  ? nft.ownedBy.map((o) => `@${o.userName}`).join(', ')
+                  : 'Unknown'}
               </strong>
             </Typography>
           </Box>
 
-          {/* Price */}
+          {/* Price section */}
           <Box
             sx={{
               bgcolor: 'rgba(17,24,39,0.5)',
-              p: 3,
+              p: { xs: 2, sm: 2.5, md: 3 },
               borderRadius: 3,
               mt: 3,
               border: '1px solid #2D155A',
             }}
           >
-            <Typography sx={{ opacity: 0.6, mb: 1.5, color: '#E5E7EB' }}>
-              Current Price
-            </Typography>
-            <Typography variant="h4" fontWeight={600}>
-              {ethAmount} ETH{' '}
-              <Typography sx={{ opacity: 0.6, mb: 1.5, color: '#E5E7EB' }}>
-                ({usdPrice})
-              </Typography>
-            </Typography>
-            {/* {nft.isForSale && <Typography sx={{ mt: 1, color: '#fff6' }}>For Sale</Typography>} */}
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
+            <Typography sx={{ opacity: 0.6, mb: 1.5, color: '#E5E7EB', fontSize: { xs: 12, sm: 14, md: 14 } }}>
+        Current Price
+      </Typography>
+      <Typography variant="h5" fontWeight={600} sx={{ fontSize: { xs: 20, sm: 24, md: 28 } }}>
+        {ethAmount} ETH
+        <Typography sx={{ opacity: 0.6, ml: 1, display: 'inline', fontSize: { xs: 12, sm: 14, md: 14 } }}>
+          ({usdPrice})
+        </Typography>
+      </Typography>
+
+            <Stack direction={{ xs: 'column', sm: 'row', md: 'row' }} spacing={2} mt={2}>
               <Button
                 variant="contained"
                 sx={{
-                  bgcolor: '#9333ea',
-                  textTransform: 'none',
-                  fontWeight: 700,
-                  width: '100%',
+                 bgcolor: '#9333ea',
+            textTransform: 'none',
+            fontWeight: 700,
+            width: '100%',
+            fontSize: { xs: 12, sm: 14, md: 14 },
                 }}
               >
                 Buy Now
@@ -1516,6 +1946,7 @@ export default function NFTDetail() {
                   textTransform: 'none',
                   fontWeight: 700,
                   width: '100%',
+                  fontSize: { xs: 12, sm: 14, md: 14 },
                 }}
               >
                 Make Offer
@@ -1528,7 +1959,7 @@ export default function NFTDetail() {
             mt={4}
             sx={{
               bgcolor: 'rgba(17,24,39,0.5)',
-              p: 3,
+               p: { xs: 2, sm: 2.5, md: 3 },
               borderRadius: 3,
               border: '1px solid #2D155A',
             }}
@@ -1551,11 +1982,9 @@ export default function NFTDetail() {
               )}
             </Box>
             <Collapse in={openSections.description}>
-              <Stack mt={2} spacing={1}>
-                <Typography sx={{ color: '#D1D5DB', fontWeight: 300 }}>
-                  Description: {nft.description}
-                </Typography>
-              </Stack>
+              <Typography sx={{ mt: 2, color: '#D1D5DB', fontWeight: 300 }}>
+                {nft.description || 'No description provided.'}
+              </Typography>
             </Collapse>
           </Box>
 
@@ -1577,7 +2006,9 @@ export default function NFTDetail() {
               }}
               onClick={() => toggleSection('details')}
             >
-              <Typography variant="h6" color='#FFF' sx={{ fontWeight: 400}}>Details</Typography>
+              <Typography variant="h6" color="#FFF" sx={{ fontWeight: 400 }}>
+                Details
+              </Typography>
               {openSections.details ? (
                 <ExpandLess sx={{ color: '#FFF' }} />
               ) : (
@@ -1585,14 +2016,22 @@ export default function NFTDetail() {
               )}
             </Box>
             <Collapse in={openSections.details}>
-              <Stack mt={2} spacing={1} sx={{ color: '#D1D5DB', fontWeight: 300 }}>
-                <Typography sx={{ color: '#9CA3AF'}}>
-                  Contract Address: <strong style={{ color:'#9333ea'}}>{nft.contractAddress}</strong>
+              <Stack mt={2} spacing={1}>
+                <Typography sx={{ color: '#9CA3AF' }}>
+                  Contract Address:{' '}
+                  <strong style={{ color: '#9333ea' }}>
+                    {nft.contractAddress}
+                  </strong>
                 </Typography>
-                <Typography sx={{ color: '#9CA3AF'}}>Token ID: {nft.tokenId}</Typography>
-                <Typography sx={{ color: '#9CA3AF'}}>Supply: {nft.supply}</Typography>
-                <Typography sx={{ color: '#9CA3AF'}}>Blockchain: {nft.blockchain}</Typography>
-                {/* <Typography>Supply: {nft.supply}</Typography> */}
+                <Typography sx={{ color: '#9CA3AF' }}>
+                  Token ID: {nft.tokenId}
+                </Typography>
+                <Typography sx={{ color: '#9CA3AF' }}>
+                  Supply: {nft.supply}
+                </Typography>
+                <Typography sx={{ color: '#9CA3AF' }}>
+                  Blockchain: {nft.blockchain}
+                </Typography>
               </Stack>
             </Collapse>
           </Box>

@@ -11,7 +11,7 @@ const TopSection = () => {
       component="section"
       sx={{
         position: 'relative',
-        minHeight: '100vh',
+        // minHeight: '80vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -21,20 +21,21 @@ const TopSection = () => {
         //   "linear-gradient(135deg, #2b006b 0%, #1a0047 40%, #080018 100%)",
         // background: '#080018',
         color: 'white',
-        mb: -10,
+        mb: 3,
+        pt: {xs: 30, sm: 30, md: 24}
       }}
     >
       {/* Vầng sáng */}
       <Box
         className="glow"
         sx={{
-          '--glow-bottom': '50%',
-          '--glow-left': '2%',
-          '--glow-width': '2700px',
-          '--glow-height': '1400px',
+          '--glow-bottom': {xs:'80%', sm:'1%', md:'60%'},
+          '--glow-left': {xs:'1%', sm:'10%', md:'10%'},
+          '--glow-width': {xs:'660px', sm:'2800px', md:'2500px'},
+          '--glow-height': {xs:'200px', sm:'1400px', md:'1200px'},
           '--glow-color1': 'rgba(190,74,170,0.7)',
           '--glow-color2': 'rgba(45,161,255,0.1)',
-          '--glow-blur': '100px',
+          '--glow-blur': '80px',
           '--glow-opacity': '1',
           '--glow-radius': '0%',
           '--glow-type': ' circle at top',
@@ -53,7 +54,7 @@ const TopSection = () => {
           position: 'relative',
           zIndex: 2,
           maxWidth: { xs: 300, sm: 780 },
-          mt: { xs: 1, sm: -15 },
+          mt: { xs: -20, sm: -15 },
         }}
       >
         <Typography
@@ -61,7 +62,7 @@ const TopSection = () => {
           sx={{
             fontWeight: 800,
             lineHeight: 1.0,
-            fontSize: { xs: '1.6rem', md: '3.5rem' },
+            fontSize: { xs: '1.4rem', sm:'2.3rem', md: '3.5rem' },
             position: 'relative', // 👈 cần để định vị icon
             display: 'inline-block',
           }}
@@ -95,7 +96,7 @@ const TopSection = () => {
           sx={{
             color: 'rgba(255,255,255,0.7)',
             lineHeight: 1.6,
-            fontSize: { xs: '0.9rem', md: '1.5rem' },
+            fontSize: { xs: '0.7rem', sm:'1.2rem', md: '1.5rem' },
             display: '-webkit-box',
             WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
@@ -119,7 +120,7 @@ const TopSection = () => {
             height: { xs: 230, md: 494 },
             borderRadius: '24px',
             mx: 'auto', // căn giữa theo parent
-            display: { xs: 'block', md: 'none' },
+            display: { xs: 'block', sm: 'none', md: 'none' },
           }}
         >
           <Box
@@ -193,11 +194,11 @@ const TopSection = () => {
         transition={{ duration: 1.2 }}
         sx={{
           position: 'relative',
-          width: 391, // dùng width chính xác của ảnh chính
-          height: 494,
+          width: 491, // dùng width chính xác của ảnh chính
+          height: {sm: 234, md: 434},
           borderRadius: '24px',
           mx: 'auto', // căn giữa theo parent
-          display: { xs: 'none', md: 'block' },
+          display: { xs: 'none', sm: 'block', md: 'block' },
         }}
       >
         <Box
@@ -206,8 +207,8 @@ const TopSection = () => {
             top: -80,
             left: '50%', // đặt 50% parent width
             transform: 'translateX(-50%)', // căn giữa layer
-            width: { xs: 160, md: 391 },
-            height: { xs: 220, md: 494 },
+            width: { sm: 220, md: 391 },
+            height: { sm: 260, md: 494 },
             borderRadius: '20px',
             overflow: 'hidden',
             zIndex: 0,

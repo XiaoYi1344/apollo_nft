@@ -61,19 +61,20 @@ function getContract(signerOrProvider?: ethers.Signer | ethers.Provider) {
 // SERVICE OBJECT
 // ================================
 export const landingPageNFTService = {
-  mintFullNFT: async (
-    signer: ethers.Signer,
-    args: { nameToken: string; tokenURI: string; description: string; price: number }
-  ) => {
-    const c = getContract(signer);
-    const tx = await c.mintFullNFT(
-      args.nameToken,
-      args.tokenURI,
-      args.description,
-      parseEther(args.price.toString())
-    );
-    return tx.wait();
-  },
+  // landingPageNFTService.ts
+mintFullNFT: async (
+  signer: ethers.Signer,
+  args: { nameToken: string; tokenURI: string; description: string; price: number }
+) => {
+  const c = getContract(signer);
+  return await c.mintFullNFT(
+    args.nameToken,
+    args.tokenURI,
+    args.description,
+    parseEther(args.price.toString())
+  ); // trả về TransactionResponse, chưa wait()
+}
+,
 
   mintToken: async (signer: ethers.Signer, tokenURI: string) => {
     const c = getContract(signer);

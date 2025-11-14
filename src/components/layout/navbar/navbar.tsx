@@ -806,25 +806,35 @@ const Navbar: React.FC = () => {
 
               {/* Wallet Button */}
               <Button
-                variant="contained"
-                sx={{
-                  background:
-                    'linear-gradient(90deg, #8c4aff 0%, #2da1ff 100%)',
-                  textTransform: 'none',
-                  borderRadius: '999px',
-                  px: 3,
-                  py: 1,
-                  fontWeight: 'bold',
-                }}
-                onClick={() => setWalletModalOpen(true)}
-                startIcon={isTablet && !account ? <WalletIcon /> : null}
-              >
-                {account
-                  ? `${account.slice(0, 6)}...${account.slice(-4)}`
-                  : isTablet
-                    ? ''
-                    : 'Connect Wallet'}
-              </Button>
+  variant="contained"
+  sx={{
+    background: 'linear-gradient(90deg, #8c4aff 0%, #2da1ff 100%)',
+    textTransform: 'none',
+    borderRadius: '999px',
+    px: isTablet ? 2 : 3, // tăng padding cho tablet
+    py: 1,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    minWidth: isTablet ? 44 : 'auto', // giữ kích thước ổn định
+    '&:hover': {
+      background: 'linear-gradient(90deg, #7a3ae6 0%, #228de6 100%)',
+      boxShadow: '0 0 10px rgba(140, 74, 255, 0.6)',
+    },
+  }}
+  onClick={() => setWalletModalOpen(true)}
+>
+  {/* Nếu đã kết nối ví */}
+  {account ? (
+    `${account.slice(0, 6)}...${account.slice(-4)}`
+  ) : isTablet ? (
+    <WalletIcon sx={{ fontSize: 24 }} /> // icon căn giữa khi không có text
+  ) : (
+    <>
+      Connect Wallet
+    </>
+  )}
+</Button>
+
             </Box>
           )}
 

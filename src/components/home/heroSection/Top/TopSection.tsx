@@ -468,15 +468,22 @@ const TopSection = () => {
             .gradient-text {
               background: linear-gradient(90deg, #a100eb, #3605ff);
               -webkit-background-clip: text;
-              -webkit-text-fill-color: blue; /* mobile mặc định */
+              -webkit-text-fill-color: blue; /* màu mặc định trên mobile */
               font-weight: 700;
+              font-size: 2.1rem; /* xs */
+              transition: all 0.3s ease; /* mượt mà khi thay đổi */
             }
 
             @media (min-width: 600px) {
               .gradient-text {
-                -webkit-text-fill-color: transparent; /* từ sm trở lên */
-                font-weight: 700;
-                font-size: 5.1rem;
+                -webkit-text-fill-color: transparent;
+                font-size: 2.4rem; /* sm */
+              }
+            }
+
+            @media (min-width: 900px) {
+              .gradient-text {
+                font-size: 5.1rem; /* md */
               }
             }
           `}</style>

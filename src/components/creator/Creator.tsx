@@ -15,14 +15,18 @@ import {
   Pagination,
   Stack,
   useMediaQuery,
+  Skeleton,
+  Card,
+  CardContent,
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@mui/material/styles';
 import type { Creator as CreatorType } from './data/creatorsData';
 
 interface Props {
-  creators: CreatorType[];
+  creators?: CreatorType[]; // creators có thể undefined khi đang loading
   onSelect: (creator: CreatorType, dir: 'left' | 'right') => void;
+  loading?: boolean; // trạng thái loading
 }
 
 const ITEMS_PER_PAGE = 8;
@@ -40,15 +44,14 @@ const slideVariants = {
   }),
 };
 
-const CreatorLeaderboard: React.FC<Props> = ({ creators, onSelect }) => {
+const CreatorLeaderboard: React.FC<Props> = ({ creators = [], onSelect, loading = false }) => {
   const [page, setPage] = useState(1);
   const [selectedRange, setSelectedRange] = useState('7 Days');
   const [direction, setDirection] = useState<'left' | 'right'>('left');
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // nhỏ hơn 600px
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Lọc theo thời gian
   const filteredCreators = useMemo(() => {
     const mapRange: Record<string, CreatorType['timeRange']> = {
       '24 Hours': '24h',
@@ -67,14 +70,7 @@ const CreatorLeaderboard: React.FC<Props> = ({ creators, onSelect }) => {
   }, [page, filteredCreators]);
 
   const handleExport = () => {
-    const csvHeader = [
-      'Rank',
-      'Creator',
-      'Total Volume',
-      'NFTs Sold',
-      'Followers',
-    ];
-
+    const csvHeader = ['Rank', 'Creator', 'Total Volume', 'NFTs Sold', 'Followers'];
     const csvRows = filteredCreators.map((c, idx) => [
       idx + 1,
       `${c.name} (${c.username})`,
@@ -82,11 +78,9 @@ const CreatorLeaderboard: React.FC<Props> = ({ creators, onSelect }) => {
       c.nftsSold,
       c.followers,
     ]);
-
     const csvContent =
       'data:text/csv;charset=utf-8,' +
       [csvHeader.join(','), ...csvRows.map((r) => r.join(','))].join('\n');
-
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.href = encodedUri;
@@ -103,13 +97,7 @@ const CreatorLeaderboard: React.FC<Props> = ({ creators, onSelect }) => {
   };
 
   return (
-    <Box
-      sx={{
-        px: { xs: 2, sm: 6, md: 10 },
-        py: 10,
-        bgcolor: 'transparent',
-      }}
-    >
+    <Box sx={{ px: { xs: 2, sm: 6, md: 10 }, py: 10, bgcolor: 'transparent' }}>
       {/* Header */}
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
@@ -156,7 +144,7 @@ const CreatorLeaderboard: React.FC<Props> = ({ creators, onSelect }) => {
         ))}
       </Stack>
 
-      {/* Table */}
+      {/* Table / Card */}
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={selectedRange}
@@ -167,162 +155,212 @@ const CreatorLeaderboard: React.FC<Props> = ({ creators, onSelect }) => {
           custom={direction}
           transition={{ duration: 0.4 }}
         >
-          <TableContainer
-            component={Paper}
-            sx={{
-              bgcolor: 'rgba(255,255,255,0.03)',
-              borderRadius: 2,
-              boxShadow: '0 10px 40px rgba(0,0,0,0.6)',
-              overflowX: 'auto',
-            }}
-          >
-            <Table sx={{ minWidth: { xs: '350', ms: '650' } }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell
+          {loading ? (
+            // Skeleton layout
+            isMobile ? (
+              <Stack spacing={2}>
+                {Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
+                  <Card
+                    key={idx}
                     sx={{
-                      color: '#cfcfff',
-                      fontWeight: 700,
-                      fontSize: { xs: 12, sm: 14 },
+                      bgcolor: 'rgba(255,255,255,0.05)',
+                      borderRadius: 3,
+                      p: 2,
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.5)',
+                      border: '1px solid rgba(255,255,255,0.1)',
                     }}
                   >
-                    Rank
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      color: '#cfcfff',
-                      fontWeight: 700,
-                      fontSize: { xs: 12, sm: 14 },
-                    }}
-                  >
-                    Creator
-                  </TableCell>
-
-                  {/* Ẩn cột này trên mobile */}
-                  {!isMobile && (
-                    <>
-                      <TableCell
-                        sx={{
-                          color: '#cfcfff',
-                          fontWeight: 700,
-                          fontSize: { xs: 12, sm: 14 },
-                        }}
-                      >
-                        Total Volume
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          color: '#cfcfff',
-                          fontWeight: 700,
-                          fontSize: { xs: 12, sm: 14 },
-                        }}
-                      >
-                        NFTs Sold
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          color: '#cfcfff',
-                          fontWeight: 700,
-                          fontSize: { xs: 12, sm: 14 },
-                        }}
-                      >
-                        Followers
-                      </TableCell>
-                    </>
-                  )}
-
-                  <TableCell
-                    sx={{
-                      color: '#cfcfff',
-                      fontWeight: 700,
-                      fontSize: { xs: 12, sm: 14 },
-                    }}
-                  >
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {paginatedCreators.map((c, idx) => (
-                  <motion.tr
-                    key={c.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <TableCell
-                      sx={{ color: '#ddd', fontSize: { xs: 12, sm: 14 } }}
+                    <Stack direction="row" alignItems="center" spacing={2}>
+                      <Skeleton variant="circular" width={50} height={50} />
+                      <Box sx={{ flex: 1 }}>
+                        <Skeleton width="60%" height={20} sx={{ mb: 0.5 }} />
+                        <Skeleton width="40%" height={15} />
+                      </Box>
+                      <Skeleton width={30} height={20} />
+                    </Stack>
+                    <CardContent sx={{ px: 0, pt: 1 }}>
+                      <Skeleton width="80%" height={15} sx={{ mb: 0.5 }} />
+                      <Skeleton width="60%" height={15} sx={{ mb: 0.5 }} />
+                      <Skeleton width="70%" height={15} sx={{ mb: 0.5 }} />
+                      <Skeleton variant="rectangular" width="100%" height={30} sx={{ mt: 1 }} />
+                    </CardContent>
+                  </Card>
+                ))}
+              </Stack>
+            ) : (
+              // Desktop table skeleton
+              <TableContainer
+                component={Paper}
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.03)',
+                  borderRadius: 2,
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.6)',
+                  overflowX: 'auto',
+                }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      {['Rank', 'Creator', 'Total Volume', 'NFTs Sold', 'Followers', 'Action'].map(
+                        (h) => (
+                          <TableCell key={h} sx={{ color: '#cfcfff', fontWeight: 700 }}>
+                            {h}
+                          </TableCell>
+                        ),
+                      )}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
+                      <TableRow key={idx}>
+                        {Array.from({ length: 6 }).map((__, cellIdx) => (
+                          <TableCell key={cellIdx}>
+                            <Skeleton width="80%" height={20} />
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )
+          ) : (
+            // Dữ liệu thực tế
+            <>
+              {isMobile ? (
+                <Stack spacing={2}>
+                  {paginatedCreators.map((c, idx) => (
+                    <Card
+                      key={c.id}
+                      sx={{
+                        bgcolor: 'rgba(255,255,255,0.05)',
+                        borderRadius: 3,
+                        p: 2,
+                        boxShadow: '0 6px 20px rgba(0,0,0,0.5)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
                     >
-                      {(page - 1) * ITEMS_PER_PAGE + idx + 1}
-                    </TableCell>
-
-                    <TableCell>
-                      <Box
-                        sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-                      >
-                        <Avatar
-                          src={c.avatar}
-                          alt={c.name}
-                          sx={{ width: 40, height: 40 }}
-                        />
+                      <Stack direction="row" alignItems="center" spacing={2}>
+                        <Avatar src={c.avatar} alt={c.name} sx={{ width: 50, height: 50 }} />
                         <Box>
-                          <Typography
-                            sx={{
-                              color: '#fff',
-                              fontWeight: 700,
-                              fontSize: { xs: 13, sm: 14 },
-                            }}
-                          >
+                          <Typography sx={{ color: '#fff', fontWeight: 700 }}>
                             {c.name}
                           </Typography>
                           <Typography sx={{ color: '#9b9bbf', fontSize: 12 }}>
-                            {c.username}
+                            @{c.username}
                           </Typography>
                         </Box>
-                      </Box>
-                    </TableCell>
-
-                    {/* Ẩn 3 cột số liệu trên mobile */}
-                    {!isMobile && (
-                      <>
-                        <TableCell sx={{ color: '#cfcfff', fontSize: 13 }}>
-                          {c.totalVolume}
-                        </TableCell>
-                        <TableCell sx={{ color: '#cfcfff', fontSize: 13 }}>
-                          {c.nftsSold}
-                        </TableCell>
-                        <TableCell sx={{ color: '#cfcfff', fontSize: 13 }}>
-                          {c.followers}
-                        </TableCell>
-                      </>
-                    )}
-
-                    <TableCell sx={{ pr: { xs: 1, sm: 3 } }}>
-                      <Button
-                        variant="contained"
-                        size="small"
-                        sx={{
-                          background: 'linear-gradient(90deg,#7a3bff,#b78eff)',
-                          textTransform: 'none',
-                          fontSize: 12,
-                          px: { xs: 1.5, sm: 2 },
-                          whiteSpace: 'nowrap',
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelect(c, 'left');
-                        }}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </motion.tr>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                        <Box sx={{ ml: 'auto' }}>
+                          <Typography sx={{ color: '#b78eff', fontSize: 12 }}>
+                            #{(page - 1) * ITEMS_PER_PAGE + idx + 1}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      <CardContent sx={{ px: 0, pt: 1 }}>
+                        <Typography sx={{ color: '#cfcfff', fontSize: 13 }}>
+                          💰 Total Volume: {c.totalVolume}
+                        </Typography>
+                        <Typography sx={{ color: '#cfcfff', fontSize: 13 }}>
+                          🖼 NFTs Sold: {c.nftsSold}
+                        </Typography>
+                        <Typography sx={{ color: '#cfcfff', fontSize: 13 }}>
+                          👥 Followers: {c.followers}
+                        </Typography>
+                        <Box sx={{ mt: 1.5 }}>
+                          <Button
+                            fullWidth
+                            variant="contained"
+                            sx={{
+                              background: 'linear-gradient(90deg,#7a3bff,#b78eff)',
+                              textTransform: 'none',
+                              fontSize: 13,
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelect(c, 'left');
+                            }}
+                          >
+                            View
+                          </Button>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Stack>
+              ) : (
+                <TableContainer
+                  component={Paper}
+                  sx={{
+                    bgcolor: 'rgba(255,255,255,0.03)',
+                    borderRadius: 2,
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.6)',
+                    overflowX: 'auto',
+                  }}
+                >
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        {['Rank', 'Creator', 'Total Volume', 'NFTs Sold', 'Followers', 'Action'].map(
+                          (h) => (
+                            <TableCell key={h} sx={{ color: '#cfcfff', fontWeight: 700 }}>
+                              {h}
+                            </TableCell>
+                          ),
+                        )}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {paginatedCreators.map((c, idx) => (
+                        <motion.tr
+                          key={c.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.25 }}
+                        >
+                          <TableCell sx={{ color: '#ddd' }}>
+                            {(page - 1) * ITEMS_PER_PAGE + idx + 1}
+                          </TableCell>
+                          <TableCell>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <Avatar src={c.avatar} alt={c.name} sx={{ width: 48, height: 48 }} />
+                              <Box>
+                                <Typography sx={{ color: '#fff', fontWeight: 700 }}>
+                                  {c.name}
+                                </Typography>
+                                <Typography sx={{ color: '#9b9bbf', fontSize: 12 }}>
+                                  {c.username}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ color: '#cfcfff' }}>{c.totalVolume}</TableCell>
+                          <TableCell sx={{ color: '#cfcfff' }}>{c.nftsSold}</TableCell>
+                          <TableCell sx={{ color: '#cfcfff' }}>{c.followers}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              sx={{
+                                background: 'linear-gradient(90deg,#7a3bff,#b78eff)',
+                                textTransform: 'none',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onSelect(c, 'left');
+                              }}
+                            >
+                              View
+                            </Button>
+                          </TableCell>
+                        </motion.tr>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </>
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -366,6 +404,7 @@ const CreatorLeaderboard: React.FC<Props> = ({ creators, onSelect }) => {
 };
 
 export default CreatorLeaderboard;
+
 
 // 'use client';
 // import React, { useState, useMemo } from 'react';

@@ -319,6 +319,223 @@
 // };
 
 // export default NFTTable;
+// 'use client';
+
+// import {
+//   Card,
+//   CardContent,
+//   Typography,
+//   Grid,
+//   Button,
+//   Box,
+//   Stack,
+//   FormControl,
+//   Select,
+//   MenuItem,
+//   TextField,
+//   InputAdornment,
+// } from '@mui/material';
+// import Image from 'next/image';
+// import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+// import SearchIcon from '@mui/icons-material/Search';
+// import { useState } from 'react';
+// import Link from 'next/link';
+// import { useAllProducts } from '@/hooks/useAllProducts';
+// import { Product } from '@/services/product_allService';
+
+// const SORT_OPTIONS = ['Latest', 'Price: Low to High', 'Price: High to Low'];
+
+// const NFTTable = () => {
+//   const { data: products, isLoading, isError } = useAllProducts();
+//   const [visibleCount, setVisibleCount] = useState(8);
+//   const [expanded, setExpanded] = useState(false);
+//   const [sort, setSort] = useState('Latest');
+//   const [search, setSearch] = useState('');
+
+//   const handleToggle = () => {
+//     if (!expanded) {
+//       setVisibleCount(products?.length || 8);
+//     } else {
+//       setVisibleCount(8);
+//     }
+//     setExpanded(!expanded);
+//   };
+
+//   if (isLoading) return <Typography>Loading...</Typography>;
+//   if (isError)
+//     return <Typography color="error">Failed to load products</Typography>;
+
+//   // Filter + search
+//   let filteredProducts: Product[] = Array.isArray(products)
+//     ? [...products]
+//     : [];
+//   if (search) {
+//     filteredProducts = filteredProducts.filter(
+//       (p) =>
+//         p.name.toLowerCase().includes(search.toLowerCase()) ||
+//         (Array.isArray(p.creator) &&
+//           p.creator.some((c) =>
+//             c.userName.toLowerCase().includes(search.toLowerCase()),
+//           )),
+//     );
+//   }
+
+//   // Sort
+//   if (sort === 'Price: Low to High')
+//     filteredProducts.sort((a, b) => a.price - b.price);
+//   if (sort === 'Price: High to Low')
+//     filteredProducts.sort((a, b) => b.price - a.price);
+
+//   return (
+//     <>
+//       {/* Search & Sort */}
+//       <Stack
+//         direction={{ xs: 'column', md: 'row' }}
+//         justifyContent="space-between"
+//         flexWrap="wrap"
+//         gap={1}
+//         mb={2}
+//       >
+//         <Box sx={{ flexBasis: { xs: '100%', md: '49%' } }}>
+//           <TextField
+//             placeholder="Search by name or creator"
+//             variant="outlined"
+//             size="small"
+//             fullWidth
+//             value={search}
+//             onChange={(e) => setSearch(e.target.value)}
+//             InputProps={{
+//               startAdornment: (
+//                 <InputAdornment position="start">
+//                   <SearchIcon
+//                     fontSize="small"
+//                     sx={{ color: 'rgba(255,255,255,0.6)' }}
+//                   />
+//                 </InputAdornment>
+//               ),
+//             }}
+//             sx={{
+//               '& .MuiOutlinedInput-root': {
+//                 borderRadius: 1.5,
+//                 background: 'rgba(255,255,255,0.2)',
+//                 input: { p: 0.8, color: '#fff' },
+//                 '& .MuiOutlinedInput-input::placeholder': {
+//                   color: 'rgba(255,255,255,0.6)',
+//                 },
+//               },
+//             }}
+//           />
+//         </Box>
+//         <Box sx={{ flexBasis: { xs: '100%', md: '18%' } }}>
+//           <FormControl fullWidth size="small">
+//             <Select
+//               value={sort}
+//               onChange={(e) => setSort(e.target.value)}
+//               sx={{
+//                 bgcolor: 'white',
+//                 borderRadius: 1.5,
+//                 textTransform: 'none',
+//               }}
+//             >
+//               {SORT_OPTIONS.map((option) => (
+//                 <MenuItem key={option} value={option}>
+//                   {option}
+//                 </MenuItem>
+//               ))}
+//             </Select>
+//           </FormControl>
+//         </Box>
+//       </Stack>
+
+//       {/* NFT Cards */}
+//       <Grid container spacing={3} mb={14}>
+//         {filteredProducts.slice(0, visibleCount).map((nft) => (
+//           <Grid size={{ xs: 12, sm: 6, md: 3 }} key={nft.id}>
+//             <Link
+//               href={`/marketplace/${nft.id}`}
+//               style={{ textDecoration: 'none' }}
+//             >
+//               <Card
+//                 sx={{
+//                   bgcolor: 'rgba(255,255,255)',
+//                   borderRadius: 3,
+//                   overflow: 'hidden',
+//                   color: 'black',
+//                   transition: '0.3s',
+//                   '&:hover': {
+//                     transform: 'translateY(-6px)',
+//                     boxShadow: '0 10px 20px rgba(0,0,0,0.3)',
+//                   },
+//                 }}
+//               >
+//                 <Image
+//                   src={`https://gateway.pinata.cloud/ipfs/${nft.image}`}
+//                   alt={nft.name}
+//                   width={450}
+//                   height={350}
+//                   style={{ width: '100%', height: 'auto' }}
+//                 />
+//                 <CardContent>
+//                   <Typography variant="subtitle2" sx={{ opacity: 0.5 }}>
+//                     {nft.properties.map((p) => p.type).join(', ')}
+//                   </Typography>
+//                   <Typography variant="h6" sx={{ fontWeight: 500 }}>
+//                     {nft.name}
+//                   </Typography>
+//                   <Box
+//                     sx={{
+//                       mt: 1.2,
+//                       display: 'flex',
+//                       justifyContent: 'space-between',
+//                       alignItems: 'center',
+//                     }}
+//                   >
+//                     <Typography
+//                       variant="body2"
+//                       sx={{ fontWeight: 500, fontSize: '1rem' }}
+//                     >
+//                       {nft.price} ETH
+//                     </Typography>
+//                     <FavoriteBorderIcon
+//                       sx={{ fontSize: '0.85rem', opacity: 0.6 }}
+//                     />
+//                   </Box>
+//                   <Button
+//                     variant="contained"
+//                     fullWidth
+//                     sx={{ mt: 2, bgcolor: '#9230FF', textTransform: 'none' }}
+//                   >
+//                     Buy Now
+//                   </Button>
+//                 </CardContent>
+//               </Card>
+//             </Link>
+//           </Grid>
+//         ))}
+
+//         {/* Load More / See Less */}
+//         <Box display="flex" justifyContent="center" mt={3} width="100%">
+//           <Button
+//             variant="contained"
+//             onClick={handleToggle}
+//             sx={{
+//               p: '6px 12px',
+//               borderRadius: 1.5,
+//               bgcolor: '#232A33',
+//               color: 'white',
+//               width: 125,
+//               textTransform: 'none',
+//             }}
+//           >
+//             {expanded ? 'See Less' : 'Load More'}
+//           </Button>
+//         </Box>
+//       </Grid>
+//     </>
+//   );
+// };
+
+// export default NFTTable;
 'use client';
 
 import {
@@ -340,8 +557,8 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
 import Link from 'next/link';
-import { useAllProducts } from '@/hooks/useAllProducts';
-import { Product } from '@/services/product_allService';
+import { useAllProducts } from '@/hooks/useProduct';
+import { Product } from '@/types/product';
 
 const SORT_OPTIONS = ['Latest', 'Price: Low to High', 'Price: High to Low'];
 
@@ -369,6 +586,7 @@ const NFTTable = () => {
   let filteredProducts: Product[] = Array.isArray(products)
     ? [...products]
     : [];
+
   if (search) {
     filteredProducts = filteredProducts.filter(
       (p) =>
@@ -387,77 +605,106 @@ const NFTTable = () => {
     filteredProducts.sort((a, b) => b.price - a.price);
 
   return (
-    <>
+    <Stack >
       {/* Search & Sort */}
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        justifyContent="space-between"
-        flexWrap="wrap"
-        gap={1}
-        mb={2}
-      >
-        <Box sx={{ flexBasis: { xs: '100%', md: '49%' } }}>
-          <TextField
-            placeholder="Search by name or creator"
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon
-                    fontSize="small"
-                    sx={{ color: 'rgba(255,255,255,0.6)' }}
-                  />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 1.5,
-                background: 'rgba(255,255,255,0.2)',
-                input: { p: 0.8, color: '#fff' },
-                '& .MuiOutlinedInput-input::placeholder': {
-                  color: 'rgba(255,255,255,0.6)',
-                },
-              },
-            }}
-          />
-        </Box>
-        <Box sx={{ flexBasis: { xs: '100%', md: '18%' } }}>
-          <FormControl fullWidth size="small">
-            <Select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              sx={{
-                bgcolor: 'white',
-                borderRadius: 1.5,
-                textTransform: 'none',
-              }}
-            >
-              {SORT_OPTIONS.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-      </Stack>
+      <Box
+  sx={{
+    maxWidth: '1200px',
+    mx: 'auto', // căn giữa
+    width: '100%',
+    // px: { xs: 2, sm: 4, md: 6 },
+  }}
+>
+  <Stack
+    direction={{ xs: 'column', sm: 'row', md: 'row' }}
+    justifyContent="space-between"
+    alignItems="center"
+    gap={1}
+    mb={4}
+    width="100%"
+    // bgcolor="#fff"
+    borderRadius={2}
+    p={2}
+  >
+    {/* Search Box */}
+    <Box sx={{ flexBasis: { xs: '100%', sm: '50%', md: '49%' } }}>
+      <TextField
+        placeholder="Search by name or creator"
+        variant="outlined"
+        size="small"
+        fullWidth
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon
+                fontSize="small"
+                sx={{ color: 'rgba(255,255,255,0.6)' }}
+              />
+            </InputAdornment>
+          ),
+        }}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 1.5,
+            background: 'rgba(255,255,255,0.2)',
+            input: { p: 0.8, color: '#fff' },
+            '& .MuiOutlinedInput-input::placeholder': {
+              color: 'rgba(255,255,255,0.6)',
+            },
+          },
+        }}
+      />
+    </Box>
+
+    {/* Sort Box */}
+    <Box
+      sx={{
+        flexBasis: { xs: '100%', sm: '50%', md: '10%' },
+        display: 'flex',
+        justifyContent: 'flex-end',
+      }}
+    >
+      <FormControl fullWidth size="small">
+        <Select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          sx={{
+            bgcolor: { xs: 'rgba(255,255,255,0.2)', md: 'white' },
+            borderRadius: 1.5,
+            textTransform: 'none',
+          }}
+        >
+          {SORT_OPTIONS.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
+  </Stack>
+</Box>
+
 
       {/* NFT Cards */}
-      <Grid container spacing={3} mb={14}>
+      <Grid
+        container
+        spacing={3}
+        // justifyContent="center"
+        mb={14}
+        px={{ xs: 2, sm: 4, md: 6 }}
+      >
         {filteredProducts.slice(0, visibleCount).map((nft) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={nft.id}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={nft.id}>
             <Link
               href={`/marketplace/${nft.id}`}
               style={{ textDecoration: 'none' }}
             >
               <Card
                 sx={{
-                  bgcolor: 'rgba(255,255,255)',
+                  bgcolor: 'white',
                   borderRadius: 3,
                   overflow: 'hidden',
                   color: 'black',
@@ -471,8 +718,8 @@ const NFTTable = () => {
                 <Image
                   src={`https://gateway.pinata.cloud/ipfs/${nft.image}`}
                   alt={nft.name}
-                  width={450}
-                  height={350}
+                  width={460}
+                  height={360}
                   style={{ width: '100%', height: 'auto' }}
                 />
                 <CardContent>
@@ -531,7 +778,7 @@ const NFTTable = () => {
           </Button>
         </Box>
       </Grid>
-    </>
+    </Stack>
   );
 };
 

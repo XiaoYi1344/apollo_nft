@@ -1,6 +1,5 @@
 'use client';
 import { Box, Grid, Stack, Typography } from '@mui/material';
-
 import FilterPanel from './filter/Filter';
 import NFTTable from './table/NFT';
 import Image from 'next/image';
@@ -23,14 +22,15 @@ const Marketplace = () => {
           '--glow-size': '900px',
           '--glow-left': '-30%',
           '--glow-top': '-1%',
-           '--glow-color1': 'rgba(214,34,218,0.6)',
-            '--glow-color2': 'rgba(214,34,218,0.4)',
+          '--glow-color1': 'rgba(214,34,218,0.6)',
+          '--glow-color2': 'rgba(214,34,218,0.4)',
           '--glow-blur': '100px',
           '--glow-opacity': '0.6',
         }}
       />
 
-      <Box sx={{ px: 4, pt: 10 }}>
+      <Box sx={{ px: { xs: 2, md: 6 }, pt: 10 }}>
+        {/* Tiêu đề */}
         <Box
           sx={{
             display: 'flex',
@@ -39,7 +39,6 @@ const Marketplace = () => {
             fontWeight: 700,
           }}
         >
-          {/* Icon */}
           <Box
             sx={{
               position: 'relative',
@@ -57,27 +56,35 @@ const Marketplace = () => {
             />
           </Box>
 
-          {/* Text */}
           <Typography variant="h4" component="h1">
             Explore the Marketplace
           </Typography>
         </Box>
 
-        <Stack direction="row">
-          <Grid container spacing={1}>
-            <Grid size={{ xs: 12, sm: 5, md: 3}}>
-              <FilterPanel />
-          
-            </Grid>
+        {/* Layout 3:9 */}
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+  {/* FilterPanel */}
+  <Box
+    sx={{
+      flexBasis: { xs: '100%', sm: '30%', md: '25%' },
+      flexShrink: 0,
+    }}
+  >
+    <FilterPanel />
+  </Box>
 
-            <Grid size={{ xs: 12, sm: 7, md: 9}}>
-             
-          <Box sx={{ flex: 1 }}>
-            <NFTTable />
-          </Box>
-            </Grid>
-          </Grid>
-        </Stack>
+  {/* NFTTable */}
+  <Box
+    sx={{
+      flexBasis: { xs: '100%', sm: '70%', md: '75%' },
+      flexGrow: 1,
+    }}
+  >
+    <NFTTable />
+  </Box>
+</Stack>
+
+
       </Box>
     </Box>
   );

@@ -540,6 +540,341 @@
 // export default CreatorDetail;
 
 // ================== CreatorDetail.tsx ==================
+// 'use client';
+
+// import React, { useState } from 'react';
+// import {
+//   Box,
+//   Avatar,
+//   Typography,
+//   Button,
+//   Grid,
+//   Card,
+//   CardMedia,
+//   CardContent,
+//   Stack,
+//   Tabs,
+//   Tab,
+//   CircularProgress,
+// } from '@mui/material';
+// import { ArrowBack, Instagram, Twitter } from '@mui/icons-material';
+// import { useSearchParams } from 'next/navigation';
+// import toast from 'react-hot-toast';
+// import { Creator } from './data/creatorsData';
+// import {
+//   useOwnedProducts,
+//   usePostProductForSale,
+//   useUpdateProduct,
+// } from '@/hooks/useProduct';
+// import EditProductDialog from './EditProductDialog';
+// import { OwnedProduct, UpdateProductPayload } from '@/types/product';
+
+// interface Props {
+//   creator: Creator | null;
+//   onBack: () => void;
+//   isWalletMode?: boolean;
+// }
+
+// const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
+//   const [tab, setTab] = useState(0);
+//   const searchParams = useSearchParams();
+//   const walletMode = isWalletMode ?? searchParams?.get('walletMode') === 'true';
+
+//   // Query data
+//   const {
+//     data: ownedProducts,
+//     isLoading,
+//     isError,
+//     refetch,
+//   } = useOwnedProducts();
+
+//   // Mutations
+//   const postProductMutation = usePostProductForSale();
+//   const updateProductMutation = useUpdateProduct();
+
+//   // Dialog state
+//   const [openEditDialog, setOpenEditDialog] = useState(false);
+//   const [selectedProduct, setSelectedProduct] = useState<OwnedProduct | null>(
+//     null,
+//   );
+
+//   const handleOpenEdit = (product: OwnedProduct) => {
+//     // Chỉ mapping type và name trong properties
+//     const mappedProduct: OwnedProduct = {
+//       ...product,
+//       externalLink: product.externalLink || '',
+//       properties: product.properties.map((prop) => ({
+//         type: prop.type || '',
+//         name: prop.name || '',
+//       })),
+//     };
+//     setSelectedProduct(mappedProduct);
+//     setOpenEditDialog(true);
+//   };
+
+//   if (!creator) return null;
+
+//   // Export CSV
+//   const handleExport = () => {
+//     const csvHeader = [
+//       'Name',
+//       'Total Revenue',
+//       'Followers',
+//       'Number of Works',
+//       'Floor Price',
+//     ];
+//     const csvRow = [
+//       creator.name,
+//       creator.totalVolume,
+//       creator.followers,
+//       creator.works,
+//       creator.floorPrice,
+//     ];
+//     const csvContent =
+//       'data:text/csv;charset=utf-8,' +
+//       [csvHeader.join(','), csvRow.join(',')].join('\n');
+//     const encodedUri = encodeURI(csvContent);
+//     const link = document.createElement('a');
+//     link.href = encodedUri;
+//     link.download = `creator_stats.csv`;
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+//   };
+
+//   return (
+//     <Stack position="relative" sx={{ overflow: 'hidden', minHeight: '100vh' }}>
+//       {/* Background gradient */}
+//       <Box
+//         sx={{
+//           position: 'absolute',
+//           inset: 0,
+//           background: 'linear-gradient(120deg,#12192b,#182858,#341a57)',
+//           overflow: 'hidden',
+//           zIndex: 1,
+//           mt: 37.5,
+//           borderTopLeftRadius: 15,
+//           borderTopRightRadius: 15,
+//         }}
+//       />
+
+//       <Box sx={{ position: 'relative', zIndex: 10 }}>
+//         {/* Banner */}
+//         <Box
+//           component="img"
+//           src={creator.banner}
+//           alt="banner"
+//           sx={{
+//             width: '100%',
+//             height: 300,
+//             objectFit: 'cover',
+//             filter: 'brightness(0.5)',
+//           }}
+//         />
+
+//         {/* Info */}
+//         <Box sx={{ px: 7, pb: 6, position: 'relative' }}>
+//           <Button variant="outlined" onClick={onBack} sx={{ mt: 1 }}>
+//             <ArrowBack fontSize="small" /> Quay lại
+//           </Button>
+
+//           <Avatar
+//             src={creator.avatar}
+//             alt={creator.name}
+//             sx={{
+//               width: { xs: 80, sm: 60, md: 96 },
+//               height: { xs: 80, sm: 60, md: 96 },
+//               border: '4px solid rgba(255,255,255,0.12)',
+//               boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+//               mt: 3,
+//             }}
+//           />
+//           <Typography
+//             variant="h5"
+//             sx={{ color: '#fff', fontWeight: 800, mt: 2 }}
+//           >
+//             {creator.name}
+//           </Typography>
+//           <Typography sx={{ color: '#9b9bbf' }}>{creator.username}</Typography>
+//           <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+//             <Button
+//               variant="contained"
+//               sx={{
+//                 textTransform: 'none',
+//                 background: 'linear-gradient(90deg,#7a3bff,#b78eff)',
+//               }}
+//             >
+//               Follow
+//             </Button>
+//             <Button
+//               variant="outlined"
+//               sx={{
+//                 color: '#cfcfff',
+//                 borderColor: 'rgba(255,255,255,0.1)',
+//                 textTransform: 'none',
+//               }}
+//             >
+//               Chia sẻ
+//             </Button>
+//             <Twitter sx={{ color: '#cfcfff' }} />
+//             <Instagram sx={{ color: '#cfcfff' }} />
+//           </Stack>
+
+//           {/* Stats */}
+//           <Grid container spacing={2} sx={{ my: 4 }}>
+//             {[
+//               { label: 'TOTAL REVENUE', value: creator.totalVolume },
+//               { label: 'FOLLOWERS', value: creator.followers },
+//               { label: 'NUMBER OF WORKS', value: creator.works },
+//               { label: 'FLOOR PRICE', value: creator.floorPrice },
+//             ].map((stat) => (
+//               <Grid key={stat.label} size={{ xs: 6, sm: 3 }}>
+//                 <Typography sx={{ color: '#9b9bbf', fontWeight: 700 }}>
+//                   {stat.value}
+//                 </Typography>
+//                 <Typography sx={{ color: '#9b9bbf' }}>{stat.label}</Typography>
+//               </Grid>
+//             ))}
+//           </Grid>
+
+//           {/* Export */}
+//           <Box sx={{ textAlign: 'center', my: 4 }}>
+//             <Button
+//               variant="text"
+//               onClick={handleExport}
+//               sx={{ color: '#fff', textTransform: 'none' }}
+//             >
+//               Xuất sang Trang tính
+//             </Button>
+//           </Box>
+
+//           {/* Tabs */}
+//           <Box sx={{ mt: 6, mb: 4 }}>
+//             <Tabs value={tab} onChange={(e, val) => setTab(val)}>
+//               <Tab label="Đã tạo" />
+//               <Tab label="Sở hữu" />
+//               <Tab label="Bộ sưu tập" />
+//               <Tab label="Yêu thích" />
+//             </Tabs>
+//           </Box>
+
+//           {/* Tab content */}
+//           {tab === 1 && (
+//             <Grid container spacing={3}>
+//               {isLoading && (
+//                 <Grid size={{ xs: 12 }} sx={{ textAlign: 'center' }}>
+//                   <CircularProgress />
+//                 </Grid>
+//               )}
+//               {isError && (
+//                 <Grid size={{ xs: 12 }}>
+//                   <Typography color="error">Lỗi tải sản phẩm sở hữu</Typography>
+//                 </Grid>
+//               )}
+//               {ownedProducts?.map((it) => (
+//                 <Grid key={it.id} size={{ xs: 12, sm: 6, md: 3 }}>
+//                   <Card
+//                     sx={{ bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 3 }}
+//                   >
+//                     <CardMedia
+//                       component="img"
+//                       image={`https://gateway.pinata.cloud/ipfs/${it.image}`}
+//                       alt={it.name}
+//                       sx={{ height: 300, objectFit: 'cover' }}
+//                     />
+//                     <CardContent sx={{ bgcolor: '#1a1a2e' }}>
+//                       <Typography
+//                         variant="subtitle1"
+//                         sx={{ color: '#fff', fontWeight: 700 }}
+//                       >
+//                         {it.name}
+//                       </Typography>
+//                       <Typography sx={{ color: '#b78eff', mt: 1 }}>
+//                         Giá: {it.price ?? 'N/A'}
+//                       </Typography>
+
+//                       {walletMode && (
+//                         <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+//                           <Button
+//                             size="small"
+//                             variant="contained"
+//                             onClick={() =>
+//                               postProductMutation.mutate(
+//                                 {
+//                                   id: it.id,
+//                                   price: it.price ?? 0,
+//                                   status: 'buyNow',
+//                                 },
+//                                 {
+//                                   onSuccess: () =>
+//                                     toast.success('Product posted for sale!'),
+//                                 },
+//                               )
+//                             }
+//                           >
+//                             Sell
+//                           </Button>
+//                           <Button
+//                             size="small"
+//                             variant="contained"
+//                             onClick={() => handleOpenEdit(it)}
+//                           >
+//                             Update
+//                           </Button>
+//                         </Stack>
+//                       )}
+//                     </CardContent>
+//                   </Card>
+//                 </Grid>
+//               ))}
+//             </Grid>
+//           )}
+//         </Box>
+//       </Box>
+
+//       {/* Dialog sửa sản phẩm */}
+//       {selectedProduct && (
+//         <EditProductDialog
+//           open={openEditDialog}
+//           onClose={() => setOpenEditDialog(false)}
+//           product={selectedProduct}
+//           onSave={(data: OwnedProduct) => {
+//             const fileImage =
+//               typeof data.image === 'object' && data.image !== null
+//                 ? (data.image as File)
+//                 : undefined;
+
+//             const payload: UpdateProductPayload = {
+//               id: String(data.id),
+//               name: data.name,
+//               description: data.description,
+//               properties: data.properties,
+//               price: data.price,
+//               externalLink: data.externalLink,
+//               ...(fileImage ? { image: fileImage } : {}),
+//             };
+
+//             updateProductMutation.mutate(payload, {
+//               onSuccess: () => {
+//                 toast.success('Product updated successfully!');
+//                 setOpenEditDialog(false);
+//                 refetch();
+//               },
+//               onError: (err: unknown) => {
+//                 if (err instanceof Error) toast.error(err.message);
+//                 else toast.error('Failed to update product');
+//               },
+//             });
+//           }}
+//         />
+//       )}
+//     </Stack>
+//   );
+// };
+
+// export default CreatorDetail;
+
+// CreatorDetail.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -556,18 +891,22 @@ import {
   Tabs,
   Tab,
   CircularProgress,
+  Chip,
+  Tooltip,
 } from '@mui/material';
 import { ArrowBack, Instagram, Twitter } from '@mui/icons-material';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { Creator } from './data/creatorsData';
+import { useOwnedProducts, usePostProductForSale } from '@/hooks/useProduct';
 import {
-  useOwnedProducts,
-  usePostProductForSale,
-  useUpdateProduct,
-} from '@/hooks/useProduct';
-import EditProductDialog from './EditProductDialog';
-import { OwnedProduct, UpdateProductPayload } from '@/types/product';
+  OwnedProduct,
+  ProductActivity,
+  ProductProperty,
+} from '@/types/product';
+import { useQueries } from '@tanstack/react-query';
+import * as productService from '@/services/productService';
+import EditNFTModal from './EditNFTModal';
 
 interface Props {
   creator: Creator | null;
@@ -577,10 +916,22 @@ interface Props {
 
 const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
   const [tab, setTab] = useState(0);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<OwnedProduct | null>(
+    null,
+  );
+  const [selectedProductIsMinted, setSelectedProductIsMinted] = useState(false);
+
+  const router = useRouter();
+
+  const handleTabClick = (path: string) => {
+    router.push(path);
+  };
+
   const searchParams = useSearchParams();
   const walletMode = isWalletMode ?? searchParams?.get('walletMode') === 'true';
 
-  // Query data
+  // Queries
   const {
     data: ownedProducts,
     isLoading,
@@ -590,31 +941,61 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
 
   // Mutations
   const postProductMutation = usePostProductForSale();
-  const updateProductMutation = useUpdateProduct();
 
-  // Dialog state
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<OwnedProduct | null>(
-    null,
+  // Activity queries
+  const activitiesQueries = useQueries({
+    queries:
+      ownedProducts?.map((product) => ({
+        queryKey: ['productActivity', product.id],
+        queryFn: () => productService.getProductActivity(product.id),
+        staleTime: 1000 * 60,
+      })) || [],
+  });
+
+  const allActivities = activitiesQueries.map(
+    (q) =>
+      q.data?.map((a) => ({
+        ...a,
+        eventType: a.evenType ?? a.evenType,
+      })) ?? [],
   );
+  const activitiesLoading = activitiesQueries.some((q) => q.isLoading);
 
-  const handleOpenEdit = (product: OwnedProduct) => {
-    // Chỉ mapping type và name trong properties
-    const mappedProduct: OwnedProduct = {
+  // Open modal
+  const handleOpenEdit = (
+    product: OwnedProduct,
+    activities: ProductActivity[],
+  ) => {
+    const parsedProperties: ProductProperty[] = Array.isArray(
+      product.properties,
+    )
+      ? product.properties
+      : (JSON.parse(product.properties || '[]') as ProductProperty[]);
+
+    const mappedProduct = {
       ...product,
-      externalLink: product.externalLink || '',
-      properties: product.properties.map((prop) => ({
-        type: prop.type || '',
-        name: prop.name || '',
+      properties: parsedProperties.map((p) => ({
+        type: p.type || '',
+        name: p.name || '',
       })),
+      isFreeze: Boolean(product.isFreeze),
+      externalLink: product.externalLink || '',
     };
+
+    // Tính isMinted dựa trên activity
+    const selectedProductIsMinted = activities.some(
+      (a) => a.evenType === 'Mint',
+    );
+
     setSelectedProduct(mappedProduct);
     setOpenEditDialog(true);
+
+    // Lưu isMinted vào state nếu muốn
+    setSelectedProductIsMinted(selectedProductIsMinted);
   };
 
   if (!creator) return null;
 
-  // Export CSV
   const handleExport = () => {
     const csvHeader = [
       'Name',
@@ -644,7 +1025,7 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
 
   return (
     <Stack position="relative" sx={{ overflow: 'hidden', minHeight: '100vh' }}>
-      {/* Background gradient */}
+      {/* Background */}
       <Box
         sx={{
           position: 'absolute',
@@ -682,8 +1063,8 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
             src={creator.avatar}
             alt={creator.name}
             sx={{
-              width: { xs: 80, md: 96 },
-              height: { xs: 80, md: 96 },
+              width: { xs: 80, sm: 60, md: 96 },
+              height: { xs: 80, sm: 60, md: 96 },
               border: '4px solid rgba(255,255,255,0.12)',
               boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
               mt: 3,
@@ -696,6 +1077,7 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
             {creator.name}
           </Typography>
           <Typography sx={{ color: '#9b9bbf' }}>{creator.username}</Typography>
+
           <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
             <Button
               variant="contained"
@@ -728,8 +1110,8 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
               { label: 'NUMBER OF WORKS', value: creator.works },
               { label: 'FLOOR PRICE', value: creator.floorPrice },
             ].map((stat) => (
-              <Grid key={stat.label} size={{ xs: 6, sm: 3 }}>
-                <Typography sx={{ color: '#9b9bbf', fontWeight: 700 }}>
+              <Grid key={stat.label} size={{ xs: 6, md: 4 }}>
+                <Typography sx={{ color: '#fff', fontWeight: 700 }}>
                   {stat.value}
                 </Typography>
                 <Typography sx={{ color: '#9b9bbf' }}>{stat.label}</Typography>
@@ -742,7 +1124,11 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
             <Button
               variant="text"
               onClick={handleExport}
-              sx={{ color: '#fff', textTransform: 'none' }}
+              sx={{
+                color: '#fff',
+                textTransform: 'none',
+                '&:hover': { color: '#b78eff' },
+              }}
             >
               Xuất sang Trang tính
             </Button>
@@ -750,15 +1136,25 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
 
           {/* Tabs */}
           <Box sx={{ mt: 6, mb: 4 }}>
-            <Tabs value={tab} onChange={(e, val) => setTab(val)}>
+            <Tabs
+              value={tab}
+              onChange={(e, val) => setTab(val)}
+              textColor="secondary"
+              indicatorColor="secondary"
+            >
               <Tab label="Đã tạo" />
               <Tab label="Sở hữu" />
               <Tab label="Bộ sưu tập" />
               <Tab label="Yêu thích" />
+              <Tab
+                label="Tải thêm"
+                onClick={() => handleTabClick('/upload')}
+                style={{ cursor: 'pointer' }}
+              />
             </Tabs>
           </Box>
 
-          {/* Tab content */}
+          {/* Tab content: Sở hữu */}
           {tab === 1 && (
             <Grid container spacing={3}>
               {isLoading && (
@@ -771,101 +1167,221 @@ const CreatorDetail: React.FC<Props> = ({ creator, onBack, isWalletMode }) => {
                   <Typography color="error">Lỗi tải sản phẩm sở hữu</Typography>
                 </Grid>
               )}
-              {ownedProducts?.map((it) => (
-                <Grid key={it.id} size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Card
-                    sx={{ bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 3 }}
-                  >
-                    <CardMedia
-                      component="img"
-                      image={`https://gateway.pinata.cloud/ipfs/${it.image}`}
-                      alt={it.name}
-                      sx={{ height: 300, objectFit: 'cover' }}
-                    />
-                    <CardContent sx={{ bgcolor: '#1a1a2e' }}>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ color: '#fff', fontWeight: 700 }}
-                      >
-                        {it.name}
-                      </Typography>
-                      <Typography sx={{ color: '#b78eff', mt: 1 }}>
-                        Giá: {it.price ?? 'N/A'}
-                      </Typography>
 
-                      {walletMode && (
-                        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() =>
-                              postProductMutation.mutate(
-                                {
-                                  id: it.id,
-                                  price: it.price ?? 0,
-                                  status: 'buyNow',
-                                },
-                                {
-                                  onSuccess: () =>
-                                    toast.success('Product posted for sale!'),
-                                },
-                              )
-                            }
+              {ownedProducts?.map((product, idx) => {
+                const activities = allActivities[idx] ?? [];
+                // NFT được coi là minted nếu có event Mint
+                const isMinted = activities.some(
+                  (a: ProductActivity) => a.evenType === 'Mint',
+                );
+                const isFrozen = product.isFreeze;
+
+                return (
+                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
+                    <Card
+                      sx={{
+                        bgcolor: 'rgba(255,255,255,0.03)',
+                        borderRadius: 3,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-5px)',
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                        },
+                      }}
+                    >
+                      <CardMedia
+                        component="img"
+                        image={`https://gateway.pinata.cloud/ipfs/${product.image}`}
+                        alt={product.name}
+                        sx={{
+                          height: 280,
+                          objectFit: 'cover',
+                          borderTopLeftRadius: 12,
+                          borderTopRightRadius: 12,
+                        }}
+                      />
+                      <CardContent sx={{ bgcolor: '#1a1a2e' }}>
+                        <Stack
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Typography
+                            variant="subtitle1"
+                            sx={{
+                              color: '#fff',
+                              fontWeight: 700,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
                           >
-                            Sell
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() => handleOpenEdit(it)}
-                          >
-                            Update
-                          </Button>
+                            {product.name}
+                          </Typography>
                         </Stack>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+
+                        {activitiesLoading ? (
+                          <CircularProgress size={16} sx={{ mt: 1 }} />
+                        ) : (
+                          <Stack
+                            direction="row"
+                            spacing={1}
+                            sx={{ mt: 1, flexWrap: 'wrap' }}
+                          >
+                            {isMinted && (
+                              <Tooltip title="Sản phẩm đã được mint onchain">
+                                <Chip
+                                  label="Minted"
+                                  size="small"
+                                  sx={{
+                                    bgcolor: 'rgba(0,255,127,0.15)',
+                                    color: '#00FA9A',
+                                    fontWeight: 600,
+                                  }}
+                                />
+                              </Tooltip>
+                            )}
+                            {isFrozen && (
+                              <Tooltip title="Metadata của sản phẩm đã bị khóa (freeze)">
+                                <Chip
+                                  label="Frozen"
+                                  size="small"
+                                  sx={{
+                                    bgcolor: 'rgba(135,206,250,0.15)',
+                                    color: '#1E90FF',
+                                    fontWeight: 600,
+                                  }}
+                                />
+                              </Tooltip>
+                            )}
+                          </Stack>
+                        )}
+
+                        <Typography sx={{ color: '#b78eff', mt: 1 }}>
+                          Giá: {product.price ?? 'N/A'}
+                        </Typography>
+
+                        {walletMode && (
+                          //                           <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                          //                             <Button
+                          //                               size="small"
+                          //                               variant="contained"
+                          //                               sx={{
+                          //                                 background:
+                          //                                   'linear-gradient(90deg,#8b5cf6,#7c3aed)',
+                          //                                 textTransform: 'none',
+                          //                               }}
+                          //                               onClick={() =>
+                          //                                 postProductMutation.mutate(
+                          //                                   {
+                          //                                     id: product.id,
+                          //                                     price: product.price ?? 0,
+                          //                                     type: 'buyNow',
+                          //                                   },
+                          //                                   {
+                          //                                     onSuccess: () =>
+                          //                                       toast.success('Product posted for sale!'),
+                          //                                   },
+                          //                                 )
+                          //                               }
+                          //                             >
+                          //                               Sell
+                          //                             </Button>
+
+                          //                             <Button
+                          //   size="small"
+                          //   variant="outlined"
+                          //   sx={{
+                          //     borderColor: '#7a3bff',
+                          //     color: '#b78eff',
+                          //     textTransform: 'none',
+                          //   }}
+                          //   onClick={() => handleOpenEdit(product, activities)}
+                          //   disabled={isMinted && !isFrozen} // đúng logic: minted + chưa freeze → không cho edit
+                          // >
+                          //   Update
+                          // </Button>
+
+                          //                           </Stack>
+                          <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                            <Button
+                              size="small"
+                              variant="contained"
+                              sx={{
+                                background:
+                                  'linear-gradient(90deg,#8b5cf6,#7c3aed)',
+                                textTransform: 'none',
+                              }}
+                              onClick={() =>
+                                postProductMutation.mutate(
+                                  {
+                                    id: product.id,
+                                    price: product.price ?? 0,
+                                    type: 'buyNow',
+                                  },
+                                  {
+                                    onSuccess: () =>
+                                      toast.success('Product posted for sale!'),
+                                  },
+                                )
+                              }
+                            >
+                              Sell
+                            </Button>
+
+                            {isMinted ? (
+                              // NFT đã minted → hiển thị Update
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                  borderColor: '#7a3bff',
+                                  color: '#b78eff',
+                                  textTransform: 'none',
+                                }}
+                                onClick={() =>
+                                  handleOpenEdit(product, activities)
+                                }
+                              >
+                                Update
+                              </Button>
+                            ) : (
+                              // NFT chưa minted → hiển thị Mint
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                  borderColor: '#7a3bff',
+                                  color: '#b78eff',
+                                  textTransform: 'none',
+                                }}
+                                onClick={() =>
+                                  handleOpenEdit(product, activities)
+                                }
+                              >
+                                Mint
+                              </Button>
+                            )}
+                          </Stack>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })}
             </Grid>
           )}
         </Box>
       </Box>
 
-      {/* Dialog sửa sản phẩm */}
+      {/* Modal Edit/Create NFT */}
       {selectedProduct && (
-        <EditProductDialog
+        <EditNFTModal
           open={openEditDialog}
           onClose={() => setOpenEditDialog(false)}
           product={selectedProduct}
-          onSave={(data: OwnedProduct) => {
-            const fileImage =
-              typeof data.image === 'object' && data.image !== null
-                ? (data.image as File)
-                : undefined;
-
-            const payload: UpdateProductPayload = {
-              id: String(data.id),
-              name: data.name,
-              description: data.description,
-              properties: data.properties,
-              price: data.price,
-              externalLink: data.externalLink,
-              ...(fileImage ? { image: fileImage } : {}),
-            };
-
-            updateProductMutation.mutate(payload, {
-              onSuccess: () => {
-                toast.success('Product updated successfully!');
-                setOpenEditDialog(false);
-                refetch();
-              },
-              onError: (err: unknown) => {
-                if (err instanceof Error) toast.error(err.message);
-                else toast.error('Failed to update product');
-              },
-            });
-          }}
+          onUpdate={refetch}
+          isMinted={selectedProductIsMinted} // tính từ activity
         />
       )}
     </Stack>
