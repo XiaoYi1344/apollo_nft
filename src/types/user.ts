@@ -1,0 +1,54 @@
+export interface ProductSummary {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  externalLink: string;
+  properties: Array<{ type: string; name: string; supply: number; blockchain: string; tokenId: string; contractAddress: string; tokenURI: string; isFreeze: boolean }>;
+  type: 'buyNow' | 'onAuction';
+  price: string;
+  likeCount: number;
+  isLike: boolean;
+  listingId: number | null;
+}
+
+export interface CollectionSummary {
+  id: number;
+  name: string;
+  image: string;
+  products: ProductSummary[];
+}
+
+export interface UserProfile {
+  id: number;
+  fullName: string;
+  userName: string;
+  addressWallet: string;
+  bio: string;
+  background?: string;
+  avatar?: string;
+  likeCount: number;
+  followCount: number;
+  isFollow: boolean;
+  ownedProducts: ProductSummary[];
+  collectionProducts?: CollectionSummary[];
+}
+
+export interface UpdateUserPayload {
+  userName: string;
+  fullName: string;
+  bio: string;
+  avatar?: File;
+  banner?: File;
+}
+
+export interface UpdateUserBackgroundPayload {
+  image: File;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+

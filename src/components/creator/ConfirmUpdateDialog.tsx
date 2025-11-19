@@ -20,7 +20,7 @@ interface Props {
   data: {
     tokenId: number;
     tokenURI: string;
-    price: number;
+    price: string;
   };
   onConfirm: () => Promise<void>;
 }

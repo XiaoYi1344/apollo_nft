@@ -832,20 +832,33 @@ const Upload: React.FC = () => {
     if (!propertyBlockchain) return toast.error('Please select a blockchain');
     if (propertySupply <= 0)
       return toast.error('Supply must be greater than 0');
+
+    // Validate external link (optional)
     if (
-  externalLink &&
-  !/^(https?:\/\/)?([\w.-]+|\blocalhost\b)(:\d+)?(\/[\w\-./?%&=]*)?$/.test(externalLink)
-)
-  return toast.error('Invalid external link');
+      externalLink &&
+      !/^(https?:\/\/)?([\w.-]+|\blocalhost\b)(:\d+)?(\/[\w\-./?%&=]*)?$/.test(
+        externalLink,
+      )
+    ) {
+      return toast.error('Invalid external link');
+    }
 
+    // ============================== PRICE HANDLING ==============================
+    // API yêu cầu price: string
+    let price = '0';
 
-    const price = freezeMetadata
-      ? Number(localStorage.getItem(`pendingPrice_${name || 'temp'}`) || '0')
-      : 0;
+    if (freezeMetadata) {
+      const savedPrice =
+        localStorage.getItem(`pendingPrice_${name || 'temp'}`) || '';
 
-    if (freezeMetadata && price <= 0)
-      return toast.error('Please set a valid price before creating the item');
+      if (!savedPrice || Number(savedPrice) <= 0) {
+        return toast.error('Please set a valid price before creating the item');
+      }
 
+      price = savedPrice.trim();
+    }
+
+    // ============================== BUILD PAYLOAD ==============================
     const payload: CreateProductPayload = {
       name,
       description,
@@ -853,7 +866,7 @@ const Upload: React.FC = () => {
       image: file,
       properties,
       isFreeze: freezeMetadata,
-      price,
+      price, // must be string
       supply: propertySupply,
       blockchain: propertyBlockchain,
     };
@@ -861,6 +874,7 @@ const Upload: React.FC = () => {
     try {
       await createProductMutation.mutateAsync(payload);
       toast.success('NFT created successfully!');
+
       localStorage.removeItem(`pendingPrice_${name || 'temp'}`);
 
       // Reset form
@@ -879,7 +893,6 @@ const Upload: React.FC = () => {
 
       router.push(`/creator/creator-detail?walletMode=true&address=${account}`);
     } catch (err: unknown) {
-      // kiểm tra err có phải Error hay không
       if (err instanceof Error) {
         toast.error(err.message);
       } else {

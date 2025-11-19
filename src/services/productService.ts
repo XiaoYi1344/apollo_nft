@@ -377,7 +377,14 @@ const getAuthHeader = () => {
 export const createProduct = async (
   data: CreateProductPayload,
 ): Promise<CreateProductResponse> => {
-  if (!data.name || !data.description || !data.image || !data.supply || !data.blockchain || data.price === undefined) {
+  if (
+    !data.name ||
+    !data.description ||
+    !data.image ||
+    !data.supply ||
+    !data.blockchain ||
+    data.price === undefined
+  ) {
     throw new Error('Missing required product fields');
   }
 
@@ -397,12 +404,13 @@ export const createProduct = async (
   }
 
   if (data.externalLink) formData.append('externalLink', data.externalLink);
-  if (data.properties) formData.append('properties', JSON.stringify(data.properties));
+  if (data.properties)
+    formData.append('properties', JSON.stringify(data.properties));
 
   formData.append('supply', String(data.supply));
   formData.append('blockchain', data.blockchain);
   formData.append('isFreeze', String(data.isFreeze || false));
-  formData.append('price', String(data.price));
+  formData.append('price', data.price);
 
   // Log formData for debugging
   for (const [key, value] of formData.entries()) {
@@ -442,7 +450,7 @@ export const updateProduct = async (
   if (data.blockchain) formData.append('blockchain', data.blockchain);
   if (data.isFreeze !== undefined)
     formData.append('isFreeze', String(data.isFreeze));
-  if (data.price !== undefined) formData.append('price', String(data.price));
+  if (data.price !== undefined) formData.append('price', data.price);
 
   const res = await axios.put(`${API_URL}/api/product`, formData, {
     headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' },
@@ -450,26 +458,41 @@ export const updateProduct = async (
   });
 
   return {
-    success: true,
-    message: 'Cập nhật thành công!',
-    data: res.data.tokenURI || '',
-  };
+  success: res.data.success,
+  message: res.data.message,
+  data: res.data.data || '',
 };
 
+};
 
 // ==================== POST PRODUCT FOR SALE ====================
 /**
- * API đăng bán sản phẩm
+ * API đăng bán sản phẩm hoặc chỉnh sửa trạng thái bán
  * PUT /api/product/post-product
  * Header: accessToken
  */
 export const postProductForSale = async (
   data: PostProductPayload,
 ): Promise<ProductResponse> => {
-  const res = await axios.put<ProductResponse>(`${API_URL}/api/product`, data, {
-    headers: getAuthHeader(),
-    withCredentials: true,
-  });
+  // Kiểm tra dữ liệu bắt buộc
+  if (!data.id || !data.price || !data.type) {
+    throw new Error('Missing required fields: id, price, type');
+  }
+
+  // Nếu type = onAuction, bắt buộc phải có startTime và endTime
+  if (data.type === 'onAuction' && (!data.startTime || !data.endTime)) {
+    throw new Error('startTime and endTime are required for onAuction');
+  }
+
+  const res = await axios.put<ProductResponse>(
+    `${API_URL}/api/product/post-product`,
+    data,
+    {
+      headers: getAuthHeader(),
+      withCredentials: true,
+    },
+  );
+
   return res.data;
 };
 
@@ -478,23 +501,46 @@ export const postProductForSale = async (
  * API lấy tất cả sản phẩm đã đăng bán
  * GET /api/product/get-all
  */
+// export const getAllProducts = async (): Promise<Product[]> => {
+//   const res = await axios.get<ApiResponse<Product[]>>(
+//     `${API_URL}/api/product/get-all`,
+//     {
+//       headers: { ...getAuthHeader(), 'ngrok-skip-browser-warning': 'true' },
+//       withCredentials: true,
+//     },
+//   );
+
+//   return res.data.data.map((p) => ({
+//     ...p,
+//     properties:
+//       typeof p.properties === 'string'
+//         ? JSON.parse(p.properties)
+//         : p.properties,
+//   }));
+// };
 export const getAllProducts = async (): Promise<Product[]> => {
+  const wallet = Cookies.get("account") || "";
+
   const res = await axios.get<ApiResponse<Product[]>>(
     `${API_URL}/api/product/get-all`,
     {
-      headers: { ...getAuthHeader(), 'ngrok-skip-browser-warning': 'true' },
+      params: {
+        addressWallet: wallet, // ⭐ gửi ví ở query
+      },
+      headers: { ...getAuthHeader(), "ngrok-skip-browser-warning": "true" },
       withCredentials: true,
-    },
+    }
   );
 
   return res.data.data.map((p) => ({
     ...p,
     properties:
-      typeof p.properties === 'string'
+      typeof p.properties === "string"
         ? JSON.parse(p.properties)
         : p.properties,
   }));
 };
+
 
 // ==================== GET ALL OWNED PRODUCTS ====================
 /**

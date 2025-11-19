@@ -576,7 +576,7 @@ export const useWalletAuth = () => {
 
         const { accessToken, user } = await verifySignature(addressWallet, signature);
 
-        const expiry = Date.now() + 1 * 60 * 1000; // 1 giờ
+        const expiry = Date.now() + 60 * 60 * 1000; // 1 giờ
         Cookies.set('accessToken', accessToken, { expires: 1 / 24, sameSite: 'strict' });
         Cookies.set('account', addressWallet, { expires: 1 / 24, sameSite: 'strict' });
         Cookies.set('tokenExpiry', expiry.toString(), { expires: 1 / 24, sameSite: 'strict' });

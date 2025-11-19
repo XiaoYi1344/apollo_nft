@@ -118,7 +118,7 @@
 //   data: T;
 // }
 
-// ==================== TYPES ====================
+// ==================== BASE TYPES ====================
 
 export interface ProductProperty {
   type: string;
@@ -137,6 +137,8 @@ export interface CollectionInfo {
   name: string;
 }
 
+// ==================== PRODUCT (ĐÃ ĐĂNG BÁN / GET ALL) ====================
+
 export interface Product {
   id: number;
   name: string;
@@ -150,13 +152,39 @@ export interface Product {
   contractAddress: string;
   tokenURI: string;
   isFreeze: boolean;
-  status: 'buyNow' | 'onAuction' | null;
-  price: number;
-  instock?: number;
+
+  /** Kiểu đăng bán */
+  type?: 'buyNow' | 'onAuction' | null;
+
+  price: string;
+
+  /** Lượt thích */
+  likeCount: number;
+
+  /** User đang đăng nhập có like hay chưa */
+  isLike: boolean;
+
+  /** Tổng số lượng user đang sở hữu */
+  totalInstock?: number;
+
+  /** Số lượng đã đăng bán nhưng chưa có người mua */
+  soldInstock?: number;
+
+  /** ID listing nếu có */
+  listingId?: number | null;
+
+  /** Người bán NFT */
   seller?: UserInfo[];
+
+  /** Người tạo NFT */
   creator: UserInfo[];
+
+  /** Bộ sưu tập */
   collections?: CollectionInfo[];
 }
+
+// ==================== OWNED PRODUCT ====================
+// (API GET /product/get-all-owned)
 
 export interface OwnedProduct {
   id: number;
@@ -166,17 +194,36 @@ export interface OwnedProduct {
   externalLink?: string;
   properties: ProductProperty[];
   supply?: number;
+
   blockchain?: string;
   tokenId?: string | null;
   contractAddress?: string | null;
   tokenURI: string;
   isFreeze: boolean;
-  status?: 'buyNow' | 'onAuction' | null;
-  price: number;
+
+  /** Kiểu đăng bán */
+  type?: 'buyNow' | 'onAuction' | null;
+
+  price: string;
+
+  /** Số lượng user đăng bán nhưng chưa bán */
   instock?: number;
+
+  /** Lượt thích */
+  likeCount: number;
+
+  /** User đang đăng nhập đã like chưa */
+  isLike: boolean;
+
+  listingId?: number | null;
+
+  /** Người tạo NFT */
   creator: UserInfo[];
+
   collections?: CollectionInfo[];
 }
+
+// ==================== PRODUCT ACTIVITY ====================
 
 export interface ProductActivity {
   id: number;
@@ -207,7 +254,7 @@ export interface CreateProductPayload {
   supply: number;
   blockchain: string;
   isFreeze: boolean;
-  price: number;
+  price: string;
 }
 
 export interface UpdateProductPayload {
@@ -219,17 +266,17 @@ export interface UpdateProductPayload {
   properties?: ProductProperty[];
   supply?: number;
   blockchain?: string;
-  price?: number;
+  price?: string;
   isFreeze?: boolean;
 }
 
 export interface PostProductPayload {
   id: number;
-  price: number;
+  price: string;
   type: 'buyNow' | 'onAuction';
   quantity?: number;
-  startTime?: string; // chỉ khi onAuction
-  endTime?: string; // chỉ khi onAuction
+  startTime?: string;
+  endTime?: string;
 }
 
 // ==================== RESPONSES ====================
@@ -247,4 +294,18 @@ export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
+}
+
+// ==================== NFT METADATA ====================
+
+export interface NFTMetadata {
+  name: string;
+  description: string;
+  image: string;
+  external_url?: string;
+  attributes: { trait_type: string; value: string }[];
+}
+
+export interface NFTMetadataWithURI extends NFTMetadata {
+  tokenURI: string;
 }

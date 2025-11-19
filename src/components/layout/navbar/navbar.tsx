@@ -691,10 +691,11 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import WalletIcon from '@mui/icons-material/Wallet';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Toaster } from 'react-hot-toast';
 import WalletModal from './WalletModal';
+import { useWalletAuth } from '@/hooks/useAuth';
 
 const navItems = ['Drop', 'Marketplace', 'Creator', 'Community'];
 
@@ -705,10 +706,16 @@ const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
 
   const router = useRouter();
+  const { account: hookAccount } = useWalletAuth(); // your wallet address from hook
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const isTablet = useMediaQuery('(max-width:900px)');
   const isMobile = useMediaQuery('(max-width:600px)'); // 👈 thêm xác định mobile
+
+  // Get query params
+  const walletMode = searchParams?.get('walletMode');
+  const address = searchParams?.get('address');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -716,15 +723,21 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // ✅ Dynamic check using hookAccount
   const isHome =
-    pathname === '/drop' ||
-    pathname === '/community' ||
-    pathname === '/view/upcoming';
+  pathname === '/drop' ||
+  pathname === '/community' ||
+  pathname === '/view/upcoming' ||
+  (pathname === '/creator/creator-detail' &&
+    walletMode === 'true' &&
+    address?.toLowerCase() === hookAccount?.toLowerCase());
+
+  // Dynamic background
   const backgroundColor = isHome
-  ? 'rgba(26, 0, 71, 0.95)' // các trang này luôn nền tím đậm
-  : scrolled
-    ? 'rgba(26, 0, 71, 0.95)' // các trang khác, khi cuộn thì tím
-    : 'rgba(0, 0, 0, 0)'; // khi chưa cuộn thì trong suốt
+    ? 'rgba(26, 0, 71, 0.95)' // fixed purple for "home" pages
+    : scrolled
+      ? 'rgba(26, 0, 71, 0.95)' // purple on scroll for other pages
+      : 'rgba(0, 0, 0, 0)'; // transparent when not scrolled
 
   return (
     <>
@@ -806,35 +819,34 @@ const Navbar: React.FC = () => {
 
               {/* Wallet Button */}
               <Button
-  variant="contained"
-  sx={{
-    background: 'linear-gradient(90deg, #8c4aff 0%, #2da1ff 100%)',
-    textTransform: 'none',
-    borderRadius: '999px',
-    px: isTablet ? 2 : 3, // tăng padding cho tablet
-    py: 1,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    minWidth: isTablet ? 44 : 'auto', // giữ kích thước ổn định
-    '&:hover': {
-      background: 'linear-gradient(90deg, #7a3ae6 0%, #228de6 100%)',
-      boxShadow: '0 0 10px rgba(140, 74, 255, 0.6)',
-    },
-  }}
-  onClick={() => setWalletModalOpen(true)}
->
-  {/* Nếu đã kết nối ví */}
-  {account ? (
-    `${account.slice(0, 6)}...${account.slice(-4)}`
-  ) : isTablet ? (
-    <WalletIcon sx={{ fontSize: 24 }} /> // icon căn giữa khi không có text
-  ) : (
-    <>
-      Connect Wallet
-    </>
-  )}
-</Button>
-
+                variant="contained"
+                sx={{
+                  background:
+                    'linear-gradient(90deg, #8c4aff 0%, #2da1ff 100%)',
+                  textTransform: 'none',
+                  borderRadius: '999px',
+                  px: isTablet ? 2 : 3, // tăng padding cho tablet
+                  py: 1,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  minWidth: isTablet ? 44 : 'auto', // giữ kích thước ổn định
+                  '&:hover': {
+                    background:
+                      'linear-gradient(90deg, #7a3ae6 0%, #228de6 100%)',
+                    boxShadow: '0 0 10px rgba(140, 74, 255, 0.6)',
+                  },
+                }}
+                onClick={() => setWalletModalOpen(true)}
+              >
+                {/* Nếu đã kết nối ví */}
+                {account ? (
+                  `${account.slice(0, 6)}...${account.slice(-4)}`
+                ) : isTablet ? (
+                  <WalletIcon sx={{ fontSize: 24 }} /> // icon căn giữa khi không có text
+                ) : (
+                  <>Connect Wallet</>
+                )}
+              </Button>
             </Box>
           )}
 

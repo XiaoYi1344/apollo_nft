@@ -1,6 +1,6 @@
 // 'use client';
 
-// import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect, useCallback } from 'react';
 // import {
 //   Dialog,
 //   DialogTitle,
@@ -10,18 +10,21 @@
 //   Button,
 //   Stack,
 //   Typography,
-//   Checkbox,
-//   FormControlLabel,
 // } from '@mui/material';
 // import toast from 'react-hot-toast';
 // import { ethers } from 'ethers';
 
-// import { OwnedProduct, ProductProperty, UpdateProductPayload, ApiResponse } from '@/types/product';
+// import {
+//   OwnedProduct,
+//   ProductProperty,
+//   UpdateProductPayload,
+//   ApiResponse,
+// } from '@/types/product';
 // import { useUpdateProduct } from '@/hooks/useProduct';
-// import { landingPageNFTService } from '@/services/landingPageNFTService';
-
-// import ConfirmOnChainDialog from './ConfirmOnChainDialog';
 // import PreviewMetadataDialog from './PreviewMetadataDialog';
+// import ConfirmUpdateDialog from './ConfirmUpdateDialog';
+// import { useLandingPageNFT } from '@/hooks/useLandingPageNFT';
+// import { landingPageNFTService } from '@/services/landingPageNFTService';
 
 // interface Props {
 //   open: boolean;
@@ -39,14 +42,25 @@
 //   attributes: { trait_type: string; value: string }[];
 // }
 
-// interface OnChainData {
-//   name: string;
-//   description: string;
+// interface NFTMetadataWithURI extends NFTMetadata {
 //   tokenURI: string;
-//   price: number;
 // }
 
-// const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMinted = false }) => {
+// interface OnChainUpdateData {
+//   tokenId: number;
+//   tokenURI: string;
+//   price: string;
+//   name: string;
+//   description: string;
+// }
+
+// const EditNFTModal: React.FC<Props> = ({
+//   open,
+//   onClose,
+//   product,
+//   onUpdate,
+//   isMinted = false,
+// }) => {
 //   const frozen = Boolean(product.isFreeze);
 //   const updateProductMutation = useUpdateProduct();
 
@@ -56,16 +70,15 @@
 //   const [externalLink, setExternalLink] = useState(product.externalLink || '');
 //   const [image, setImage] = useState<File | null>(null);
 //   const [properties, setProperties] = useState<ProductProperty[]>([...product.properties]);
-//   const [supply, setSupply] = useState(product.supply || 0);
-//   const [blockchain, setBlockchain] = useState(product.blockchain || '');
 //   const [price, setPrice] = useState(product.price);
-//   const [isFreezeState, setIsFreezeState] = useState(frozen);
 
 //   // On-chain & preview states
-//   const [metadataPreview, setMetadataPreview] = useState<NFTMetadata | null>(null);
+//   const [metadataPreview, setMetadataPreview] = useState<NFTMetadataWithURI | null>(null);
 //   const [openPreview, setOpenPreview] = useState(false);
-//   const [onChainData, setOnChainData] = useState<OnChainData | null>(null);
+//   const [onChainData, setOnChainData] = useState<OnChainUpdateData | null>(null);
 //   const [openConfirm, setOpenConfirm] = useState(false);
+
+//   const { updateNFT: updateNFTOnChain } = useLandingPageNFT();
 
 //   useEffect(() => {
 //     setName(product.name);
@@ -73,14 +86,11 @@
 //     setExternalLink(product.externalLink || '');
 //     setImage(null);
 //     setProperties([...product.properties]);
-//     setSupply(product.supply || 0);
-//     setBlockchain(product.blockchain || '');
 //     setPrice(product.price);
-//     setIsFreezeState(frozen);
-//   }, [product, frozen]);
+//   }, [product]);
 
 //   // ======================== SAVE → BACKEND ========================
-// const saveUpdate = () => {
+//   const saveUpdate = () => {
 //   const payload: UpdateProductPayload = frozen
 //     ? { id: String(product.id), price }
 //     : {
@@ -90,95 +100,102 @@
 //         image: image ?? undefined,
 //         externalLink: externalLink.trim(),
 //         properties,
-//         supply,
-//         blockchain: blockchain.trim(),
 //         price,
-//         isFreeze: isFreezeState,
 //       };
 
 //   updateProductMutation.mutate(payload, {
-//     onSuccess: (res: ApiResponse<string>) => {
-//       toast.success('Cập nhật thành công!');
-//       onUpdate?.();
-//       onClose();
+//   onSuccess: (res) => {
+//     // Nếu response của bạn là {success, message, data}
+//     const tokenURI = res?.data; // ⭐ lấy data bên trong data
+//     if (!tokenURI) {
+//       toast.error('Không lấy được tokenURI mới!');
+//       return;
+//     }
 
-//       // Lấy tokenURI mới nếu có, nếu không thì lấy tokenURI hiện tại
-//       const tokenURI = res?.data || product.tokenURI || '';
-      
-//       // Bước 2 — tạo preview metadata nếu có tokenURI
-//       if (tokenURI) {
-//         const metadata: NFTMetadata = {
-//           name,
-//           description,
-//           image: tokenURI,
-//           external_url: externalLink,
-//           attributes: properties.map(p => ({ trait_type: p.type, value: p.name })),
-//         };
+//     console.log('TokenURI mới:', tokenURI);
 
-//         setMetadataPreview(metadata);
-//         setOpenPreview(true);
-//       }
-//     },
-//     onError: (err) => {
-//       toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
-//     },
-//   });
-// };
+//     const imageURL = image ? URL.createObjectURL(image) : product.image;
 
-//   // ======================== CONFIRM METADATA → OPEN ON-CHAIN DIALOG ========================
-//   const confirmMetadata = (tokenURI: string) => {
-//     setOnChainData({
+//     const metadata: NFTMetadataWithURI = {
 //       name,
 //       description,
+//       image: imageURL,
+//       external_url: externalLink,
+//       attributes: properties.map((p) => ({ trait_type: p.type, value: p.name })),
 //       tokenURI,
-//       price,
+//     };
+
+//     setMetadataPreview(metadata);
+//     setOpenPreview(true);
+
+//     setOnChainData({
+//       tokenId: Number(product.tokenId),
+//       tokenURI,
+//       price: price || '0',
+//       name,
+//       description,
+//     });
+//   },
+//   onError: (err) => {
+//     toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
+//   },
+// });
+
+// };
+
+//   // ======================== CONFIRM → ON-CHAIN ========================
+//   const confirmUpdate = (metadata: NFTMetadataWithURI) => {
+//     setOnChainData({
+//       tokenId: Number(product.tokenId), // 0 nếu chưa mint
+//       tokenURI: metadata.tokenURI,
+//       price: price || '0',
+//       name: metadata.name,
+//       description: metadata.description,
 //     });
 //     setOpenPreview(false);
 //     setOpenConfirm(true);
 //   };
 
-//   // ======================== MINT NFT ON-CHAIN ========================
-//   const handleMintOnChain = async () => {
-//     if (!window.ethereum) {
-//       toast.error('Bạn cần ví Web3 để mint NFT!');
-//       return;
-//     }
-
+//   // ======================== HANDLE ON-CHAIN CONFIRM ========================
+//   const handleConfirmOnChain = async () => {
 //     if (!onChainData) return;
 
 //     try {
-//   const provider = new ethers.BrowserProvider(window.ethereum);
-//   const signer = await provider.getSigner();
+//       if (!window.ethereum) throw new Error('Cần kết nối ví Web3!');
 
-//   if (!onChainData) return;
+//       const provider = new ethers.BrowserProvider(window.ethereum);
+//       const signer = await provider.getSigner();
 
-//   const tx = await landingPageNFTService.mintFullNFT(signer, {
-//     nameToken: onChainData.name,
-//     tokenURI: onChainData.tokenURI,
-//     description: onChainData.description,
-//     price: onChainData.price,
-//   });
-
-//   await tx.wait();
-
-//   toast.success('Mint NFT thành công!');
-//   setOpenConfirm(false);
-// } catch (err: unknown) {
-//   if (err instanceof Error) {
-//     // err.message có kiểu string
-//     console.error(err);
-//     toast.error(`Mint NFT thất bại: ${err.message}`);
-//   } else {
-//     console.error(err);
-//     toast.error('Mint NFT thất bại: Unknown error');
-//   }
-// }
-
+//       if (onChainData.tokenId === 0) {
+//         // Mint mới
+//         const tx = await landingPageNFTService.mintFullNFT(signer, {
+//           nameToken: onChainData.name,
+//           tokenURI: onChainData.tokenURI,
+//           description: onChainData.description,
+//           price: Number(onChainData.price),
+//         });
+//         const receipt = await tx.wait();
+//         const newTokenId = receipt.events?.[0]?.args?.tokenId?.toNumber() || 0;
+//         toast.success('Mint NFT thành công!');
+//         onUpdate?.();
+//         setOpenConfirm(false);
+//         setOnChainData({ ...onChainData, tokenId: newTokenId });
+//       } else {
+//         // Update NFT đã mint
+//         const tx = await updateNFTOnChain(onChainData.tokenId, onChainData.tokenURI, Number(onChainData.price));
+//         await tx.wait();
+//         toast.success('Cập nhật NFT trên blockchain thành công!');
+//         onUpdate?.();
+//         setOpenConfirm(false);
+//       }
+//     } catch (err: unknown) {
+//       console.error(err);
+//       toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
+//     }
 //   };
 
-//   // ======================== UI ========================
-//   const handleSave = () => {
-//     if (!name.trim() || !description.trim() || !blockchain.trim()) {
+//   const handleSaveClick = () => {
+//     if (!name.trim() || !description.trim()) {
 //       toast.error('Vui lòng điền đầy đủ thông tin!');
 //       return;
 //     }
@@ -188,52 +205,47 @@
 //   return (
 //     <>
 //       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-//         <DialogTitle>Update / Create NFT</DialogTitle>
+//         <DialogTitle>{isMinted ? 'Update Minted NFT' : 'Update / Create NFT'}</DialogTitle>
 //         <DialogContent>
 //           <Stack spacing={2}>
-//             <TextField label="Name" value={name} onChange={e => setName(e.target.value)} fullWidth />
-//             <TextField label="Description" value={description} onChange={e => setDescription(e.target.value)} fullWidth multiline />
-//             <TextField label="External Link" value={externalLink} onChange={e => setExternalLink(e.target.value)} fullWidth />
-
+//             <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
+//             <TextField label="Description" value={description} onChange={(e) => setDescription(e.target.value)} fullWidth multiline />
+//             <TextField label="External Link" value={externalLink} onChange={(e) => setExternalLink(e.target.value)} fullWidth />
 //             <Button variant="outlined" component="label">
 //               Upload Image
-//               <input type="file" hidden accept="image/*" onChange={e => e.target.files && setImage(e.target.files[0])} />
+//               <input type="file" hidden accept="image/*" onChange={(e) => e.target.files && setImage(e.target.files[0])} />
 //             </Button>
-
-//             <TextField label="Price (ETH)" type="number" value={price} onChange={e => setPrice(Number(e.target.value))} fullWidth />
-
-//             {!frozen && (
-//               <FormControlLabel
-//                 control={<Checkbox checked={isFreezeState} onChange={e => setIsFreezeState(e.target.checked)} />}
-//                 label="Frozen?"
-//               />
-//             )}
+//             <TextField label="Price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} fullWidth />
 //           </Stack>
 //         </DialogContent>
-
 //         <DialogActions>
 //           <Button onClick={onClose}>Close</Button>
-//           <Button onClick={handleSave} variant="contained" disabled={updateProductMutation.isPending}>
+//           <Button onClick={handleSaveClick} variant="contained" disabled={updateProductMutation.isPending}>
 //             {updateProductMutation.isPending ? 'Saving...' : 'Save'}
 //           </Button>
 //         </DialogActions>
 //       </Dialog>
 
 //       {metadataPreview && (
+//         <>
 //         <PreviewMetadataDialog
 //           open={openPreview}
 //           onClose={() => setOpenPreview(false)}
 //           metadata={metadataPreview}
-//           onNext={() => confirmMetadata(metadataPreview.image)}
+//           onNext={() => confirmUpdate(metadataPreview)}
 //         />
+//         <Typography sx={{ mt: 2, wordBreak: 'break-all' }}>
+//     TokenURI mới: {metadataPreview.tokenURI}
+//   </Typography>
+//         </>
 //       )}
 
 //       {onChainData && (
-//         <ConfirmOnChainDialog
+//         <ConfirmUpdateDialog
 //           open={openConfirm}
 //           onClose={() => setOpenConfirm(false)}
 //           data={onChainData}
-//           onConfirm={handleMintOnChain}
+//           onConfirm={handleConfirmOnChain}
 //         />
 //       )}
 //     </>
@@ -242,10 +254,9 @@
 
 // export default EditNFTModal;
 
-
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -255,18 +266,23 @@ import {
   Button,
   Stack,
   Typography,
+  Chip,
+  Box,
 } from '@mui/material';
 import toast from 'react-hot-toast';
 import { ethers } from 'ethers';
 
-import { OwnedProduct, ProductProperty, UpdateProductPayload, ApiResponse } from '@/types/product';
+import {
+  OwnedProduct,
+  ProductProperty,
+  UpdateProductPayload,
+  NFTMetadataWithURI,
+} from '@/types/product';
 import { useUpdateProduct } from '@/hooks/useProduct';
-import { landingPageNFTService } from '@/services/landingPageNFTService';
-
 import PreviewMetadataDialog from './PreviewMetadataDialog';
-import ConfirmUpdateDialog from './ConfirmUpdateDialog'; // modal mới cho update on-chain
-
+import ConfirmUpdateDialog from './ConfirmUpdateDialog';
 import { useLandingPageNFT } from '@/hooks/useLandingPageNFT';
+import { landingPageNFTService } from '@/services/landingPageNFTService';
 
 interface Props {
   open: boolean;
@@ -276,21 +292,21 @@ interface Props {
   isMinted?: boolean;
 }
 
-interface NFTMetadata {
-  name: string;
-  description: string;
-  image: string;
-  external_url: string;
-  attributes: { trait_type: string; value: string }[];
-}
-
 interface OnChainUpdateData {
   tokenId: number;
   tokenURI: string;
-  price: number;
+  price: string;
+  name: string;
+  description: string;
 }
 
-const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMinted = false }) => {
+const EditNFTModal: React.FC<Props> = ({
+  open,
+  onClose,
+  product,
+  onUpdate,
+  isMinted = false,
+}) => {
   const frozen = Boolean(product.isFreeze);
   const updateProductMutation = useUpdateProduct();
 
@@ -299,13 +315,20 @@ const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMin
   const [description, setDescription] = useState(product.description);
   const [externalLink, setExternalLink] = useState(product.externalLink || '');
   const [image, setImage] = useState<File | null>(null);
-  const [properties, setProperties] = useState<ProductProperty[]>([...product.properties]);
+  const [properties, setProperties] = useState<ProductProperty[]>([
+    ...product.properties,
+  ]);
+  const [supply, setSupply] = useState(product.supply || 1);
+  const [blockchain, setBlockchain] = useState(product.blockchain || '');
   const [price, setPrice] = useState(product.price);
 
   // On-chain & preview states
-  const [metadataPreview, setMetadataPreview] = useState<NFTMetadata | null>(null);
+  const [metadataPreview, setMetadataPreview] =
+    useState<NFTMetadataWithURI | null>(null);
   const [openPreview, setOpenPreview] = useState(false);
-  const [onChainData, setOnChainData] = useState<OnChainUpdateData | null>(null);
+  const [onChainData, setOnChainData] = useState<OnChainUpdateData | null>(
+    null,
+  );
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const { updateNFT: updateNFTOnChain } = useLandingPageNFT();
@@ -316,11 +339,31 @@ const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMin
     setExternalLink(product.externalLink || '');
     setImage(null);
     setProperties([...product.properties]);
+    setSupply(product.supply || 1);
+    setBlockchain(product.blockchain || '');
     setPrice(product.price);
   }, [product]);
 
   // ======================== SAVE → BACKEND ========================
   const saveUpdate = () => {
+    // Kiểm tra bắt buộc các trường nếu chưa frozen
+    if (!frozen) {
+      if (
+        !name.trim() ||
+        !description.trim() ||
+        (!image && !product.image) ||
+        !externalLink.trim() ||
+        !properties.length ||
+        !supply ||
+        !blockchain.trim() ||
+        !price
+      ) {
+        toast.error('Vui lòng điền đầy đủ tất cả các thông tin NFT!');
+        return;
+      }
+    }
+
+    // Nếu frozen chỉ update price
     const payload: UpdateProductPayload = frozen
       ? { id: String(product.id), price }
       : {
@@ -330,27 +373,44 @@ const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMin
           image: image ?? undefined,
           externalLink: externalLink.trim(),
           properties,
+          supply,
+          blockchain,
           price,
+          isFreeze: product.isFreeze,
         };
 
     updateProductMutation.mutate(payload, {
-      onSuccess: (res: ApiResponse<string>) => {
-        toast.success('Cập nhật thành công!');
-        onUpdate?.();
-        onClose();
-
-        const tokenURI = res?.data || product.tokenURI || '';
-        if (tokenURI) {
-          const metadata: NFTMetadata = {
-            name,
-            description,
-            image: tokenURI,
-            external_url: externalLink,
-            attributes: properties.map((p) => ({ trait_type: p.type, value: p.name })),
-          };
-          setMetadataPreview(metadata);
-          setOpenPreview(true);
+      onSuccess: (res) => {
+        const tokenURI = res?.data;
+        if (!tokenURI) {
+          toast.error('Không lấy được tokenURI mới!');
+          return;
         }
+
+        const imageURL = image ? URL.createObjectURL(image) : product.image;
+
+        const metadata: NFTMetadataWithURI = {
+          name,
+          description,
+          image: imageURL,
+          external_url: externalLink,
+          attributes: properties.map((p) => ({
+            trait_type: p.type,
+            value: p.name,
+          })),
+          tokenURI,
+        };
+
+        setMetadataPreview(metadata);
+        setOpenPreview(true);
+
+        setOnChainData({
+          tokenId: Number(product.tokenId),
+          tokenURI,
+          price: price || '0',
+          name,
+          description,
+        });
       },
       onError: (err) => {
         toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
@@ -358,68 +418,190 @@ const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMin
     });
   };
 
-  // ======================== CONFIRM → OPEN UPDATE DIALOG ========================
-  const confirmUpdate = (tokenURI: string) => {
+  // ======================== CONFIRM → ON-CHAIN ========================
+  const confirmUpdate = (metadata: NFTMetadataWithURI) => {
     setOnChainData({
       tokenId: Number(product.tokenId),
-      tokenURI,
-      price: price || 0,
+      tokenURI: metadata.tokenURI,
+      price: price || '0',
+      name: metadata.name,
+      description: metadata.description,
     });
     setOpenPreview(false);
     setOpenConfirm(true);
   };
 
-  // ======================== UPDATE NFT ON-CHAIN ========================
-  const updateNFT = useCallback(
-  async (tokenId: number, tokenURI: string, price: number) => {
+  const handleConfirmOnChain = async () => {
+    if (!onChainData) return;
+
     try {
-      const tx = await updateNFTOnChain(tokenId, tokenURI, price); // hook handles wallet internally
-      if (!tx) throw new Error('Không thể lấy giao dịch');
+      if (!window.ethereum) throw new Error('Cần kết nối ví Web3!');
 
-      toast.success('Cập nhật NFT thành công trên blockchain!');
-      onUpdate?.();
-      setOpenConfirm(false);
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
 
-      return tx.hash; // trả về txHash nếu muốn hiển thị Etherscan link
+      if (onChainData.tokenId === 0) {
+        const tx = await landingPageNFTService.mintFullNFT(signer, {
+          nameToken: onChainData.name,
+          tokenURI: onChainData.tokenURI,
+          description: onChainData.description,
+          price: Number(onChainData.price),
+        });
+        const receipt = await tx.wait();
+        const newTokenId = receipt.events?.[0]?.args?.tokenId?.toNumber() || 0;
+        toast.success('Mint NFT thành công!');
+        onUpdate?.();
+        setOpenConfirm(false);
+        setOnChainData({ ...onChainData, tokenId: newTokenId });
+      } else {
+        const tx = await updateNFTOnChain(
+          onChainData.tokenId,
+          onChainData.tokenURI,
+          Number(onChainData.price),
+        );
+        await tx.wait();
+        toast.success('Cập nhật NFT trên blockchain thành công!');
+        onUpdate?.();
+        setOpenConfirm(false);
+      }
     } catch (err: unknown) {
       console.error(err);
-      toast.error(err instanceof Error ? err.message : 'Cập nhật NFT thất bại');
+      toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
     }
-  },
-  [updateNFTOnChain, onUpdate]
-);
-
-  // ======================== UI ========================
-  const handleSave = () => {
-    if (!name.trim() || !description.trim()) {
-      toast.error('Vui lòng điền đầy đủ thông tin!');
-      return;
-    }
-    saveUpdate();
   };
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      {/* <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>{isMinted ? 'Update Minted NFT' : 'Update / Create NFT'}</DialogTitle>
         <DialogContent>
-          <Stack spacing={2}>
-            <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
+          <Stack spacing={2} pt={2}>
+            <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth disabled={frozen} />
+            <TextField label="Description" value={description} onChange={(e) => setDescription(e.target.value)} fullWidth multiline disabled={frozen} />
+            <TextField label="External Link" value={externalLink} onChange={(e) => setExternalLink(e.target.value)} fullWidth disabled={frozen} />
+            <Button variant="outlined" component="label" disabled={frozen}>
+              Upload Image
+              <input type="file" hidden accept="image/*" onChange={(e) => e.target.files && setImage(e.target.files[0])} />
+            </Button>
+            <Stack direction="row" spacing={1} flexWrap="wrap">
+              {properties.map((p, idx) => (
+                <Chip key={idx} label={`${p.type}: ${p.name}`} color="secondary" size="small" sx={{ mb: 0.5 }} />
+              ))}
+            </Stack>
+            <TextField label="Supply" type="number" value={supply} onChange={(e) => setSupply(Number(e.target.value))} fullWidth disabled={frozen} />
+            <TextField label="Blockchain" value={blockchain} onChange={(e) => setBlockchain(e.target.value)} fullWidth disabled={frozen} />
+            <TextField label="Price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} fullWidth />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Close</Button>
+          <Button onClick={saveUpdate} variant="contained" disabled={updateProductMutation.isPending}>
+            {updateProductMutation.isPending ? 'Saving...' : 'Save'}
+          </Button>
+        </DialogActions>
+      </Dialog> */}
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            background: 'linear-gradient(160deg, #0f0f0f 0%, #1a0f2b 100%)',
+            border: '1px solid #7a3bff',
+            boxShadow: '0 0 25px rgba(122,59,255,0.6)',
+            p: 2,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            color: '#fff',
+            fontWeight: 700,
+            textAlign: 'center',
+            textShadow: '0 0 6px #7a3bff',
+          }}
+        >
+          {isMinted ? 'Update Minted NFT' : 'Update / Create NFT'}
+        </DialogTitle>
+
+        <DialogContent>
+          <Stack spacing={2} pt={2}>
+            <TextField
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+              disabled={frozen}
+              sx={{
+                input: { color: '#fff' },
+                label: { color: '#aaa' },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: '#7a3bff' },
+                  '&:hover fieldset': { borderColor: '#ff5ca2' },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#ff5ca2',
+                    boxShadow: '0 0 8px #ff5ca2',
+                  },
+                },
+              }}
+            />
+
             <TextField
               label="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
               multiline
+              disabled={frozen}
+              sx={{
+                textarea: { color: '#fff' },
+                label: { color: '#aaa' },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: '#7a3bff' },
+                  '&:hover fieldset': { borderColor: '#ff5ca2' },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#ff5ca2',
+                    boxShadow: '0 0 8px #ff5ca2',
+                  },
+                },
+              }}
             />
+
             <TextField
               label="External Link"
               value={externalLink}
               onChange={(e) => setExternalLink(e.target.value)}
               fullWidth
+              disabled={frozen}
+              sx={{
+                input: { color: '#fff' },
+                label: { color: '#aaa' },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: '#7a3bff' },
+                  '&:hover fieldset': { borderColor: '#ff5ca2' },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#ff5ca2',
+                    boxShadow: '0 0 8px #ff5ca2',
+                  },
+                },
+              }}
             />
 
-            <Button variant="outlined" component="label">
+            <Button
+              variant="outlined"
+              component="label"
+              disabled={frozen}
+              sx={{
+                color: '#fff',
+                borderColor: '#7a3bff',
+                '&:hover': {
+                  borderColor: '#ff5ca2',
+                  boxShadow: '0 0 12px #ff5ca2',
+                },
+              }}
+            >
               Upload Image
               <input
                 type="file"
@@ -429,19 +611,103 @@ const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMin
               />
             </Button>
 
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {properties.map((p, idx) => (
+                <Chip
+                  key={idx}
+                  label={`${p.type}: ${p.name}`}
+                  color="secondary"
+                  size="small"
+                  sx={{
+                    border: '1px solid #7a3bff',
+                    color: '#fff',
+                    background: 'rgba(122,59,255,0.1)',
+                    textShadow: '0 0 4px #7a3bff',
+                  }}
+                />
+              ))}
+            </Box>
+
+            <TextField
+              label="Supply"
+              type="number"
+              value={supply}
+              onChange={(e) => setSupply(Number(e.target.value))}
+              fullWidth
+              disabled={frozen}
+              sx={{
+                input: { color: '#fff' },
+                label: { color: '#aaa' },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: '#7a3bff' },
+                  '&:hover fieldset': { borderColor: '#ff5ca2' },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#ff5ca2',
+                    boxShadow: '0 0 8px #ff5ca2',
+                  },
+                },
+              }}
+            />
+
+            <TextField
+              label="Blockchain"
+              value={blockchain}
+              onChange={(e) => setBlockchain(e.target.value)}
+              fullWidth
+              disabled={frozen}
+              sx={{
+                input: { color: '#fff' },
+                label: { color: '#aaa' },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: '#7a3bff' },
+                  '&:hover fieldset': { borderColor: '#ff5ca2' },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#ff5ca2',
+                    boxShadow: '0 0 8px #ff5ca2',
+                  },
+                },
+              }}
+            />
+
             <TextField
               label="Price"
               type="number"
               value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
+              onChange={(e) => setPrice(e.target.value)}
               fullWidth
+              sx={{
+                input: { color: '#fff', fontWeight: 700 },
+                label: { color: '#fff' },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: '#ff5ca2' },
+                  '&.Mui-focused fieldset': { boxShadow: '0 0 10px #ff5ca2' },
+                },
+              }}
             />
           </Stack>
         </DialogContent>
 
-        <DialogActions>
-          <Button onClick={onClose}>Close</Button>
-          <Button onClick={handleSave} variant="contained" disabled={updateProductMutation.isPending}>
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button
+            onClick={onClose}
+            sx={{
+              color: '#fff',
+              border: '1px solid #7a3bff',
+              '&:hover': { boxShadow: '0 0 12px #7a3bff' },
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            onClick={saveUpdate}
+            variant="contained"
+            disabled={updateProductMutation.isPending}
+            sx={{
+              background: 'linear-gradient(90deg,#7a3bff,#ff5ca2)',
+              boxShadow: '0 0 12px #ff5ca2',
+              '&:hover': { boxShadow: '0 0 20px #ff5ca2' },
+            }}
+          >
             {updateProductMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
         </DialogActions>
@@ -452,7 +718,7 @@ const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMin
           open={openPreview}
           onClose={() => setOpenPreview(false)}
           metadata={metadataPreview}
-          onNext={() => confirmUpdate(metadataPreview.image)}
+          onNext={() => confirmUpdate(metadataPreview)}
         />
       )}
 
@@ -461,7 +727,7 @@ const EditNFTModal: React.FC<Props> = ({ open, onClose, product, onUpdate, isMin
           open={openConfirm}
           onClose={() => setOpenConfirm(false)}
           data={onChainData}
-          onConfirm={() => updateNFT(onChainData.tokenId, onChainData.tokenURI, onChainData.price)}
+          onConfirm={handleConfirmOnChain}
         />
       )}
     </>

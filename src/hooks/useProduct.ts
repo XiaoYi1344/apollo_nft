@@ -301,6 +301,8 @@ import {
   ApiResponse,
 } from '../types/product';
 import * as productService from '../services/productService';
+import { useToggleLike } from './useLike';
+import { useCallback } from 'react';
 
 // ==================== DEFAULT OPTIONS ====================
 const defaultQueryOptions = {
@@ -400,10 +402,10 @@ export const useUpdateProduct = () => {
 
   return useMutation<ApiResponse<string>, Error, UpdateProductPayload>({
     mutationFn: productService.updateProduct,
-    onSuccess: (data, variables) => {
+    onSuccess: (response, variables) => {
       // Cập nhật cache của React Query để UI hiển thị tokenURI mới ngay
-      if (variables.id) {
-        queryClient.setQueryData(['product', variables.id], data);
+      if (response.data) {
+        queryClient.invalidateQueries({ queryKey: ['product', variables.id] });
       }
 
       // Invalidate queries nếu cần refetch danh sách
@@ -413,9 +415,8 @@ export const useUpdateProduct = () => {
   });
 };
 
-
 /**
- * Đăng bán sản phẩm
+ * Hook đăng bán sản phẩm hoặc chỉnh sửa trạng thái bán
  */
 export const usePostProductForSale = () => {
   const queryClient = useQueryClient();
@@ -423,8 +424,21 @@ export const usePostProductForSale = () => {
   return useMutation<ProductResponse, Error, PostProductPayload>({
     mutationFn: productService.postProductForSale,
     onSuccess: () => {
+      // Refresh danh sách sản phẩm và sản phẩm sở hữu
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['ownedProducts'] });
     },
+  });
+};
+
+/**
+ * gọi product theo collection
+ */
+export const useGetProductsByCollection = (collectionId: number, enabled = true) => {
+  return useQuery<Product[]>({
+    queryKey: ['products-by-collection', collectionId],
+    queryFn: () => productService.getProductsByCollection(collectionId),
+    enabled, // chỉ fetch khi enabled = true
+    staleTime: 1000 * 60, // cache 1 phút
   });
 };

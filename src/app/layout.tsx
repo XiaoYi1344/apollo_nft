@@ -4,7 +4,7 @@ import './globals.css';
 import Navbar from '@/components/layout/navbar/navbar';
 import Footer from '@/components/layout/footer/footer';
 import { Box } from '@mui/material';
-import CustomCursor from '@/components/CustomMouses';
+// import CustomCursor from '@/components/CustomMouses';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ClientProvider } from './ClientProvider';
 import { WagmiAppProvider } from '@/providers/wagmi-provider';
@@ -43,7 +43,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-nft-dark`}
       >
-        <CustomCursor />
+        {/* <CustomCursor /> */}
         <Navbar />
         <Box sx={{ position: 'relative', overflow: 'hidden' }}>
           {/* Glow dưới nền */}

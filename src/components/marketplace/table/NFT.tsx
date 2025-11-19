@@ -560,21 +560,22 @@ import Link from 'next/link';
 import { useAllProducts } from '@/hooks/useProduct';
 import { Product } from '@/types/product';
 
-const SORT_OPTIONS = ['Latest', 'Price: Low to High', 'Price: High to Low'];
+const SORT_OPTIONS = [
+  'Latest',
+  'Price: Low to High',
+  'Price: High to Low',
+] as const;
 
 const NFTTable = () => {
   const { data: products, isLoading, isError } = useAllProducts();
+
   const [visibleCount, setVisibleCount] = useState(8);
   const [expanded, setExpanded] = useState(false);
-  const [sort, setSort] = useState('Latest');
+  const [sort, setSort] = useState<(typeof SORT_OPTIONS)[number]>('Latest');
   const [search, setSearch] = useState('');
 
   const handleToggle = () => {
-    if (!expanded) {
-      setVisibleCount(products?.length || 8);
-    } else {
-      setVisibleCount(8);
-    }
+    setVisibleCount(expanded ? 8 : products?.length || 8);
     setExpanded(!expanded);
   };
 
@@ -582,120 +583,116 @@ const NFTTable = () => {
   if (isError)
     return <Typography color="error">Failed to load products</Typography>;
 
-  // Filter + search
+  // ================================
+  // 1. Filter + Search
+  // ================================
   let filteredProducts: Product[] = Array.isArray(products)
     ? [...products]
     : [];
 
-  if (search) {
-    filteredProducts = filteredProducts.filter(
-      (p) =>
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        (Array.isArray(p.creator) &&
-          p.creator.some((c) =>
-            c.userName.toLowerCase().includes(search.toLowerCase()),
-          )),
-    );
+  if (search.trim()) {
+    const query = search.toLowerCase();
+    filteredProducts = filteredProducts.filter((p) => {
+      const matchName = p.name.toLowerCase().includes(query);
+      const matchCreator =
+        Array.isArray(p.creator) &&
+        p.creator.some((c) => c.userName?.toLowerCase().includes(query));
+      return matchName || matchCreator;
+    });
   }
 
-  // Sort
-  if (sort === 'Price: Low to High')
-    filteredProducts.sort((a, b) => a.price - b.price);
-  if (sort === 'Price: High to Low')
-    filteredProducts.sort((a, b) => b.price - a.price);
+  // ================================
+  // 2. Sort
+  // ================================
+  const sortMap: Record<
+    (typeof SORT_OPTIONS)[number],
+    (a: Product, b: Product) => number
+  > = {
+    'Price: Low to High': (a, b) => Number(a.price) - Number(b.price),
+    'Price: High to Low': (a, b) => Number(b.price) - Number(a.price),
+    Latest: (_a, _b) => 0, // giữ nguyên thứ tự API
+  };
+
+  filteredProducts.sort(sortMap[sort]);
 
   return (
-    <Stack >
+    <Stack>
       {/* Search & Sort */}
-      <Box
-  sx={{
-    maxWidth: '1200px',
-    mx: 'auto', // căn giữa
-    width: '100%',
-    // px: { xs: 2, sm: 4, md: 6 },
-  }}
->
-  <Stack
-    direction={{ xs: 'column', sm: 'row', md: 'row' }}
-    justifyContent="space-between"
-    alignItems="center"
-    gap={1}
-    mb={4}
-    width="100%"
-    // bgcolor="#fff"
-    borderRadius={2}
-    p={2}
-  >
-    {/* Search Box */}
-    <Box sx={{ flexBasis: { xs: '100%', sm: '50%', md: '49%' } }}>
-      <TextField
-        placeholder="Search by name or creator"
-        variant="outlined"
-        size="small"
-        fullWidth
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon
-                fontSize="small"
-                sx={{ color: 'rgba(255,255,255,0.6)' }}
-              />
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 1.5,
-            background: 'rgba(255,255,255,0.2)',
-            input: { p: 0.8, color: '#fff' },
-            '& .MuiOutlinedInput-input::placeholder': {
-              color: 'rgba(255,255,255,0.6)',
-            },
-          },
-        }}
-      />
-    </Box>
-
-    {/* Sort Box */}
-    <Box
-      sx={{
-        flexBasis: { xs: '100%', sm: '50%', md: '10%' },
-        display: 'flex',
-        justifyContent: 'flex-end',
-      }}
-    >
-      <FormControl fullWidth size="small">
-        <Select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          sx={{
-            bgcolor: { xs: 'rgba(255,255,255,0.2)', md: 'white' },
-            borderRadius: 1.5,
-            textTransform: 'none',
-          }}
+      <Box sx={{ maxWidth: 1200, mx: 'auto', width: '100%' }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          alignItems="center"
+          gap={1}
+          mb={4}
+          width="100%"
+          p={2}
         >
-          {SORT_OPTIONS.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Box>
-  </Stack>
-</Box>
+          {/* Search Box */}
+          <Box sx={{ flexBasis: { xs: '100%', sm: '50%' } }}>
+            <TextField
+              placeholder="Search by name or creator"
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon
+                      fontSize="small"
+                      sx={{ color: 'rgba(255,255,255,0.6)' }}
+                    />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5,
+                  background: 'rgba(255,255,255,0.2)',
+                  input: { p: 0.8, color: '#fff' },
+                  '& .MuiOutlinedInput-input::placeholder': {
+                    color: 'rgba(255,255,255,0.6)',
+                  },
+                },
+              }}
+            />
+          </Box>
 
+          {/* Sort Box */}
+          <Box
+            sx={{
+              flexBasis: { xs: '100%', sm: '20%' },
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <FormControl fullWidth size="small">
+              <Select
+                value={sort}
+                onChange={(e) =>
+                  setSort(e.target.value as (typeof SORT_OPTIONS)[number])
+                }
+                sx={{
+                  bgcolor: { xs: 'rgba(255,255,255,0.2)', md: 'white' },
+                  borderRadius: 1.5,
+                  textTransform: 'none',
+                }}
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </Stack>
+      </Box>
 
       {/* NFT Cards */}
-      <Grid
-        container
-        spacing={3}
-        // justifyContent="center"
-        mb={14}
-        px={{ xs: 2, sm: 4, md: 6 }}
-      >
+      <Grid container spacing={3} mb={14} px={{ xs: 2, sm: 4 }}>
         {filteredProducts.slice(0, visibleCount).map((nft) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={nft.id}>
             <Link
@@ -724,7 +721,7 @@ const NFTTable = () => {
                 />
                 <CardContent>
                   <Typography variant="subtitle2" sx={{ opacity: 0.5 }}>
-                    {nft.properties.map((p) => p.type).join(', ')}
+                    {nft.properties?.map((p) => p.type).join(', ')}
                   </Typography>
                   <Typography variant="h6" sx={{ fontWeight: 500 }}>
                     {nft.name}

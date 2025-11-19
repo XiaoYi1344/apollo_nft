@@ -1679,9 +1679,10 @@ import { useState } from 'react';
 import { useProduct } from '@/hooks/useProduct';
 import { useProductActivity } from '@/hooks/useProduct';
 import { ProductActivity } from '@/types/product';
+import { useToggleLike } from '@/hooks/useLike';
 
 export default function NFTDetail() {
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const router = useRouter();
   const productId = Number(id);
 
@@ -1691,7 +1692,8 @@ export default function NFTDetail() {
   // ✅ Fetch product activity
   const { data: activity = [] } = useProductActivity(productId);
 
-  const [liked, setLiked] = useState(false);
+const { mutate: toggleLike, isPending: liking } = useToggleLike();
+
   const [openSections, setOpenSections] = useState({
     properties: true,
     activity: true,
@@ -1717,13 +1719,30 @@ export default function NFTDetail() {
       </Box>
     );
 
-  const ethAmount = nft.price || 0;
-  const usdPrice = `$${(ethAmount * 2000).toLocaleString()}`;
+  // ================================
+  // ✔ PRICE HANDLING FIX (API trả price: string)
+  // ================================
 
+  // Convert về number an toàn
+  const ethAmount = nft.price ? Number(nft.price) : 0;
+
+  // Format USD
+  const usdPrice = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(ethAmount * 2000);
+
+  // ================================
   const creators = Array.isArray(nft.creator)
     ? nft.creator
     : nft.creator
       ? [nft.creator]
+      : [];
+
+  const owners = Array.isArray(nft.seller)
+    ? nft.seller
+    : nft.seller
+      ? [nft.seller]
       : [];
 
   const safeActivity: ProductActivity[] = Array.isArray(activity)
@@ -1734,8 +1753,8 @@ export default function NFTDetail() {
     <Box
       sx={{
         color: 'white',
-        px: { xs: 2, sm:4, md: 6 },
-        py: { xs: 6, sm:3, md: 10 },
+        px: { xs: 2, sm: 4, md: 6 },
+        py: { xs: 6, sm: 3, md: 10 },
         maxWidth: 1400,
         mx: 'auto',
         fontFamily: '"Orbitron", sans-serif',
@@ -1767,7 +1786,7 @@ export default function NFTDetail() {
         <Box
           sx={{
             flex: { xs: 'unset', sm: 1, md: 1 },
-            width: { xs: '100%', sm: '90%', md: '50%' }, 
+            width: { xs: '100%', sm: '90%', md: '50%' },
           }}
         >
           <Card
@@ -1794,29 +1813,45 @@ export default function NFTDetail() {
             />
 
             {/* Like button */}
-            <Box
-              sx={{
-                 position: 'absolute',
-          top: { xs: 10, sm: 15, md: 20 },
-          right: { xs: 10, sm: 15, md: 20 },
-          cursor: 'pointer',
-          bgcolor: liked ? '#fff' : 'rgba(31,41,55,0.6)',
-          p: { xs: 0.8, sm: 1, md: 1.2 },
-                borderRadius: '50%',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  bgcolor: liked ? '#fff' : 'rgba(255,76,253,0.8)',
-                  transform: 'scale(1.05)',
-                },
-              }}
-              onClick={() => setLiked(!liked)}
-            >
-              {liked ? (
-          <Favorite sx={{ fontSize: { xs: 20, sm: 23, md: 25 }, color: '#FF4CFD' }} />
-        ) : (
-          <FavoriteBorder sx={{ fontSize: { xs: 20, sm: 23, md: 25 }, color: '#fff' }} />
-        )}
-            </Box>
+           
+
+<Box
+  sx={{
+    position: 'absolute',
+    top: { xs: 10, sm: 15, md: 20 },
+    right: { xs: 10, sm: 15, md: 20 },
+    cursor: liking ? 'not-allowed' : 'pointer',
+    bgcolor: nft.isLike ? '#fff' : 'rgba(31,41,55,0.6)',
+    p: { xs: 0.8, sm: 1, md: 1.2 },
+    borderRadius: '50%',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      bgcolor: nft.isLike ? '#fff' : 'rgba(255,76,253,0.8)',
+      transform: liking ? 'none' : 'scale(1.05)',
+    },
+  }}
+  onClick={() => {
+    if (!liking) toggleLike({ targetId: productId, targetType: 'nft' });
+  }}
+>
+  {nft.isLike ? (
+    <Favorite
+      sx={{
+        fontSize: { xs: 20, sm: 23, md: 25 },
+        color: '#FF4CFD',
+      }}
+    />
+  ) : (
+    <FavoriteBorder
+      sx={{
+        fontSize: { xs: 20, sm: 23, md: 25 },
+        color: '#fff',
+      }}
+    />
+  )}
+</Box>
+
+
           </Card>
 
           {/* Properties */}
@@ -1825,7 +1860,7 @@ export default function NFTDetail() {
               mt={4}
               sx={{
                 bgcolor: 'rgba(17,24,39,0.5)',
-                 p: { xs: 2, sm: 2.5, md: 3 },
+                p: { xs: 2, sm: 2.5, md: 3 },
                 borderRadius: 3,
                 border: '1px solid #2D155A',
               }}
@@ -1873,36 +1908,53 @@ export default function NFTDetail() {
         </Box>
 
         {/* Right */}
-        <Box sx={{ flex: { xs: 'unset', sm: 1, md: 1 },
-      width: { xs: '100%', sm: '90%', md: '50%' }, // Full width trên sm, 50% trên md
-      mt: { xs: 3, sm: 3, md: 0 }, // margin top khi stacked
-       }}>
+        <Box
+          sx={{
+            flex: { xs: 'unset', sm: 1, md: 1 },
+            width: { xs: '100%', sm: '90%', md: '50%' }, // Full width trên sm, 50% trên md
+            mt: { xs: 3, sm: 3, md: 0 }, // margin top khi stacked
+          }}
+        >
           <Typography
-  fontWeight={600}
-  sx={{
-    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, // xs < sm < md
-  }}
->
-  {nft.name}
-</Typography>
-
+            fontWeight={600}
+            sx={{
+              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, // xs < sm < md
+            }}
+          >
+            {nft.name}
+          </Typography>
 
           {/* Creator */}
           <Box mt={1} fontSize={{ xs: 12, sm: 14, md: 14 }}>
-            <Typography sx={{ color: '#9CA3AF' }}>
-              Created by:{' '}
-              <strong style={{ color: '#FFF', fontWeight: 500 }}>
-                @{nft.creator?.userName || 'Unknown'}
-              </strong>
-            </Typography>
-            <Typography sx={{ color: '#9CA3AF' }}>
-              Owned by:{' '}
-              <strong style={{ color: '#FFF', fontWeight: 500 }}>
-                {Array.isArray(nft.ownedBy)
-                  ? nft.ownedBy.map((o) => `@${o.userName}`).join(', ')
-                  : 'Unknown'}
-              </strong>
-            </Typography>
+            {/* Created by */}
+            {creators.length > 0 && (
+              <Typography sx={{ color: '#9CA3AF' }}>
+                Created by:{' '}
+                <strong
+                  style={{ cursor: 'pointer', color: '#B983FF' }}
+                  onClick={() =>
+                    router.push(`/profile/${creators[0].addressWallet}`)
+                  }
+                >
+                  @{creators[0].userName}
+                </strong>
+              </Typography>
+            )}
+
+            {/* Owned by */}
+            {owners.length > 0 && (
+              <Typography sx={{ color: '#9CA3AF' }}>
+                Owned by:{' '}
+                <strong
+                  style={{ cursor: 'pointer', color: '#B983FF' }}
+                  onClick={() =>
+                    router.push(`/profile/${owners[0].addressWallet}`)
+                  }
+                >
+                  @{owners[0].userName}
+                </strong>
+              </Typography>
+            )}
           </Box>
 
           {/* Price section */}
@@ -1915,25 +1967,47 @@ export default function NFTDetail() {
               border: '1px solid #2D155A',
             }}
           >
-            <Typography sx={{ opacity: 0.6, mb: 1.5, color: '#E5E7EB', fontSize: { xs: 12, sm: 14, md: 14 } }}>
-        Current Price
-      </Typography>
-      <Typography variant="h5" fontWeight={600} sx={{ fontSize: { xs: 20, sm: 24, md: 28 } }}>
-        {ethAmount} ETH
-        <Typography sx={{ opacity: 0.6, ml: 1, display: 'inline', fontSize: { xs: 12, sm: 14, md: 14 } }}>
-          ({usdPrice})
-        </Typography>
-      </Typography>
+            <Typography
+              sx={{
+                opacity: 0.6,
+                mb: 1.5,
+                color: '#E5E7EB',
+                fontSize: { xs: 12, sm: 14, md: 14 },
+              }}
+            >
+              Current Price
+            </Typography>
+            <Typography
+              variant="h5"
+              fontWeight={600}
+              sx={{ fontSize: { xs: 20, sm: 24, md: 28 } }}
+            >
+              {ethAmount} ETH
+              <Typography
+                sx={{
+                  opacity: 0.6,
+                  ml: 1,
+                  display: 'inline',
+                  fontSize: { xs: 12, sm: 14, md: 14 },
+                }}
+              >
+                ({usdPrice})
+              </Typography>
+            </Typography>
 
-            <Stack direction={{ xs: 'column', sm: 'row', md: 'row' }} spacing={2} mt={2}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row', md: 'row' }}
+              spacing={2}
+              mt={2}
+            >
               <Button
                 variant="contained"
                 sx={{
-                 bgcolor: '#9333ea',
-            textTransform: 'none',
-            fontWeight: 700,
-            width: '100%',
-            fontSize: { xs: 12, sm: 14, md: 14 },
+                  bgcolor: '#9333ea',
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  width: '100%',
+                  fontSize: { xs: 12, sm: 14, md: 14 },
                 }}
               >
                 Buy Now
@@ -1959,7 +2033,7 @@ export default function NFTDetail() {
             mt={4}
             sx={{
               bgcolor: 'rgba(17,24,39,0.5)',
-               p: { xs: 2, sm: 2.5, md: 3 },
+              p: { xs: 2, sm: 2.5, md: 3 },
               borderRadius: 3,
               border: '1px solid #2D155A',
             }}
@@ -2067,9 +2141,7 @@ export default function NFTDetail() {
                   safeActivity.map((act) => (
                     <Box key={act.id}>
                       <Box display="flex" gap={1} flexWrap="wrap">
-                        <Typography fontWeight={700}>
-                          {act.eventType}
-                        </Typography>
+                        <Typography fontWeight={700}>{act.evenType}</Typography>
                         <Typography>Price: {act.price}</Typography>
                         <Typography>Qty: {act.quantity}</Typography>
                         <Typography>From: {act.fromAddress}</Typography>

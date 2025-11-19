@@ -69,27 +69,50 @@ export function useLandingPageNFT() {
   );
 
   // ================= UPDATE NFT =================
-  const updateNFT = useCallback(
-    async (tokenId: number, tokenURI: string, price: number) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const signer = await connectWallet();
-        if (!signer) throw new Error('No signer connected');
+  // const updateNFT = useCallback(
+  //   async (tokenId: number, tokenURI: string, price: number) => {
+  //     setLoading(true);
+  //     setError(null);
+  //     try {
+  //       const signer = await connectWallet();
+  //       if (!signer) throw new Error('No signer connected');
 
-        const tx = await landingPageNFTService.updateNFT(signer, tokenId, tokenURI, price);
-        setTxHash(tx.transactionHash);
-        await tx.wait();
-        return tx;
-      } catch (err: unknown) {
-        if (err instanceof Error) setError(err.message);
-        else setError('Unknown error occurred');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [connectWallet]
-  );
+  //       const tx = await landingPageNFTService.updateNFT(signer, tokenId, tokenURI, price);
+  //       setTxHash(tx.transactionHash);
+  //       await tx.wait();
+  //       return tx;
+  //     } catch (err: unknown) {
+  //       if (err instanceof Error) setError(err.message);
+  //       else setError('Unknown error occurred');
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   },
+  //   [connectWallet]
+  // );
+
+  const updateNFT = useCallback(
+  async (tokenId: number, tokenURI: string, price: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const signer = await connectWallet();
+      if (!signer) throw new Error('No signer connected');
+
+      const tx = await landingPageNFTService.updateNFT(signer, tokenId, tokenURI, price);
+      setTxHash(tx.hash); // TransactionResponse có hash
+      return tx; // trả về TransactionResponse
+    } catch (err: unknown) {
+      if (err instanceof Error) setError(err.message);
+      else setError('Unknown error occurred');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  },
+  [connectWallet]
+);
+
 
   const getNFTInfo = useCallback(async (tokenId: number) => {
     try {

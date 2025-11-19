@@ -83,10 +83,12 @@ mintFullNFT: async (
   },
 
   updateNFT: async (signer: ethers.Signer, tokenId: number, tokenURI: string, price: number) => {
-    const c = getContract(signer);
-    const tx = await c.updateNFT(tokenId, tokenURI, parseEther(price.toString()));
-    return tx.wait();
-  },
+  const c = getContract(signer);
+  const tx = await c.updateNFT(tokenId, tokenURI, parseEther(price.toString())); // TransactionResponse
+  await tx.wait(); // đợi mined
+  return tx; // ⚡ trả về TransactionResponse
+},
+
 
   sendNFT: async (signer: ethers.Signer, to: string, tokenId: number) => {
     const c = getContract(signer);
