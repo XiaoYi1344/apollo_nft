@@ -1,5 +1,5 @@
 'use client';
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import FilterPanel from './filter/Filter';
 import NFTTable from './table/NFT';
 import Image from 'next/image';
@@ -28,6 +28,7 @@ const Marketplace = () => {
           '--glow-opacity': '0.6',
         }}
       />
+
 
       <Box sx={{ px: { xs: 2, md: 6 }, pt: 10 }}>
         {/* Tiêu đề */}

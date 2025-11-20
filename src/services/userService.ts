@@ -80,10 +80,14 @@ export const updateUserBackground = async (data: UpdateUserBackgroundPayload): P
 // Avatar URL helper
 export const getUserAvatar = (imageId: string) => `${API_URL}/api/upload/${imageId}`;
 
-export default {
+const userApi = {
   getUserProfile,
   getUserProfileByWallet,
   updateUser,
   updateUserBackground,
   getUserAvatar,
 };
+
+export default userApi;
+
+

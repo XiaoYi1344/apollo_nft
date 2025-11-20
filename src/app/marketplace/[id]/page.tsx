@@ -1,3 +1,5 @@
+'use client';
+
 import NFTDetail from '@/components/marketplace/table/NFTDetail'
 import React from 'react'
 

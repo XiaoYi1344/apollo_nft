@@ -301,8 +301,8 @@ import {
   ApiResponse,
 } from '../types/product';
 import * as productService from '../services/productService';
-import { useToggleLike } from './useLike';
-import { useCallback } from 'react';
+// import { useToggleLike } from './useLike';
+// import { useCallback } from 'react';
 
 // ==================== DEFAULT OPTIONS ====================
 const defaultQueryOptions = {
@@ -321,6 +321,7 @@ export const useAllProducts = () =>
     queryFn: productService.getAllProducts,
     ...defaultQueryOptions,
   });
+
 
 /**
  * Lấy tất cả sản phẩm mà người dùng sở hữu hoặc đã tạo

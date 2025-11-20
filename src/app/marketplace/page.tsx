@@ -1,3 +1,5 @@
+'use client';
+
 import Marketplace from '@/components/marketplace/Marketplace'
 import React from 'react'
 

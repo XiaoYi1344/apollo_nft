@@ -1,7 +1,18 @@
 'use client';
 
 import React from 'react';
-import { Grid, Card, CardMedia, CardContent, Stack, Button, CircularProgress, Chip, Tooltip, Typography } from '@mui/material';
+import {
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Stack,
+  Button,
+  CircularProgress,
+  Chip,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { OwnedProduct, ProductActivity } from '@/types/product';
 
 interface Props {
@@ -9,17 +20,27 @@ interface Props {
   allActivities: ProductActivity[][];
   activitiesLoading: boolean;
   walletMode: boolean;
-  handleOpenEdit: (product: OwnedProduct, activities: ProductActivity[]) => void;
+  handleOpenEdit: (
+    product: OwnedProduct,
+    activities: ProductActivity[],
+  ) => void;
   openSellModal: (productId: number, price: string) => void;
 }
 
-const OwnedTab: React.FC<Props> = ({ ownedProducts, allActivities, activitiesLoading, walletMode, handleOpenEdit, openSellModal }) => {
+const OwnedTab: React.FC<Props> = ({
+  ownedProducts,
+  allActivities,
+  activitiesLoading,
+  walletMode,
+  handleOpenEdit,
+  openSellModal,
+}) => {
   return (
     <Grid container spacing={3} mb={3}>
       {ownedProducts
         .filter((product, idx) => {
           const activities = allActivities[idx] ?? [];
-          const isMinted = activities.some(a => a.evenType === 'Mint');
+          const isMinted = activities.some((a) => a.evenType === 'Mint');
           return !isMinted; // chỉ hiển thị NFT chưa minted
         })
         .map((product, idx) => {
@@ -28,17 +49,45 @@ const OwnedTab: React.FC<Props> = ({ ownedProducts, allActivities, activitiesLoa
 
           return (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
-              <Card sx={{ bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 3, transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-5px)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' } }}>
+              <Card
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.03)',
+                  borderRadius: 3,
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                  },
+                }}
+              >
                 <CardMedia
                   component="img"
                   image={`https://gateway.pinata.cloud/ipfs/${product.image}`}
                   alt={product.name}
-                  sx={{ height: 280, objectFit: 'cover', borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+                  sx={{
+                    height: 280,
+                    objectFit: 'cover',
+                    borderTopLeftRadius: 12,
+                    borderTopRightRadius: 12,
+                  }}
                   loading="lazy"
                 />
                 <CardContent sx={{ bgcolor: '#1a1a2e' }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="subtitle1" sx={{ color: '#fff', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        color: '#fff',
+                        fontWeight: 700,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {product.name}
                     </Typography>
                   </Stack>
@@ -46,14 +95,32 @@ const OwnedTab: React.FC<Props> = ({ ownedProducts, allActivities, activitiesLoa
                   {activitiesLoading ? (
                     <CircularProgress size={16} sx={{ mt: 1 }} />
                   ) : (
-                    <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>
-                      {isFrozen && <Tooltip title="Metadata của sản phẩm đã bị khóa (freeze)"><Chip label="Frozen" size="small" sx={{ bgcolor: 'rgba(135,206,250,0.15)', color: '#1E90FF', fontWeight: 600 }} /></Tooltip>}
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{ mt: 1, flexWrap: 'wrap' }}
+                    >
+                      {isFrozen && (
+                        <Tooltip title="Metadata của sản phẩm đã bị khóa (freeze)">
+                          <Chip
+                            label="Frozen"
+                            size="small"
+                            sx={{
+                              bgcolor: 'rgba(135,206,250,0.15)',
+                              color: '#1E90FF',
+                              fontWeight: 600,
+                            }}
+                          />
+                        </Tooltip>
+                      )}
                     </Stack>
                   )}
 
-                  <Typography sx={{ color: '#b78eff', mt: 1 }}>Giá: {product.price ?? 'N/A'}</Typography>
+                  <Typography sx={{ color: '#b78eff', mt: 1 }}>
+                    Giá: {product.price ?? 'N/A'}
+                  </Typography>
 
-                  {walletMode && (
+                  {/* {walletMode && (
                     <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
                       <Button
                         size="small"
@@ -62,6 +129,40 @@ const OwnedTab: React.FC<Props> = ({ ownedProducts, allActivities, activitiesLoa
                         onClick={() => handleOpenEdit(product, activities)}
                       >
                         Mint
+                      </Button>
+                    </Stack>
+                  )} */}
+                  {walletMode && (
+                    <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                          borderColor: '#7a3bff',
+                          color: '#b78eff',
+                          textTransform: 'none',
+                        }}
+                        onClick={() => handleOpenEdit(product, activities)}
+                      >
+                        Mint
+                      </Button>
+
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                          borderColor: '#ff7a3b',
+                          color: '#ffb78e',
+                          textTransform: 'none',
+                        }}
+                        onClick={() =>
+                          openSellModal(
+                            product.id,
+                            product.price?.toString() || '0',
+                          )
+                        }
+                      >
+                        Sell
                       </Button>
                     </Stack>
                   )}

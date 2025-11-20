@@ -1,3 +1,4 @@
+'use client';
 import Community from '@/components/community/community'
 import React from 'react'
 

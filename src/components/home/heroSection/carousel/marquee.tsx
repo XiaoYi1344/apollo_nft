@@ -101,7 +101,7 @@
 'use client';
 import Marquee from 'react-fast-marquee';
 import { Box, Stack, Typography, Grid } from '@mui/material';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 const partners = [
   { name: 'Coinbase', img: '/home/hero/logo.webp', width: 150, height: 60 },
@@ -177,6 +177,8 @@ export default function PartnersMarquee() {
           </Stack>
         </Marquee>
       </Box>
+
+
 
       {/* 👉 Grid layout cho mobile */}
       <Grid

@@ -1,10 +1,8 @@
-import DropPage from '@/components/drop/dropPage'
-import React from 'react'
+'use client';
 
-const page = () => {
-  return (
-    <DropPage />
-  )
+import React from 'react';
+import DropPage from '@/components/drop/dropPage';
+
+export default function Page() {
+  return <DropPage />;
 }
-
-export default page

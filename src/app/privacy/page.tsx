@@ -1,3 +1,4 @@
+'use client';
 import PivacySlidingPanel from '@/components/privacy/privacy'
 import React from 'react'
 

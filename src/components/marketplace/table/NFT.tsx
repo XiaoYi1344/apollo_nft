@@ -610,7 +610,7 @@ const NFTTable = () => {
   > = {
     'Price: Low to High': (a, b) => Number(a.price) - Number(b.price),
     'Price: High to Low': (a, b) => Number(b.price) - Number(a.price),
-    Latest: (_a, _b) => 0, // giữ nguyên thứ tự API
+    Latest: () => 0, // giữ nguyên thứ tự API
   };
 
   filteredProducts.sort(sortMap[sort]);

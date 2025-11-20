@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { ethers, parseEther } from 'ethers';
+import { ethers } from 'ethers';
 import { landingPageNFTService } from '@/services/landingPageNFTService';
 
 export function useLandingPageNFT() {
@@ -90,6 +90,7 @@ export function useLandingPageNFT() {
   //   },
   //   [connectWallet]
   // );
+
 
   const updateNFT = useCallback(
   async (tokenId: number, tokenURI: string, price: number) => {

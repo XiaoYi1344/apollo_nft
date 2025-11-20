@@ -1045,6 +1045,183 @@
 
 // // export default WalletModal;
 
+// 'use client';
+
+// import React, { useState, useEffect } from 'react';
+// import {
+//   Modal,
+//   Paper,
+//   Typography,
+//   Button,
+//   Box,
+//   Stack,
+//   IconButton,
+//   Divider,
+//   Avatar,
+// } from '@mui/material';
+// import CloseIcon from '@mui/icons-material/Close';
+// import Image from 'next/image';
+// import { motion } from 'framer-motion';
+// import toast from 'react-hot-toast';
+// import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+// import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+// import TranslateIcon from '@mui/icons-material/Translate';
+// import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+// import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+
+// import { useRouter } from 'next/navigation';
+// import { useWalletAuth } from '@/hooks/useAuth';
+// // import QRCode from 'qrcode.react';
+
+// import dynamic from 'next/dynamic';
+// interface EthereumProvider {
+//   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+// }
+
+// declare global {
+//   interface Window {
+//     ethereum?: EthereumProvider;
+//   }
+// }
+
+// type WalletState = 'select' | 'connecting' | 'info' | 'disconnect';
+
+// interface WalletModalProps {
+//   open: boolean;
+//   onClose: () => void;
+//   account: string;
+//   setAccount: (acc: string) => void;
+// }
+
+// const WalletModal: React.FC<WalletModalProps> = ({
+//   open,
+//   onClose,
+//   account,
+//   setAccount,
+// }) => {
+//   const [walletState, setWalletState] = useState<WalletState>('select');
+//   const [connectingWalletName, setConnectingWalletName] = useState('');
+//   const [walletListOpen, setWalletListOpen] = useState(false);
+//   const [walletBalance, setWalletBalance] = useState('0');
+//   const [showPioneQR, setShowPioneQR] = useState(false);
+//   const [pioneQR, setPioneQR] = useState('');
+
+//   const router = useRouter();
+
+//   const {
+//     authenticateWallet,
+//     logout,
+//     account: hookAccount,
+//     loading,
+//   } = useWalletAuth();
+//   const QRCode = dynamic(() => import('qrcode.react'), { ssr: false });
+
+//   const accounts = (await ethereum.request({
+//     method: 'eth_requestAccounts',
+//   })) as string[];
+//   if (!accounts || accounts.length === 0) throw new Error('No accounts found');
+
+//   const address = accounts[0];
+//   await authenticateWallet(address);
+
+//   // ✅ Update external state
+//   setAccount(address);
+
+//   const balance = await getBalance(address);
+//   setWalletBalance(balance);
+//   setWalletState('info');
+
+//   // ✅ Update wallet state & balance khi hookAccount thay đổi
+//   useEffect(() => {
+//     if (!open) return;
+//     if (hookAccount) {
+//       setWalletState('info');
+//       getBalance(hookAccount).then(setWalletBalance);
+//     } else {
+//       setWalletState('select');
+//     }
+//   }, [hookAccount, open]);
+
+//   // 🔹 Lấy balance
+//   const getBalance = async (account: string) => {
+//     if (!window.ethereum) return '0';
+//     try {
+//       const balanceWei = await window.ethereum.request({
+//         method: 'eth_getBalance',
+//         params: [account, 'latest'],
+//       });
+//       const balanceEth = parseFloat(
+//         (parseInt(balanceWei as string, 16) / 1e18).toFixed(4),
+//       );
+//       return balanceEth.toString();
+//     } catch (err) {
+//       console.error('Error fetching balance:', err);
+//       return '0';
+//     }
+//   };
+
+//   // 🔹 Connect wallet (MetaMask / Pione)
+//   const connectWallet = async (wallet: string) => {
+//     try {
+//       setConnectingWalletName(wallet);
+//       setWalletState('connecting');
+
+//       if (wallet === 'metamask') {
+//         const { ethereum } = window;
+//         if (!ethereum) {
+//           toast.error('MetaMask is not installed!');
+//           setWalletState('select');
+//           return;
+//         }
+
+//         const accounts = (await ethereum.request({
+//           method: 'eth_requestAccounts',
+//         })) as string[];
+//         if (!accounts || accounts.length === 0)
+//           throw new Error('No accounts found');
+
+//         const address = accounts[0];
+//         await authenticateWallet(address); // 🔥 gọi hook
+
+//         const balance = await getBalance(address);
+//         setWalletBalance(balance);
+//         setWalletState('info');
+//       } else if (wallet === 'pione') {
+//         const callbackUrl = encodeURIComponent(window.location.href);
+//         const qrLink = `pione://connect?callback=${callbackUrl}`;
+//         setPioneQR(qrLink);
+//         setShowPioneQR(true);
+//       }
+//     } catch (error: unknown) {
+//       console.error(error);
+//       toast.error(error instanceof Error ? error.message : 'Connection failed');
+//       setWalletState('select');
+//     }
+//   };
+
+//   const handleDisconnect = () => {
+//     setWalletState('disconnect');
+//     logout();
+//     router.push('/');
+//   };
+
+//   const handleExplore = () => {
+//     if (hookAccount) {
+//       router.push(
+//         `/creator/creator-detail?walletMode=true&address=${hookAccount}`,
+//       );
+//     }
+//     onClose();
+//   };
+
+//   if (loading) {
+//     return (
+//       <Box className="fixed inset-0 flex items-center justify-center">
+//         <Typography sx={{ color: '#fff' }}>Connecting wallet...</Typography>
+//       </Box>
+//     );
+//   }
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -1068,12 +1245,10 @@ import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import TranslateIcon from '@mui/icons-material/Translate';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
-
 import { useRouter } from 'next/navigation';
 import { useWalletAuth } from '@/hooks/useAuth';
-// import QRCode from 'qrcode.react';
-
 import dynamic from 'next/dynamic';
+
 interface EthereumProvider {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
 }
@@ -1107,191 +1282,25 @@ const WalletModal: React.FC<WalletModalProps> = ({
   const [pioneQR, setPioneQR] = useState('');
 
   const router = useRouter();
-  // const { authenticateWallet, logout } = useWalletAuth();
-
-  // const { authenticateWallet, logout: hookLogout, account: hookAccount, loading } =
-  //   useWalletAuth();
-    
-  // const QRCode = dynamic(() => import('qrcode.react'), { ssr: false });
-
-  // // useEffect(() => {
-  // //   if (!open) return;
-  // //   if (account) {
-  // //     setWalletState('info');
-  // //     getBalance(account).then(setWalletBalance);
-  // //   } else {
-  // //     setWalletState('select');
-  // //   }
-  // // }, [open, account]);
-  // useEffect(() => {
-  //   if (!open) return;
-
-  //   if (hookAccount) {
-  //     setWalletState('info');
-  //     getBalance(hookAccount).then(setWalletBalance);
-  //   } else {
-  //     setWalletState('select');
-  //   }
-  // }, [open, hookAccount]);
-
-  // // const getBalance = async (account: string) => {
-  // //   if (!window.ethereum) return '0';
-  // //   try {
-  // //     const balanceWei = await window.ethereum.request({
-  // //       method: 'eth_getBalance',
-  // //       params: [account, 'latest'],
-  // //     });
-  // //     const balanceEth = parseFloat(
-  // //       (parseInt(balanceWei as string, 16) / 1e18).toFixed(4),
-  // //     );
-  // //     return balanceEth.toString();
-  // //   } catch (err) {
-  // //     console.error('Error fetching balance:', err);
-  // //     return '0';
-  // //   }
-  // // };
-
-  // // const connectWallet = async (wallet: string) => {
-  // //   try {
-  // //     setConnectingWalletName(wallet);
-  // //     setWalletState('connecting');
-
-  // //     if (wallet === 'metamask') {
-  // //       const { ethereum } = window;
-  // //       if (!ethereum) {
-  // //         toast.error('MetaMask is not installed!');
-  // //         setWalletState('select');
-  // //         return;
-  // //       }
-
-  // //       const accounts = (await ethereum.request({
-  // //         method: 'eth_requestAccounts',
-  // //       })) as string[];
-  // //       if (!accounts || accounts.length === 0)
-  // //         throw new Error('No accounts found');
-
-  // //       const address = accounts[0];
-  // //       await authenticateWallet(address);
-  // //       setAccount(address);
-
-  // //       const balance = await getBalance(address);
-  // //       setWalletBalance(balance);
-  // //       setWalletState('info');
-  // //       toast.success('Wallet connected successfully!');
-  // //     } else if (wallet === 'pione') {
-  // //       const callbackUrl = encodeURIComponent(window.location.href);
-  // //       const qrLink = `pione://connect?callback=${callbackUrl}`;
-  // //       setPioneQR(qrLink);
-  // //       setShowPioneQR(true);
-  // //     }
-  // //   } catch (error: unknown) {
-  // //     console.error(error);
-  // //     toast.error(error instanceof Error ? error.message : 'Connection failed');
-  // //     setWalletState('select');
-  // //   }
-  // // };
-
-  // // const handleDisconnect = () => {
-  // //   setWalletState('disconnect');
-  // //   setAccount('');
-  // //   logout?.();
-  // // };
-
-  // // const handleExplore = () => {
-  // //   onClose();
-  // //   router.push(`/creator/creator-detail?walletMode=true&address=${account}`);
-  // // };
-
-  // const getBalance = async (account: string) => {
-  //   if (!window.ethereum) return '0';
-  //   try {
-  //     const balanceWei = await window.ethereum.request({
-  //       method: 'eth_getBalance',
-  //       params: [account, 'latest'],
-  //     });
-  //     const balanceEth = parseFloat(
-  //       (parseInt(balanceWei as string, 16) / 1e18).toFixed(4),
-  //     );
-  //     return balanceEth.toString();
-  //   } catch (err) {
-  //     console.error('Error fetching balance:', err);
-  //     return '0';
-  //   }
-  // };
-
-  // const connectWallet = async (wallet: string) => {
-  //   try {
-  //     setConnectingWalletName(wallet);
-  //     setWalletState('connecting');
-
-  //     if (wallet === 'metamask') {
-  //       const { ethereum } = window;
-  //       if (!ethereum) {
-  //         toast.error('MetaMask is not installed!');
-  //         setWalletState('select');
-  //         return;
-  //       }
-
-  //       const accounts = (await ethereum.request({
-  //         method: 'eth_requestAccounts',
-  //       })) as string[];
-  //       if (!accounts || accounts.length === 0) throw new Error('No accounts found');
-
-  //       const address = accounts[0];
-  //       await authenticateWallet(address); // 🔥 gọi hook
-  //       setAccount(address);
-
-  //       const balance = await getBalance(address);
-  //       setWalletBalance(balance);
-  //       setWalletState('info');
-  //     } else if (wallet === 'pione') {
-  //       const callbackUrl = encodeURIComponent(window.location.href);
-  //       const qrLink = `pione://connect?callback=${callbackUrl}`;
-  //       setPioneQR(qrLink);
-  //       setShowPioneQR(true);
-  //     }
-  //   } catch (error: unknown) {
-  //     console.error(error);
-  //     toast.error(error instanceof Error ? error.message : 'Connection failed');
-  //     setWalletState('select');
-  //   }
-  // };
-
-  // const handleDisconnect = () => {
-  //   setWalletState('disconnect');
-  //   setAccount('');
-  //   hookLogout();
-  //   router.push(`/`)
-  // };
-
-  // const handleExplore = () => {
-  //   onClose();
-  //   router.push(`/creator/creator-detail?walletMode=true&address=${hookAccount}`);
-  // };
-
-   const { authenticateWallet, logout, account: hookAccount, loading } = useWalletAuth();
+  const {
+    authenticateWallet,
+    logout,
+    account: hookAccount,
+    loading,
+  } = useWalletAuth();
   const QRCode = dynamic(() => import('qrcode.react'), { ssr: false });
 
-  // ✅ Update wallet state & balance khi hookAccount thay đổi
-  useEffect(() => {
-    if (!open) return;
-    if (hookAccount) {
-      setWalletState('info');
-      getBalance(hookAccount).then(setWalletBalance);
-    } else {
-      setWalletState('select');
-    }
-  }, [hookAccount, open]);
-
   // 🔹 Lấy balance
-  const getBalance = async (account: string) => {
+  const getBalance = async (acc: string) => {
     if (!window.ethereum) return '0';
     try {
       const balanceWei = await window.ethereum.request({
         method: 'eth_getBalance',
-        params: [account, 'latest'],
+        params: [acc, 'latest'],
       });
-      const balanceEth = parseFloat((parseInt(balanceWei as string, 16) / 1e18).toFixed(4));
+      const balanceEth = parseFloat(
+        (parseInt(balanceWei as string, 16) / 1e18).toFixed(4),
+      );
       return balanceEth.toString();
     } catch (err) {
       console.error('Error fetching balance:', err);
@@ -1299,7 +1308,7 @@ const WalletModal: React.FC<WalletModalProps> = ({
     }
   };
 
-  // 🔹 Connect wallet (MetaMask / Pione)
+  // 🔹 Connect wallet
   const connectWallet = async (wallet: string) => {
     try {
       setConnectingWalletName(wallet);
@@ -1313,12 +1322,16 @@ const WalletModal: React.FC<WalletModalProps> = ({
           return;
         }
 
-        const accounts = (await ethereum.request({ method: 'eth_requestAccounts' })) as string[];
-        if (!accounts || accounts.length === 0) throw new Error('No accounts found');
+        const accounts = (await ethereum.request({
+          method: 'eth_requestAccounts',
+        })) as string[];
+        if (!accounts || accounts.length === 0)
+          throw new Error('No accounts found');
 
         const address = accounts[0];
-        await authenticateWallet(address); // 🔥 gọi hook
+        await authenticateWallet(address);
 
+        setAccount(address); // ✅ dùng trực tiếp
         const balance = await getBalance(address);
         setWalletBalance(balance);
         setWalletState('info');
@@ -1328,27 +1341,50 @@ const WalletModal: React.FC<WalletModalProps> = ({
         setPioneQR(qrLink);
         setShowPioneQR(true);
       }
-    } catch (error: unknown) {
-      console.error(error);
-      toast.error(error instanceof Error ? error.message : 'Connection failed');
+    } catch (err: unknown) {
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : 'Connection failed');
       setWalletState('select');
     }
   };
 
+  // 🔹 Disconnect wallet
   const handleDisconnect = () => {
     setWalletState('disconnect');
     logout();
+    setAccount(''); // reset external account
     router.push('/');
   };
 
+  // 🔹 Explore creator page
   const handleExplore = () => {
     if (hookAccount) {
-      router.push(`/creator/creator-detail?walletMode=true&address=${hookAccount}`);
+      router.push(
+        `/creator/creator-detail?walletMode=true&address=${hookAccount}`,
+      );
     }
     onClose();
   };
 
+  // ✅ Update wallet state & balance khi hookAccount thay đổi
+  useEffect(() => {
+    if (!open) return;
+    if (hookAccount) {
+      setWalletState('info');
+      getBalance(hookAccount).then(setWalletBalance);
+    } else {
+      setWalletState('select');
+      setWalletBalance('0');
+    }
+  }, [hookAccount, open]);
 
+  if (loading) {
+    return (
+      <Box className="fixed inset-0 flex items-center justify-center bg-black/40">
+        <Typography sx={{ color: '#fff' }}>Connecting wallet...</Typography>
+      </Box>
+    );
+  }
   return (
     <>
       {/* MAIN MODAL */}
@@ -1824,6 +1860,168 @@ const WalletModal: React.FC<WalletModalProps> = ({
 };
 
 export default WalletModal;
+
+// const { authenticateWallet, logout } = useWalletAuth();
+
+// const { authenticateWallet, logout: hookLogout, account: hookAccount, loading } =
+//   useWalletAuth();
+
+// const QRCode = dynamic(() => import('qrcode.react'), { ssr: false });
+
+// // useEffect(() => {
+// //   if (!open) return;
+// //   if (account) {
+// //     setWalletState('info');
+// //     getBalance(account).then(setWalletBalance);
+// //   } else {
+// //     setWalletState('select');
+// //   }
+// // }, [open, account]);
+// useEffect(() => {
+//   if (!open) return;
+
+//   if (hookAccount) {
+//     setWalletState('info');
+//     getBalance(hookAccount).then(setWalletBalance);
+//   } else {
+//     setWalletState('select');
+//   }
+// }, [open, hookAccount]);
+
+// // const getBalance = async (account: string) => {
+// //   if (!window.ethereum) return '0';
+// //   try {
+// //     const balanceWei = await window.ethereum.request({
+// //       method: 'eth_getBalance',
+// //       params: [account, 'latest'],
+// //     });
+// //     const balanceEth = parseFloat(
+// //       (parseInt(balanceWei as string, 16) / 1e18).toFixed(4),
+// //     );
+// //     return balanceEth.toString();
+// //   } catch (err) {
+// //     console.error('Error fetching balance:', err);
+// //     return '0';
+// //   }
+// // };
+
+// // const connectWallet = async (wallet: string) => {
+// //   try {
+// //     setConnectingWalletName(wallet);
+// //     setWalletState('connecting');
+
+// //     if (wallet === 'metamask') {
+// //       const { ethereum } = window;
+// //       if (!ethereum) {
+// //         toast.error('MetaMask is not installed!');
+// //         setWalletState('select');
+// //         return;
+// //       }
+
+// //       const accounts = (await ethereum.request({
+// //         method: 'eth_requestAccounts',
+// //       })) as string[];
+// //       if (!accounts || accounts.length === 0)
+// //         throw new Error('No accounts found');
+
+// //       const address = accounts[0];
+// //       await authenticateWallet(address);
+// //       setAccount(address);
+
+// //       const balance = await getBalance(address);
+// //       setWalletBalance(balance);
+// //       setWalletState('info');
+// //       toast.success('Wallet connected successfully!');
+// //     } else if (wallet === 'pione') {
+// //       const callbackUrl = encodeURIComponent(window.location.href);
+// //       const qrLink = `pione://connect?callback=${callbackUrl}`;
+// //       setPioneQR(qrLink);
+// //       setShowPioneQR(true);
+// //     }
+// //   } catch (error: unknown) {
+// //     console.error(error);
+// //     toast.error(error instanceof Error ? error.message : 'Connection failed');
+// //     setWalletState('select');
+// //   }
+// // };
+
+// // const handleDisconnect = () => {
+// //   setWalletState('disconnect');
+// //   setAccount('');
+// //   logout?.();
+// // };
+
+// // const handleExplore = () => {
+// //   onClose();
+// //   router.push(`/creator/creator-detail?walletMode=true&address=${account}`);
+// // };
+
+// const getBalance = async (account: string) => {
+//   if (!window.ethereum) return '0';
+//   try {
+//     const balanceWei = await window.ethereum.request({
+//       method: 'eth_getBalance',
+//       params: [account, 'latest'],
+//     });
+//     const balanceEth = parseFloat(
+//       (parseInt(balanceWei as string, 16) / 1e18).toFixed(4),
+//     );
+//     return balanceEth.toString();
+//   } catch (err) {
+//     console.error('Error fetching balance:', err);
+//     return '0';
+//   }
+// };
+
+// const connectWallet = async (wallet: string) => {
+//   try {
+//     setConnectingWalletName(wallet);
+//     setWalletState('connecting');
+
+//     if (wallet === 'metamask') {
+//       const { ethereum } = window;
+//       if (!ethereum) {
+//         toast.error('MetaMask is not installed!');
+//         setWalletState('select');
+//         return;
+//       }
+
+//       const accounts = (await ethereum.request({
+//         method: 'eth_requestAccounts',
+//       })) as string[];
+//       if (!accounts || accounts.length === 0) throw new Error('No accounts found');
+
+//       const address = accounts[0];
+//       await authenticateWallet(address); // 🔥 gọi hook
+//       setAccount(address);
+
+//       const balance = await getBalance(address);
+//       setWalletBalance(balance);
+//       setWalletState('info');
+//     } else if (wallet === 'pione') {
+//       const callbackUrl = encodeURIComponent(window.location.href);
+//       const qrLink = `pione://connect?callback=${callbackUrl}`;
+//       setPioneQR(qrLink);
+//       setShowPioneQR(true);
+//     }
+//   } catch (error: unknown) {
+//     console.error(error);
+//     toast.error(error instanceof Error ? error.message : 'Connection failed');
+//     setWalletState('select');
+//   }
+// };
+
+// const handleDisconnect = () => {
+//   setWalletState('disconnect');
+//   setAccount('');
+//   hookLogout();
+//   router.push(`/`)
+// };
+
+// const handleExplore = () => {
+//   onClose();
+//   router.push(`/creator/creator-detail?walletMode=true&address=${hookAccount}`);
+// };
 
 // 'use client';
 

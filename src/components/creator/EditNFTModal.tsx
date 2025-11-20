@@ -265,7 +265,6 @@ import {
   TextField,
   Button,
   Stack,
-  Typography,
   Chip,
   Box,
 } from '@mui/material';
@@ -735,3 +734,4 @@ const EditNFTModal: React.FC<Props> = ({
 };
 
 export default EditNFTModal;
+

@@ -1,10 +1,14 @@
-import Upload from '@/components/uploads/Upload'
-import React from 'react'
+'use client';
 
-const page = () => {
+import dynamic from 'next/dynamic';
+import React, { Suspense } from 'react';
+
+const Upload = dynamic(() => import('@/components/uploads/Upload'), {
+  ssr: false,
+});
+
+export default function Page() {
   return (
-    <Upload />
-  )
+      <Upload />
+  );
 }
-
-export default page

@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import creators, { Creator } from './data/creatorsData';
 import CreatorLeaderboard from './Creator';
-import CreatorDetail from './CreatorDetail';
+import ProfileDetail from './ProfileDetail';
 
 export default function Page() {
   const [selected, setSelected] = useState<Creator | null>(null);
@@ -60,7 +60,7 @@ export default function Page() {
             exit={direction === 'left' ? variants.exitLeft : variants.exitRight}
             transition={{ duration: 0.5 }}
           >
-            <CreatorDetail creator={selected} onBack={handleBack} />
+            <ProfileDetail onBack={handleBack} />
           </motion.div>
         )}
       </AnimatePresence>

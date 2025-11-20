@@ -1,3 +1,4 @@
+'use client';
 import Page from '@/components/creator/page'
 import React from 'react'
 

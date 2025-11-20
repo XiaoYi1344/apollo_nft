@@ -1,3 +1,5 @@
+
+'use client';
 // import Page from '@/components/creator/page';
 import HomePage from '@/components/home/homePage';
 // import { Upload } from '@/components/uploads/Upload';

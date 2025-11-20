@@ -1,10 +1,9 @@
-import TermsSlidingPanel from '@/components/term/term'
-import React from 'react'
+// app/terms/page.tsx
+'use client'; // <-- IMPORTANT
 
-const page = () => {
-  return (
-    <TermsSlidingPanel />
-  )
+import React from 'react';
+import TermsSlidingPanel from '@/components/term/term';
+
+export default function Page() {
+  return <TermsSlidingPanel />;
 }
-
-export default page
