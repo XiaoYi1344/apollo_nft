@@ -64,7 +64,7 @@ import { WalletProvider } from '@/context/WalletContext';
 import QueryProvider from './ClientProvider';
 import ClientWrapper from './ClientWrapper';
 import { Box } from '@mui/material';
-import Rule from '@/components/Rule';
+// import Rule from '@/components/Rule';
 import AppNavFooter from './AppNavFooter';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -90,9 +90,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <Box sx={{ position: 'relative', zIndex: 1 }}>
               <QueryProvider>
-                <Rule>
+                {/* <Rule> */}
                   <ClientWrapper>{children}</ClientWrapper>
-                </Rule>
+                {/* </Rule> */}
               </QueryProvider>
 
               {/* Client Navbar + Footer */}
