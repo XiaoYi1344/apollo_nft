@@ -3,8 +3,11 @@ import { Box, Stack, Typography } from '@mui/material';
 import FilterPanel from './filter/Filter';
 import NFTTable from './table/NFT';
 import Image from 'next/image';
+import { useState } from 'react';
 
 const Marketplace = () => {
+   const [statusSelected, setStatusSelected] = useState<string[]>([]);
+
   return (
     <Box
       sx={{
@@ -71,7 +74,10 @@ const Marketplace = () => {
       flexShrink: 0,
     }}
   >
-    <FilterPanel />
+   <FilterPanel
+              statusSelected={statusSelected}
+              setStatusSelected={setStatusSelected}
+            />
   </Box>
 
   {/* NFTTable */}
@@ -81,7 +87,7 @@ const Marketplace = () => {
       flexGrow: 1,
     }}
   >
-    <NFTTable />
+     <NFTTable statusSelected={statusSelected} />
   </Box>
 </Stack>
 

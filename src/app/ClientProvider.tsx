@@ -1,14 +1,11 @@
+// app/QueryProvider.tsx
 'use client';
 
+import { ReactNode, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React, { Suspense } from 'react';
 
-const queryClient = new QueryClient();
+export default function QueryProvider({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient());
 
-export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-    </QueryClientProvider>
-  );
-};
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}

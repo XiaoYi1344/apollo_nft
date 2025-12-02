@@ -5,15 +5,29 @@ import StatusFilter from './status/StatusFilter';
 import PriceFilter from './price/PriceFilter';
 import CollectionsFilter from './collection/CollectionsFilter';
 import PropertiesFilter from './filter/PropertiesFilter';
+import { useFilteredProducts, useOwnedProducts } from '@/hooks/useProduct';
 
-export default function FilterPanel() {
+interface FilterPanelProps {
+  statusSelected: string[];
+  setStatusSelected: (val: string[]) => void;
+}
+
+export default function FilterPanel({
+  statusSelected,
+  setStatusSelected,
+}: FilterPanelProps) {
   // State chung cho tất cả filter
-  const [statusSelected, setStatusSelected] = useState<string[]>([]);
   const [price, setPrice] = useState({ min: '', max: '' });
   const [collectionsSelected, setCollectionsSelected] = useState<string[]>([]);
   const [propertiesSelected, setPropertiesSelected] = useState<
     Record<string, string[]>
   >({});
+
+  // ====================== FILTER LỌC THEO STATUS ====================
+  const { data: products = [] } = useOwnedProducts();
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
+  const filteredProducts = useFilteredProducts(products, selectedStatuses);
 
   // Clear All
   const handleClearAll = () => {
@@ -29,7 +43,7 @@ export default function FilterPanel() {
         px: 3,
         borderRadius: 3,
         color: 'white',
-        width: {xs: 300, sm: 310, md: 340},
+        width: {xs: '100%', sm: '115%', md: '105%'},
         fontFamily: 'Inter, sans-serif',
       }}
     >
@@ -50,7 +64,7 @@ export default function FilterPanel() {
       </Stack>
 
       <StatusFilter selected={statusSelected} setSelected={setStatusSelected} />
-      <PriceFilter price={price} setPrice={setPrice} />
+
       <CollectionsFilter
         selected={collectionsSelected}
         setSelected={setCollectionsSelected}

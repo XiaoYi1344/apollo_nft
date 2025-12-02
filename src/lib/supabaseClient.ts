@@ -19,12 +19,13 @@ export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON
 });
 
 // 🧪 Kiểm tra kết nối khi chạy local
+// 🧪 Kiểm tra kết nối khi chạy local
 if (process.env.NODE_ENV === "development") {
   (async () => {
     try {
-      const { data, error } = await supabase.from("nfts").select("id").limit(1);
+      const { data, error } = await supabase.from("auction_bids").select("id").limit(1);
       if (error) console.error("❌ Supabase connection failed:", error.message);
-      else console.log("✅ Supabase connected:", data?.length ?? 0, "rows in nfts");
+      else console.log("✅ Supabase connected:", data?.length ?? 0, "rows in auction_bids");
     } catch (err) {
       console.error("⚠️ Supabase connection test error:", err);
     }

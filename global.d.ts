@@ -18,6 +18,7 @@ declare module 'qrcode.react' {
       excavate?: boolean;
     };
   }
+  
 
   const QRCode: React.FC<QRCodeProps>;
   export default QRCode;

@@ -6,12 +6,14 @@ export interface Collection {
   description: string;
   image: string;
   isActive: boolean;
-  creator: string;
-  addressWallet: string;
-  products?: OwnedProduct[]; // có thể rỗng
+  isPublic?: boolean; // mới: trạng thái công khai
+  creator: {
+    userName: string;
+    addressWallet: string;
+    avatar?: string;
+  };
+  products?: OwnedProduct[];
 }
-
-
 
 export interface CreateCollectionRequest {
   name: string;
@@ -26,8 +28,14 @@ export interface UpdateCollectionRequest {
   image: File;
 }
 
+export interface UpdateCollectionVisibilityRequest {
+  id: number;
+  isPublic: boolean;
+}
+
 export interface ProductCollectionRequest {
   productIds: number[];
   collectionId: number;
   type: 'add' | 'remove';
+  listingId?: number | null;
 }

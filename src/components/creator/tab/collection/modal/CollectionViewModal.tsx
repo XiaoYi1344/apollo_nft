@@ -15,7 +15,9 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import { Collection } from '@/types/collection';
 import { OwnedProduct } from '@/types/product';
-import { useGetProductsByCollection } from '@/hooks/useProduct';
+import { useProductsByCollection } from '@/hooks/useProduct';
+
+
 
 interface Props {
   open: boolean;
@@ -36,7 +38,7 @@ const CollectionViewModal: React.FC<Props> = ({
     data: products = [],
     isLoading,
     refetch,
-  } = useGetProductsByCollection(collection.id, open);
+  } = useProductsByCollection(collection.id, open);
 
   React.useEffect(() => {
     if (open) {

@@ -10,6 +10,7 @@ import {
   Slider,
   Box,
   Typography,
+  Stack,
 } from '@mui/material';
 import Cropper, { Area } from 'react-easy-crop';
 import getCroppedImg from '@/utils/cropImage';
@@ -31,9 +32,9 @@ export default function CropImageModal({
 }: Props) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0); // thêm rotation
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
-  // Aspect ratio dựa trên type
   const aspect = (() => {
     switch (type) {
       case 'avatar':
@@ -57,12 +58,12 @@ export default function CropImageModal({
   const handleCropSave = useCallback(async () => {
     if (!croppedAreaPixels) return;
     try {
-      const croppedFile = await getCroppedImg(image, croppedAreaPixels, type);
+      const croppedFile = await getCroppedImg(image, croppedAreaPixels, type, rotation);
       onCropDone(croppedFile);
     } catch (err) {
       console.error(err);
     }
-  }, [croppedAreaPixels, image, onCropDone, type]);
+  }, [croppedAreaPixels, image, onCropDone, type, rotation]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
@@ -86,6 +87,7 @@ export default function CropImageModal({
           image={image}
           crop={crop}
           zoom={zoom}
+          rotation={rotation} // truyền rotation
           aspect={aspect}
           onCropChange={setCrop}
           onZoomChange={setZoom}
@@ -96,21 +98,43 @@ export default function CropImageModal({
       </DialogContent>
 
       <Box sx={{ px: 4, py: 2 }}>
-        <Typography variant="body2" sx={{ color: '#aaa', mb: 1, textAlign: 'center' }}>
-          Zoom
-        </Typography>
-        <Slider
-          min={1}
-          max={3}
-          step={0.01}
-          value={zoom}
-          onChange={(_, value) => setZoom(value as number)}
-          sx={{
-            '& .MuiSlider-thumb': { bgcolor: '#7a3bff', border: '2px solid #fff' },
-            '& .MuiSlider-track': { bgcolor: '#7a3bff' },
-            '& .MuiSlider-rail': { bgcolor: '#555' },
-          }}
-        />
+        <Stack spacing={2}>
+          <Box>
+            <Typography variant="body2" sx={{ color: '#aaa', mb: 1, textAlign: 'center' }}>
+              Zoom
+            </Typography>
+            <Slider
+              min={1}
+              max={3}
+              step={0.01}
+              value={zoom}
+              onChange={(_, value) => setZoom(value as number)}
+              sx={{
+                '& .MuiSlider-thumb': { bgcolor: '#7a3bff', border: '2px solid #fff' },
+                '& .MuiSlider-track': { bgcolor: '#7a3bff' },
+                '& .MuiSlider-rail': { bgcolor: '#555' },
+              }}
+            />
+          </Box>
+
+          <Box>
+            <Typography variant="body2" sx={{ color: '#aaa', mb: 1, textAlign: 'center' }}>
+              Rotation
+            </Typography>
+            <Slider
+              min={0}
+              max={360}
+              step={1}
+              value={rotation}
+              onChange={(_, value) => setRotation(value as number)}
+              sx={{
+                '& .MuiSlider-thumb': { bgcolor: '#7a3bff', border: '2px solid #fff' },
+                '& .MuiSlider-track': { bgcolor: '#7a3bff' },
+                '& .MuiSlider-rail': { bgcolor: '#555' },
+              }}
+            />
+          </Box>
+        </Stack>
       </Box>
 
       <DialogActions sx={{ px: 4, pb: 3, justifyContent: 'center' }}>

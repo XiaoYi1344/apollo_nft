@@ -1,14 +1,21 @@
-'use client';
+// 'use client';
+// import Upload from '@/components/uploads/Upload'
+// import React from 'react'
 
-import dynamic from 'next/dynamic';
-import React, { Suspense } from 'react';
+// const page = () => {
+//   return (
+//     <Upload />
+//   )
+// }
 
-const Upload = dynamic(() => import('@/components/uploads/Upload'), {
-  ssr: false,
-});
+// export default page
+
+
+// app/uploads/page.tsx
+import UploadClientWrapper from './UploadClient';
+
+export const dynamic = 'force-dynamic';
 
 export default function Page() {
-  return (
-      <Upload />
-  );
+  return <UploadClientWrapper />;
 }

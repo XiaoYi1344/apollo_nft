@@ -1,15 +1,32 @@
+// // app/ClientWrapper.tsx
+// 'use client';
+
+// import React, { Suspense } from 'react';
+// import dynamic from 'next/dynamic';
+// import { WagmiAppProvider } from '@/providers/wagmi-provider';
+
+// export default function ClientWrapper({ children }: { children: React.ReactNode }) {
+//   const DynamicChildren = dynamic(() => Promise.resolve(() => <>{children}</>), { ssr: false });
+//   return (
+//     <Suspense fallback={<div>Loading...</div>}>
+//       <DynamicChildren />
+//       <WagmiAppProvider>{children}</WagmiAppProvider>
+//     </Suspense>
+//   );
+// }
+
+// app/ClientWrapper.tsx
 'use client';
 
-import { ClientProvider } from './ClientProvider';
+import React, { Suspense } from 'react';
 import { WagmiAppProvider } from '@/providers/wagmi-provider';
-import React from 'react';
 
-const ClientWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export default function ClientWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <ClientProvider>
-      <WagmiAppProvider>{children}</WagmiAppProvider>
-    </ClientProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <WagmiAppProvider>
+        {children}
+      </WagmiAppProvider>
+    </Suspense>
   );
-};
-
-export default ClientWrapper;
+}

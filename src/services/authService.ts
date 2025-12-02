@@ -1,16 +1,26 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API + '/api/authentication';
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API + '/api/authentication',
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
+});
 
+// -------- LOGIN --------
 export const loginWallet = async (addressWallet: string) => {
-  const res = await axios.post(`${API_URL}/login`, { addressWallet });
-  return res.data; // { nonce }
+  const res = await api.post('/login', { addressWallet });
+  return res.data;
 };
 
-export const verifySignature = async (addressWallet: string, signature: string) => {
-  const res = await axios.post(`${API_URL}/signature`, {
+// -------- VERIFY SIGNATURE --------
+export const verifySignature = async (
+  addressWallet: string,
+  signature: string
+) => {
+  const res = await api.post('/signature', {
     addressWallet,
     signature,
   });
-  return res.data.data; // { accessToken, user }
+  return res.data.data;
 };

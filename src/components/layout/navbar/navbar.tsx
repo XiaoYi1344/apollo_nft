@@ -701,8 +701,10 @@ const navItems = ['Drop', 'Marketplace', 'Creator', 'Community'];
 
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
-  const [account, setAccount] = useState<string>('');
+  // const [walletModalOpen, setWalletModalOpen] = useState(false);
+  // const [account, setAccount] = useState<string>('');
+   const [walletModalOpen, setWalletModalOpen] = useState(false);
+  const [account, setAccount] = useState('');
   const [scrolled, setScrolled] = useState(false);
 
   const router = useRouter();
@@ -713,10 +715,13 @@ const Navbar: React.FC = () => {
   const isTablet = useMediaQuery('(max-width:900px)');
   const isMobile = useMediaQuery('(max-width:600px)'); // 👈 thêm xác định mobile
 
+  const [isHomePage, setIsHomePage] = useState(false);
+
   // Get query params
   const walletMode = searchParams?.get('walletMode');
   const address = searchParams?.get('address');
 
+  const [profile, setProfile] = useState<{ addressWallet: string; avatar?: string } | null>(null);
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', handleScroll);
@@ -724,16 +729,21 @@ const Navbar: React.FC = () => {
   }, []);
 
   // ✅ Dynamic check using hookAccount
-  const isHome =
-  pathname === '/drop' ||
-  pathname === '/community' ||
-  pathname === '/view/upcoming' ||
-  (pathname === '/creator/creator-detail' &&
-    walletMode === 'true' &&
-    address?.toLowerCase() === hookAccount?.toLowerCase());
+  useEffect(() => {
+  if (!hookAccount) return; // chưa load xong
+  const walletModeActive = walletMode === 'true';
+  const sameAddress =
+    address?.toLowerCase() === hookAccount.toLowerCase();
+  const home =
+    pathname === '/drop' ||
+    pathname === '/community' ||
+    pathname === '/view/upcoming' ||
+    (pathname === '/creator/creator-detail' && walletModeActive && sameAddress);
+  setIsHomePage(home);
+}, [hookAccount, walletMode, address, pathname]);
 
   // Dynamic background
-  const backgroundColor = isHome
+  const backgroundColor = isHomePage
     ? 'rgba(26, 0, 71, 0.95)' // fixed purple for "home" pages
     : scrolled
       ? 'rgba(26, 0, 71, 0.95)' // purple on scroll for other pages
@@ -836,7 +846,7 @@ const Navbar: React.FC = () => {
                     boxShadow: '0 0 10px rgba(140, 74, 255, 0.6)',
                   },
                 }}
-                onClick={() => setWalletModalOpen(true)}
+                 onClick={() => setWalletModalOpen(true)}
               >
                 {/* Nếu đã kết nối ví */}
                 {account ? (
@@ -952,7 +962,13 @@ const Navbar: React.FC = () => {
           Connect Wallet
         </MenuItem>
       </Menu>
-      <WalletModal
+      {/* <WalletModal
+        open={walletModalOpen}
+        onClose={() => setWalletModalOpen(false)}
+        account={account}
+        setAccount={setAccount}
+      /> */}
+       <WalletModal
         open={walletModalOpen}
         onClose={() => setWalletModalOpen(false)}
         account={account}

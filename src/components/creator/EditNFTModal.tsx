@@ -378,43 +378,89 @@ const EditNFTModal: React.FC<Props> = ({
           isFreeze: product.isFreeze,
         };
 
+    // updateProductMutation.mutate(payload, {
+    //   onSuccess: (res) => {
+    //     const tokenURI = res?.data;
+    //     if (!tokenURI) {
+    //       toast.error('Không lấy được tokenURI mới!');
+    //       return;
+    //     }
+
+    //     const imageURL = image ? URL.createObjectURL(image) : product.image;
+
+    //     const metadata: NFTMetadataWithURI = {
+    //       name,
+    //       description,
+    //       image: imageURL,
+    //       external_url: externalLink,
+    //       attributes: properties.map((p) => ({
+    //         trait_type: p.type,
+    //         value: p.name,
+    //       })),
+    //       tokenURI,
+    //     };
+
+    //     setMetadataPreview(metadata);
+    //     setOpenPreview(true);
+
+    //     setOnChainData({
+    //       tokenId: Number(product.tokenId),
+    //       tokenURI,
+    //       price: price || '0',
+    //       name,
+    //       description,
+    //     });
+    //   },
+    //   onError: (err) => {
+    //     toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
+    //   },
+    // });
     updateProductMutation.mutate(payload, {
-      onSuccess: (res) => {
-        const tokenURI = res?.data;
-        if (!tokenURI) {
-          toast.error('Không lấy được tokenURI mới!');
-          return;
-        }
+  onSuccess: (res) => {
+    const resData = res?.data as string | { tokenURI?: string } | undefined;
 
-        const imageURL = image ? URL.createObjectURL(image) : product.image;
+    // Lấy tokenURI từ response
+    const tokenURIFromRes: string | undefined =
+      typeof resData === 'string' ? resData : resData?.tokenURI;
 
-        const metadata: NFTMetadataWithURI = {
-          name,
-          description,
-          image: imageURL,
-          external_url: externalLink,
-          attributes: properties.map((p) => ({
-            trait_type: p.type,
-            value: p.name,
-          })),
-          tokenURI,
-        };
+    // Fallback sang product nếu không có tokenURI mới
+    // const tokenURI: string | undefined =
+    //   tokenURIFromRes ?? product.tokenURI ?? product.ownerships?.[0]?.tokenURI;
+    const tokenURI: string | undefined =
+  tokenURIFromRes ?? product.tokenURI;
 
-        setMetadataPreview(metadata);
-        setOpenPreview(true);
+    if (!tokenURI) {
+      toast.error('Không lấy được tokenURI mới!');
+      return;
+    }
 
-        setOnChainData({
-          tokenId: Number(product.tokenId),
-          tokenURI,
-          price: price || '0',
-          name,
-          description,
-        });
-      },
-      onError: (err) => {
-        toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
-      },
+    const imageURL = image ? URL.createObjectURL(image) : product.image;
+
+    const metadata: NFTMetadataWithURI = {
+      name,
+      description,
+      image: imageURL,
+      external_url: externalLink,
+      attributes: properties.map((p) => ({ trait_type: p.type, value: p.name })),
+      tokenURI,
+    };
+
+    setMetadataPreview(metadata);
+    setOpenPreview(true);
+
+    setOnChainData({
+      tokenId: Number(product.tokenId) || 0,
+      tokenURI,
+      price: price || '0',
+      name,
+      description,
     });
+  },
+  onError: (err) => {
+    toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
+  },
+});
+
   };
 
   // ======================== CONFIRM → ON-CHAIN ========================
@@ -534,8 +580,8 @@ const EditNFTModal: React.FC<Props> = ({
               fullWidth
               disabled={frozen}
               sx={{
-                input: { color: '#fff' },
-                label: { color: '#aaa' },
+                input: { color: '#fff' }, // chữ input bình thường
+                label: { color: '#aaa' }, // label bình thường
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: '#7a3bff' },
                   '&:hover fieldset': { borderColor: '#ff5ca2' },
@@ -544,6 +590,22 @@ const EditNFTModal: React.FC<Props> = ({
                     boxShadow: '0 0 8px #ff5ca2',
                   },
                 },
+                '& .MuiOutlinedInput-input.Mui-disabled': {
+                  color: '#fff', // fallback, các browser khác
+                  '-webkit-text-fill-color': '#B6B6B6', // Chrome / Safari
+                  opacity: 0.8, // bỏ mờ mặc định
+                },
+
+                // Label khi disabled
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: '#fff',
+                  opacity: 1,
+                },
+                // Viền khi disabled
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: '#7a3bff',
+                  },
               }}
             />
 
@@ -555,16 +617,36 @@ const EditNFTModal: React.FC<Props> = ({
               multiline
               disabled={frozen}
               sx={{
+                // Chữ textarea bình thường
                 textarea: { color: '#fff' },
+                // Label bình thường
                 label: { color: '#aaa' },
+                // Root của OutlinedInput
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: '#7a3bff' },
-                  '&:hover fieldset': { borderColor: '#ff5ca2' },
+                  '& fieldset': { borderColor: '#7a3bff' }, // viền bình thường
+                  '&:hover fieldset': { borderColor: '#ff5ca2' }, // hover
                   '&.Mui-focused fieldset': {
                     borderColor: '#ff5ca2',
                     boxShadow: '0 0 8px #ff5ca2',
                   },
                 },
+                // Textarea khi disabled
+                '& .MuiOutlinedInput-input.Mui-disabled, & .MuiOutlinedInput-input.Mui-disabled textarea':
+                  {
+                    color: '#fff', // fallback cho Firefox/Edge
+                    '-webkit-text-fill-color': '#B6B6B6', // Chrome/Safari
+                    opacity: 0.8, // bỏ mờ mặc định
+                  },
+                // Label khi disabled
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: '#fff',
+                  opacity: 1,
+                },
+                // Viền khi disabled
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: '#7a3bff',
+                  },
               }}
             />
 
@@ -575,8 +657,8 @@ const EditNFTModal: React.FC<Props> = ({
               fullWidth
               disabled={frozen}
               sx={{
-                input: { color: '#fff' },
-                label: { color: '#aaa' },
+                input: { color: '#fff' }, // chữ input bình thường
+                label: { color: '#aaa' }, // label bình thường
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: '#7a3bff' },
                   '&:hover fieldset': { borderColor: '#ff5ca2' },
@@ -585,6 +667,22 @@ const EditNFTModal: React.FC<Props> = ({
                     boxShadow: '0 0 8px #ff5ca2',
                   },
                 },
+                '& .MuiOutlinedInput-input.Mui-disabled': {
+                  color: '#fff', // fallback, các browser khác
+                  '-webkit-text-fill-color': '#B6B6B6', // Chrome / Safari
+                  opacity: 0.8, // bỏ mờ mặc định
+                },
+
+                // Label khi disabled
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: '#fff',
+                  opacity: 1,
+                },
+                // Viền khi disabled
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: '#7a3bff',
+                  },
               }}
             />
 
@@ -598,6 +696,11 @@ const EditNFTModal: React.FC<Props> = ({
                 '&:hover': {
                   borderColor: '#ff5ca2',
                   boxShadow: '0 0 12px #ff5ca2',
+                },
+                '&.Mui-disabled': {
+                  color: '#fff', // chữ vẫn trắng
+                  borderColor: '#7a3bff', // viền vẫn tím
+                  opacity: 1, // bỏ mờ mặc định
                 },
               }}
             >
@@ -635,8 +738,8 @@ const EditNFTModal: React.FC<Props> = ({
               fullWidth
               disabled={frozen}
               sx={{
-                input: { color: '#fff' },
-                label: { color: '#aaa' },
+                input: { color: '#fff' }, // chữ input bình thường
+                label: { color: '#aaa' }, // label bình thường
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: '#7a3bff' },
                   '&:hover fieldset': { borderColor: '#ff5ca2' },
@@ -645,6 +748,22 @@ const EditNFTModal: React.FC<Props> = ({
                     boxShadow: '0 0 8px #ff5ca2',
                   },
                 },
+                '& .MuiOutlinedInput-input.Mui-disabled': {
+                  color: '#fff', // fallback, các browser khác
+                  '-webkit-text-fill-color': '#B6B6B6', // Chrome / Safari
+                  opacity: 0.8, // bỏ mờ mặc định
+                },
+
+                // Label khi disabled
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: '#fff',
+                  opacity: 1,
+                },
+                // Viền khi disabled
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: '#7a3bff',
+                  },
               }}
             />
 
@@ -655,8 +774,8 @@ const EditNFTModal: React.FC<Props> = ({
               fullWidth
               disabled={frozen}
               sx={{
-                input: { color: '#fff' },
-                label: { color: '#aaa' },
+                input: { color: '#fff' }, // chữ input bình thường
+                label: { color: '#aaa' }, // label bình thường
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: '#7a3bff' },
                   '&:hover fieldset': { borderColor: '#ff5ca2' },
@@ -665,6 +784,22 @@ const EditNFTModal: React.FC<Props> = ({
                     boxShadow: '0 0 8px #ff5ca2',
                   },
                 },
+                '& .MuiOutlinedInput-input.Mui-disabled': {
+                  color: '#fff', // fallback, các browser khác
+                  '-webkit-text-fill-color': '#B6B6B6', // Chrome / Safari
+                  opacity: 0.8, // bỏ mờ mặc định
+                },
+
+                // Label khi disabled
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: '#fff',
+                  opacity: 1,
+                },
+                // Viền khi disabled
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: '#7a3bff',
+                  },
               }}
             />
 
@@ -723,15 +858,16 @@ const EditNFTModal: React.FC<Props> = ({
 
       {onChainData && (
         <ConfirmUpdateDialog
-          open={openConfirm}
-          onClose={() => setOpenConfirm(false)}
-          data={onChainData}
-          onConfirm={handleConfirmOnChain}
-        />
+  open={openConfirm}
+  onClose={() => setOpenConfirm(false)}
+  data={onChainData}       // nếu có dữ liệu onChain mới
+  ownedProduct={product}   // fallback nếu onChainData không có
+  onConfirm={handleConfirmOnChain}
+/>
+
       )}
     </>
   );
 };
 
 export default EditNFTModal;
-

@@ -1,15 +1,16 @@
-'use client';
+// // app/_not-found/page.tsx
+// 'use client'
+// import NotFoundClient from "@/components/_not-found/NotFoundClient";
 
-import dynamic from 'next/dynamic';
-import React, { Suspense } from 'react';
+// export default function NotFoundPage() {
+//   return <NotFoundClient />;
+// }
 
-const NotFoundClient = dynamic(
-  () => import('@/components/_not-found/NotFoundClient'),
-  { ssr: false }
-);
+// app/_not-found/page.tsx
+import ClientPage from './clientpage';
+
+export const dynamic = 'force-dynamic';
 
 export default function NotFoundPage() {
-  return (
-      <NotFoundClient />
-  );
+  return <ClientPage />;
 }

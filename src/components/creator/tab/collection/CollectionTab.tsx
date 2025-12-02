@@ -239,6 +239,7 @@ import {
   useUpdateCollection,
   useDeleteCollection,
   useUpdateProductCollection,
+  useUpdateCollectionVisibility,
 } from '@/hooks/useCollection';
 
 import { OwnedProduct, ProductActivity } from '@/types/product';
@@ -262,6 +263,7 @@ const AddProductsModal = dynamic(
   () => import('./modal/AddProductsModal'),
   { ssr: false }
 );
+
 
 /* -----------------------------
     Lazy Image Component
@@ -373,6 +375,7 @@ const CollectionTab: React.FC<Props> = ({
   const deleteMutation = useDeleteCollection();
   const updateProductCollectionMutation = useUpdateProductCollection();
 
+  const updateVisibilityMutation = useUpdateCollectionVisibility();
   /* -----------------------------
       Modal States
   ------------------------------ */
@@ -577,20 +580,28 @@ const CollectionTab: React.FC<Props> = ({
 
       {openEdit.open && openEdit.collection && (
         <EditCollectionModal
-          open={openEdit.open}
-          collection={openEdit.collection}
-          onClose={() => setOpenEdit({ open: false })}
-          onSubmit={(data) =>
-            updateMutation.mutate(data, {
-              onSuccess: () => setOpenEdit({ open: false }),
-            })
-          }
-          onDelete={() =>
-            deleteMutation.mutate(openEdit.collection!.id, {
-              onSuccess: () => setOpenEdit({ open: false }),
-            })
-          }
-        />
+  open={openEdit.open}
+  collection={openEdit.collection}
+  onClose={() => setOpenEdit({ open: false })}
+  onSubmit={(data) =>
+    updateMutation.mutate(data, {
+      onSuccess: () => setOpenEdit({ open: false }),
+    })
+  }
+  onDelete={() =>
+    deleteMutation.mutate(openEdit.collection!.id, {
+      onSuccess: () => setOpenEdit({ open: false }),
+    })
+  }
+  onTogglePublic={(isPublic: boolean) =>
+  updateVisibilityMutation.mutate({
+    id: openEdit.collection!.id, // ✅ FIXED
+    isPublic,
+  })
+}
+
+/>
+
       )}
 
       {openView.open && openView.collection && (

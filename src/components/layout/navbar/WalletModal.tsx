@@ -1249,6 +1249,9 @@ import { useRouter } from 'next/navigation';
 import { useWalletAuth } from '@/hooks/useAuth';
 import dynamic from 'next/dynamic';
 
+import Cookies from 'js-cookie';
+import userApi from '@/services/userService';
+
 interface EthereumProvider {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
 }
@@ -1274,6 +1277,7 @@ const WalletModal: React.FC<WalletModalProps> = ({
   account,
   setAccount,
 }) => {
+  const API_URL = process.env.NEXT_PUBLIC_API;
   const [walletState, setWalletState] = useState<WalletState>('select');
   const [connectingWalletName, setConnectingWalletName] = useState('');
   const [walletListOpen, setWalletListOpen] = useState(false);
@@ -1282,6 +1286,26 @@ const WalletModal: React.FC<WalletModalProps> = ({
   const [pioneQR, setPioneQR] = useState('');
 
   const router = useRouter();
+
+  const [profile, setProfile] = useState<{
+    addressWallet: string;
+    avatar?: string;
+  } | null>(null);
+  const walletAddress = Cookies.get('account') || '';
+
+  const [selectedWallet, setSelectedWallet] = useState<
+    'eth' | 'metamask' | 'pione' | 'wallet'
+  >('eth');
+
+  const walletIcons: Record<typeof selectedWallet, string> = {
+    eth: '/icons/eth.svg',
+    metamask: '/icons/metamask.svg',
+    pione: '/icons/pione.svg',
+    wallet: '/icons/wallet.svg',
+  };
+
+  const shortenAddress = (addr: string) =>
+    addr ? addr.slice(0, 6) + '...' + addr.slice(-4) : '';
   const {
     authenticateWallet,
     logout,
@@ -1291,29 +1315,105 @@ const WalletModal: React.FC<WalletModalProps> = ({
   const QRCode = dynamic(() => import('qrcode.react'), { ssr: false });
 
   // 🔹 Lấy balance
-  const getBalance = async (acc: string) => {
-    if (!window.ethereum) return '0';
-    try {
-      const balanceWei = await window.ethereum.request({
-        method: 'eth_getBalance',
-        params: [acc, 'latest'],
-      });
-      const balanceEth = parseFloat(
-        (parseInt(balanceWei as string, 16) / 1e18).toFixed(4),
-      );
-      return balanceEth.toString();
-    } catch (err) {
-      console.error('Error fetching balance:', err);
+  const getBalance = async (acc: string): Promise<string> => {
+  if (!window.ethereum || !window.ethereum.request) {
+    console.error('Ethereum provider not found');
+    return '0';
+  }
+
+  try {
+    const balanceWei = await window.ethereum.request({
+      method: 'eth_getBalance',
+      params: [acc, 'latest'],
+    });
+
+    // Kiểm tra dữ liệu trả về
+    if (!balanceWei || typeof balanceWei !== 'string') {
+      console.error('Invalid balance returned:', balanceWei);
       return '0';
     }
-  };
+
+    // Chuyển từ hex sang số ETH
+    const balanceEth = parseFloat((parseInt(balanceWei, 16) / 1e18).toFixed(4));
+    if (isNaN(balanceEth)) {
+      console.error('Parsed balance is NaN:', balanceWei);
+      return '0';
+    }
+
+    return balanceEth.toString();
+  } catch (err: unknown) {
+    console.error('Error fetching balance:', err instanceof Error ? err.message : err);
+    return '0';
+  }
+};
+
 
   // 🔹 Connect wallet
-  const connectWallet = async (wallet: string) => {
-    try {
-      setConnectingWalletName(wallet);
-      setWalletState('connecting');
+  // const connectWallet = async (wallet: string) => {
+  //   try {
+  //     setConnectingWalletName(wallet);
+  //     setWalletState('connecting');
 
+  //     if (wallet === 'metamask') {
+  //       const { ethereum } = window;
+  //       if (!ethereum) {
+  //         toast.error('MetaMask is not installed!');
+  //         setWalletState('select');
+  //         return;
+  //       }
+
+  //       // step 1: yêu cầu user confirm
+  //       const accounts = (await ethereum.request({
+  //         method: 'eth_requestAccounts',
+  //       })) as string[];
+
+  //       if (!accounts || accounts.length === 0)
+  //         throw new Error('No accounts found');
+
+  //       const address = accounts[0];
+
+  //       // step 2: vẫn đang CONNECTING — KHÔNG chuyển UI
+  //       setConnectingWalletName(wallet);
+  //       setWalletState('connecting');
+
+  //       // step 3: chờ authenticate (backend)
+  //       try {
+  //         await authenticateWallet(address); // 🔥 nếu thất bại sẽ vẫn hiển thị connecting
+
+  //         // step 4: kết nối thành công -> chuyển INFO
+  //         setAccount(address);
+  //         const balance = await getBalance(address);
+  //         setWalletBalance(balance);
+
+  //         setWalletState('info'); // 🔥 chỉ vào info nếu tất cả thành công
+  //       } catch (err) {
+  //         toast.error('Authentication failed!');
+  //         console.log(err);
+
+  //         setWalletState('select'); // quay lại chọn ví
+  //       }
+  //     } else if (wallet === 'pione') {
+  //       const callbackUrl = encodeURIComponent(window.location.href);
+  //       const qrLink = `pione://connect?callback=${callbackUrl}`;
+  //       setPioneQR(qrLink);
+  //       setShowPioneQR(true);
+  //     }
+  //   } catch (err: unknown) {
+  //     console.error(err);
+  //     toast.error(err instanceof Error ? err.message : 'Connection failed');
+  //     setWalletState('select');
+  //   }
+  // };
+  //   const connectWallet = async (wallet: string) => {
+
+  // };
+
+  const connectWallet = async (wallet: 'metamask' | 'pione') => {
+    setSelectedWallet(wallet);
+    setConnectingWalletName(wallet);
+    setWalletState('connecting');
+
+    try {
       if (wallet === 'metamask') {
         const { ethereum } = window;
         if (!ethereum) {
@@ -1329,9 +1429,15 @@ const WalletModal: React.FC<WalletModalProps> = ({
           throw new Error('No accounts found');
 
         const address = accounts[0];
-        await authenticateWallet(address);
+        setAccount(address);
 
-        setAccount(address); // ✅ dùng trực tiếp
+        try {
+          await authenticateWallet(address);
+        } catch (err) {
+          console.log('Backend auth failed, waiting...');
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+
         const balance = await getBalance(address);
         setWalletBalance(balance);
         setWalletState('info');
@@ -1378,13 +1484,38 @@ const WalletModal: React.FC<WalletModalProps> = ({
     }
   }, [hookAccount, open]);
 
-  if (loading) {
-    return (
-      <Box className="fixed inset-0 flex items-center justify-center bg-black/40">
-        <Typography sx={{ color: '#fff' }}>Connecting wallet...</Typography>
-      </Box>
-    );
-  }
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await userApi.getUserProfileByWallet(walletAddress); // dùng đúng tên export
+        setProfile({
+          addressWallet: data.addressWallet,
+          avatar: data.avatar ? userApi.getUserAvatar(data.avatar) : undefined,
+        });
+      } catch (err) {
+        console.error('Failed to load profile', err);
+      }
+    };
+
+    if (walletAddress) fetchProfile();
+  }, [walletAddress]);
+
+  // if (!profile) return null;
+  const avatarUrl = profile?.avatar
+    ? profile.avatar.startsWith('http')
+      ? profile.avatar // đã là link Cloudinary
+      : `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763370298/${profile.avatar}.png`
+    : '/avatars/cyber-avatar.png';
+
+  console.log(avatarUrl);
+
+  // if (loading) {
+  //   return (
+  //     <Box className="fixed inset-0 flex items-center justify-center bg-black/40">
+  //       <Typography sx={{ color: '#fff' }}>Connecting wallet...</Typography>
+  //     </Box>
+  //   );
+  // }
   return (
     <>
       {/* MAIN MODAL */}
@@ -1438,7 +1569,7 @@ const WalletModal: React.FC<WalletModalProps> = ({
                     To start, please connect your wallet.
                   </Typography>
 
-                  <Stack spacing={2}>
+                  {/* <Stack spacing={2}>
                     <Button
                       fullWidth
                       onClick={() => connectWallet('metamask')}
@@ -1507,6 +1638,76 @@ const WalletModal: React.FC<WalletModalProps> = ({
                       />
                       All Wallets
                     </Button>
+                  </Stack> */}
+                  <Stack spacing={2}>
+                    <Button
+                      fullWidth
+                      onClick={() => connectWallet('metamask')}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        px: 3,
+                        py: 1.5,
+                        borderRadius: 2,
+                        bgcolor: '#1F1639',
+                        '&:hover': { bgcolor: '#2A1C52' },
+                      }}
+                    >
+                      <Image
+                        src="/icons/metamask.svg"
+                        alt="metamask"
+                        width={28}
+                        height={28}
+                      />
+                      MetaMask
+                    </Button>
+
+                    <Button
+                      fullWidth
+                      onClick={() => connectWallet('pione')}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        px: 3,
+                        py: 1.5,
+                        borderRadius: 2,
+                        bgcolor: '#1F1639',
+                        '&:hover': { bgcolor: '#2A1C52' },
+                      }}
+                    >
+                      <Image
+                        src="/icons/pione.svg"
+                        alt="pione"
+                        width={28}
+                        height={28}
+                      />
+                      Pione Wallet
+                    </Button>
+
+                    <Button
+                      fullWidth
+                      onClick={() => setSelectedWallet('wallet')}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        px: 3,
+                        py: 1.5,
+                        borderRadius: 2,
+                        bgcolor: '#1F1639',
+                        '&:hover': { bgcolor: '#2A1C52' },
+                      }}
+                    >
+                      <Image
+                        src="/icons/wallet.svg"
+                        alt="all-wallets"
+                        width={28}
+                        height={28}
+                      />
+                      All Wallets
+                    </Button>
                   </Stack>
                 </>
               )}
@@ -1537,49 +1738,74 @@ const WalletModal: React.FC<WalletModalProps> = ({
 
               {/* CONNECTING */}
               {walletState === 'connecting' && (
-                <Box className="flex flex-col items-center justify-center">
-                  <div className="relative mb-6 w-20 h-20 flex items-center justify-center">
+                <Box className="flex flex-col items-center justify-center py-6 px-4">
+                  {/* Title */}
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 700,
+                      mb: 3,
+                      fontSize: '22px',
+                    }}
+                  >
+                    Connecting {connectingWalletName}...
+                  </Typography>
+
+                  {/* Circle loading */}
+                  <motion.div className="relative mb-6 w-[95px] h-[95px] flex items-center justify-center">
+                    {/* Rotating soft border */}
                     <motion.div
-                      className="absolute w-20 h-20 rounded-full border-[6px] border-[#8c4aff]/40 border-t-[#8c4aff]"
-                      animate={{ rotate: 360 }}
+                      className="absolute w-[95px] h-[95px] rounded-full border-[4px] border-[#9d69ff]/30"
+                      animate={{ rotate: [0, 360] }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 6,
+                        ease: 'linear',
+                      }}
+                      style={{ willChange: 'transform' }}
+                    />
+
+                    {/* Soft continuous aura */}
+                    <motion.div
+                      className="absolute w-[95px] h-[95px] rounded-full"
+                      style={{
+                        boxShadow: '0 0 18px 6px rgba(157,105,255,0.3)',
+                        willChange: 'transform'
+                      }}
+                      initial={{ scale: 0.85 }}
+                      animate={{ scale: [0.85, 1.2] }}
                       transition={{
                         repeat: Infinity,
                         duration: 2.5,
-                        ease: 'linear',
+                        ease: 'easeInOut',
                       }}
                     />
-                    {[0, 1, 2].map((i) => (
-                      <motion.div
-                        key={i}
-                        className="absolute w-20 h-20 rounded-full border-[3px] border-[#8c4aff]/30"
-                        initial={{ scale: 0.6, opacity: 0.8 }}
-                        animate={{ scale: 1.6, opacity: 0 }}
-                        transition={{
-                          duration: 2.5,
-                          repeat: Infinity,
-                          delay: i * 0.6,
-                          ease: 'easeOut',
-                        }}
-                      />
-                    ))}
-                    <Image
-                      src="/icons/metamask.svg"
-                      alt="metamask"
-                      width={40}
-                      height={40}
-                      className="relative z-10"
-                    />
-                  </div>
 
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                    Connecting {connectingWalletName}...
-                  </Typography>
+                    {/* Center icon */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Image
+                        src={walletIcons[selectedWallet]}
+                        alt={selectedWallet}
+                        width={38}
+                        height={38}
+                      />
+                    </Box>
+                  </motion.div>
+
+                  {/* Subtitle */}
                   <Typography
                     variant="body2"
                     sx={{
-                      color: '#bcb9d3',
-                      fontSize: '14px',
+                      color: '#c8c5db',
+                      fontSize: '15px',
                       mb: 4,
+                      maxWidth: '260px',
                       textAlign: 'center',
                     }}
                   >
@@ -1587,24 +1813,28 @@ const WalletModal: React.FC<WalletModalProps> = ({
                     press &quot;Connect&quot;.
                   </Typography>
 
-                  <Button
-                    disabled
-                    startIcon={
-                      <span className="w-2 h-2 rounded-full bg-yellow-400" />
-                    }
+                  {/* Status bar */}
+                  <Box
                     sx={{
-                      color: '#fff',
-                      borderColor: '#fff',
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                      borderRadius: '12px',
-                      px: 3,
-                      py: 1,
+                      width: '100%',
+                      py: 1.5,
+                      borderRadius: '14px',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 1.2,
                     }}
                   >
-                    Waiting for confirmation from {connectingWalletName}
-                  </Button>
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                    <Typography
+                      variant="body2"
+                      sx={{ color: '#e8e6f5', fontSize: '14px' }}
+                    >
+                      Waiting for confirmation from {connectingWalletName}
+                    </Typography>
+                  </Box>
                 </Box>
               )}
 
@@ -1619,7 +1849,10 @@ const WalletModal: React.FC<WalletModalProps> = ({
                     className="relative mb-5"
                   >
                     <Avatar
-                      src="/avatars/cyber-avatar.png"
+                      src={
+                        avatarUrl
+                        // : '/avatars/cyber-avatar.png'
+                      }
                       sx={{
                         width: 80,
                         height: 80,
@@ -1629,16 +1862,14 @@ const WalletModal: React.FC<WalletModalProps> = ({
                         '&:hover': { transform: 'scale(1.05)' },
                       }}
                     />
+
                     <Typography
                       variant="body2"
-                      sx={{
-                        mt: 1,
-                        color: '#c7baff',
-                        fontSize: 13,
-                        letterSpacing: 0.3,
-                      }}
+                      sx={{ mt: 1, color: '#c7baff', fontSize: 13 }}
                     >
-                      {account.slice(0, 6)}...{account.slice(-4)}
+                      {profile?.addressWallet
+                        ? shortenAddress(profile.addressWallet)
+                        : 'Loading...'}
                     </Typography>
                   </motion.div>
 
@@ -1714,7 +1945,7 @@ const WalletModal: React.FC<WalletModalProps> = ({
                     <Box className="flex items-center gap-2">
                       <AccountBalanceWalletIcon sx={{ color: '#b79aff' }} />
                       <Typography sx={{ color: '#b79aff' }}>
-                        Balance: {walletBalance} ETH
+                        Balance: {walletBalance} PZO
                       </Typography>
                     </Box>
                   </Stack>

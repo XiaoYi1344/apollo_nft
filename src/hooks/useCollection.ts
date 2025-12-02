@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CreateCollectionRequest, UpdateCollectionRequest, ProductCollectionRequest, Collection } from '@/types/collection';
+import {
+  CreateCollectionRequest,
+  UpdateCollectionRequest,
+  ProductCollectionRequest,
+  UpdateCollectionVisibilityRequest,
+  Collection,
+} from '@/types/collection';
 import { collectionService } from '@/services/collectionService';
+
 interface GetAllOwnedCollectionsResponse {
   success: boolean;
   message: string;
@@ -9,9 +16,12 @@ interface GetAllOwnedCollectionsResponse {
 
 // === Queries ===
 export const useGetAllCollections = () => {
-  return useQuery({
+  return useQuery<Collection[]>({
     queryKey: ['collections'],
-    queryFn: () => collectionService.getAllCollections().then(res => res.data.result),
+    queryFn: async () => {
+      const res = await collectionService.getAllCollections();
+      return res.data.result;
+    },
   });
 };
 
@@ -43,6 +53,17 @@ export const useUpdateCollection = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: UpdateCollectionRequest) => collectionService.updateCollection(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['collections'] });
+      queryClient.invalidateQueries({ queryKey: ['collections-owned'] });
+    },
+  });
+};
+
+export const useUpdateCollectionVisibility = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UpdateCollectionVisibilityRequest) => collectionService.updateCollectionVisibility(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['collections'] });
       queryClient.invalidateQueries({ queryKey: ['collections-owned'] });

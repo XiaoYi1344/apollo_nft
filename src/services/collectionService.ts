@@ -5,24 +5,16 @@ import {
   CreateCollectionRequest,
   UpdateCollectionRequest,
   ProductCollectionRequest,
+  UpdateCollectionVisibilityRequest,
 } from '@/types/collection';
 
 const API_URL = process.env.NEXT_PUBLIC_API + '/api';
-
-// Header mặc định
-const defaultHeaders = {
-  'ngrok-skip-browser-warning': 'true',
-};
-
-// Lấy accessToken từ cookie
+const defaultHeaders = { 'ngrok-skip-browser-warning': 'true' };
 const getToken = () => Cookies.get('accessToken') || '';
 
 export const collectionService = {
   getImage: (imageId: string) =>
-    axios.get(`${API_URL}/upload/${imageId}`, {
-      headers: { ...defaultHeaders },
-      withCredentials: true,
-    }),
+    axios.get(`${API_URL}/upload/${imageId}`, { headers: { ...defaultHeaders } }),
 
   createCollection: (data: CreateCollectionRequest) => {
     const formData = new FormData();
@@ -36,7 +28,6 @@ export const collectionService = {
         Authorization: `Bearer ${getToken()}`,
         'Content-Type': 'multipart/form-data',
       },
-      withCredentials: true,
     });
   },
 
@@ -53,31 +44,29 @@ export const collectionService = {
         Authorization: `Bearer ${getToken()}`,
         'Content-Type': 'multipart/form-data',
       },
-      withCredentials: true,
     });
   },
+
+  updateCollectionVisibility: (data: UpdateCollectionVisibilityRequest) =>
+    axios.put(`${API_URL}/collection/visibility`, data, {
+      headers: { ...defaultHeaders, Authorization: `Bearer ${getToken()}` },
+    }),
 
   deleteCollection: (collectionId: number) =>
     axios.delete(`${API_URL}/collection/${collectionId}`, {
       headers: { ...defaultHeaders, Authorization: `Bearer ${getToken()}` },
-      withCredentials: true,
     }),
 
   updateProductCollection: (data: ProductCollectionRequest) =>
     axios.put(`${API_URL}/collection/product-collection`, data, {
       headers: { ...defaultHeaders, Authorization: `Bearer ${getToken()}` },
-      withCredentials: true,
     }),
 
   getAllCollections: () =>
-    axios.get<{ result: Collection[] }>(`${API_URL}/collection/get-all`, {
-      headers: { ...defaultHeaders },
-      withCredentials: true,
-    }),
+    axios.get<{ result: Collection[] }>(`${API_URL}/collection/get-all`, { headers: defaultHeaders }),
 
   getAllOwnedCollections: () =>
     axios.get<{ result: Collection[] }>(`${API_URL}/collection/get-all-owned`, {
       headers: { ...defaultHeaders, Authorization: `Bearer ${getToken()}` },
-      withCredentials: true,
     }),
 };

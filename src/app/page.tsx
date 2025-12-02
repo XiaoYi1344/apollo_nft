@@ -1,23 +1,17 @@
-
 'use client';
-// import Page from '@/components/creator/page';
+
 import HomePage from '@/components/home/homePage';
-// import { Upload } from '@/components/uploads/Upload';
-// import BlogList from '@/components/test';
-// import TermsSlidingPanel from '@/components/term/term';
-
-
+import AvatarCustomizerAdvanced from '@/components/AvatarCustomizerAdvanced';
 
 export default function Home() {
   return (
     <>
-      <HomePage/>
-      {/* <DropPage /> */}
-      {/* <Marketplace /> */}
-      {/* <TermsSlidingPanel /> */}
-      {/* <Page /> */}
-      {/* <BlogList /> */}
-      {/* <Upload /> */}
+      <HomePage />
+
+      {/* Thêm Avatar Customizer mini để test */}
+      {/* <div style={{ marginTop: '50px', padding: '20px', background: '#f5f5f5' }}>
+        <AvatarCustomizerAdvanced />
+      </div> */}
     </>
   );
 }

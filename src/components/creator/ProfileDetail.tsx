@@ -898,9 +898,9 @@ import {
 import { ArrowBack, Instagram, Twitter } from '@mui/icons-material';
 import { useRouter, useSearchParams } from 'next/navigation';
 // import toast from 'react-hot-toast';
-import { 
-  useOwnedProducts, 
-  // usePostProductForSale 
+import {
+  useOwnedProducts,
+  // usePostProductForSale
 } from '@/hooks/useProduct';
 import {
   OwnedProduct,
@@ -922,6 +922,7 @@ import CreatedTab from './tab/CreatedTab';
 import CollectionTab from './tab/collection/CollectionTab';
 
 import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 // import { UserProfile } from '@/types/user';
 interface Props {
   onBack: () => void;
@@ -945,6 +946,29 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
 
   const router = useRouter();
 
+const rawUser = Cookies.get('user');
+let canCreateNews = false;
+
+if (rawUser) {
+  try {
+    const user = JSON.parse(rawUser);
+
+    type Permission = {
+      type: string;
+      isActive: boolean;
+    };
+
+    const permissions: Permission[] = user?.permissions || [];
+
+    canCreateNews = permissions.some(
+      (p) => p.type === 'collaborator' && p.isActive
+    );
+  } catch (e) {
+    console.error('Failed to parse user cookie', e);
+  }
+}
+
+
   const handleTabClick = (path: string) => {
     router.push(path);
   };
@@ -953,7 +977,7 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
   const walletMode = isWalletMode ?? searchParams?.get('walletMode') === 'true';
 
   // const accessToken = Cookies.get('accessToken') || '';
-  const account = Cookies.get('account') ?? '';
+  // const account = Cookies.get('account') ?? '';
   // Queries
   const {
     data: ownedProducts,
@@ -980,12 +1004,13 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
   //       staleTime: 1000 * 60,
   //     })) || [],
   // });
+  const productsArray = Array.isArray(ownedProducts) ? ownedProducts : [];
+
   const activitiesQueries = useQueries({
-    queries:
-      ownedProducts?.map((product) => ({
-        queryKey: ['productActivity', product.id],
-        queryFn: () => productService.getProductActivity(product.id),
-      })) || [],
+    queries: productsArray.map((product) => ({
+      queryKey: ['productActivity', product.id],
+      queryFn: () => productService.getProductActivity(product.id),
+    })),
   });
 
   const allActivities = activitiesQueries.map(
@@ -1081,7 +1106,7 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
   const stats = [
     {
       label: 'TOTAL REVENUE',
-      value: user.ownedProducts.reduce(
+      value: (user.ownedProducts ?? []).reduce(
         (sum, p) => sum + Number(p.price || 0),
         0,
       ),
@@ -1263,7 +1288,7 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
 
               {/* Buttons */}
               <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-                <Button
+                {/* <Button
                   variant="contained"
                   sx={{
                     textTransform: 'none',
@@ -1272,7 +1297,21 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
                   disabled={user.addressWallet === account} // disable nếu là chính mình
                 >
                   Follow
-                </Button>
+                </Button> */}
+
+                {/* Nút tạo News chỉ hiển thị nếu có quyền */}
+                {canCreateNews && (
+                  <Button
+                    variant="contained"
+                    sx={{
+                      textTransform: 'none',
+                      background: 'linear-gradient(90deg,#7a3bff,#b78eff)',
+                    }}
+                    onClick={() => router.push('/view/news/create')}
+                  >
+                    Tạo News
+                  </Button>
+                )}
 
                 <Button
                   variant="outlined"
@@ -1389,9 +1428,15 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
               activitiesLoading={activitiesLoading}
               walletMode={walletMode}
               handleOpenEdit={handleOpenEdit}
-              openSellModal={(id, price) => {
-                setSellProductId(id);
-                setSellProductPrice(price);
+              openSellModal={(product) => {
+                if (!product.tokenId) {
+                  toast.error('NFT chưa mint, không thể bán!');
+                  return;
+                }
+
+                setSellProductId(Number(product.tokenId)); // ✔ ép kiểu number
+                setSellProductPrice(product.price?.toString() || '0');
+
                 setOpenSellModal(true);
               }}
             />
@@ -1404,9 +1449,13 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
               activitiesLoading={activitiesLoading}
               walletMode={walletMode}
               handleOpenEdit={handleOpenEdit}
-              openSellModal={(id, price) => {
-                setSellProductId(id);
-                setSellProductPrice(price);
+              openSellModal={(product) => {
+                if (!product.tokenId) {
+                  toast.error('NFT chưa mint, không thể bán!');
+                  return;
+                }
+                setSellProductId(parseInt(product.tokenId, 10));
+                setSellProductPrice(product.price || '0');
                 setOpenSellModal(true);
               }}
             />
@@ -1432,11 +1481,11 @@ const ProfileDetail: React.FC<Props> = ({ onBack, isWalletMode }) => {
         />
       )}
 
-      {sellProductId && (
+      {sellProductId !== null && (
         <SellNFT
           open={openSellModal}
           onClose={() => setOpenSellModal(false)}
-          productId={sellProductId}
+          tokenId={sellProductId}
           defaultPrice={sellProductPrice}
         />
       )}

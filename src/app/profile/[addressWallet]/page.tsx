@@ -921,19 +921,38 @@
 // };
 
 // export default CreatorDetail;
+// 'use client';
+
+// import CreatorDetail from '@/components/creator/CreatorDetail';
+// import { useRouter, useParams } from 'next/navigation';
+
+// export default function Page() {
+//   const router = useRouter();
+//   const params = useParams<{ addressWallet: string }>();
+//   const addressWallet = params?.addressWallet ?? '';
+
+//   const handleBack = () => router.push('/profile');
+
+//   return (
+//     <CreatorDetail onBack={handleBack} addressWallet={addressWallet} />
+//   );
+// }
+
+
 'use client';
 
-import CreatorDetail from '@/components/creator/CreatorDetail';
-import { useRouter, useParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import React, { Suspense } from 'react';
+
+const CreatorDetailClient = dynamic(
+  () => import('./ClientPage'),
+  { ssr: false }
+);
 
 export default function Page() {
-  const router = useRouter();
-  const params = useParams<{ addressWallet: string }>();
-  const addressWallet = params?.addressWallet ?? '';
-
-  const handleBack = () => router.push('/profile');
-
   return (
-    <CreatorDetail onBack={handleBack} addressWallet={addressWallet} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreatorDetailClient />
+    </Suspense>
   );
 }

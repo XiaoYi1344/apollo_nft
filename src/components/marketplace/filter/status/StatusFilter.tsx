@@ -29,6 +29,7 @@ export default function StatusFilter({ selected, setSelected }: StatusProps) {
         py: 1,
         borderRadius: 2,
         mb: 3,
+        // width:'100%'
       }}
     >
       <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '1.2rem' }}>
