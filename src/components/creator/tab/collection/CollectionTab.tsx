@@ -85,9 +85,9 @@
 //     position: 'relative',
 //     transition: '0.25s',
 //     '&:hover': { transform: 'scale(1.02)' },
-//     '&:hover .more-btn': { 
-//       opacity: 1, 
-//       pointerEvents: 'auto' 
+//     '&:hover .more-btn': {
+//       opacity: 1,
+//       pointerEvents: 'auto'
 //     },
 //   }}
 //   onClick={() => setOpenView({ open: true, collection: col })}
@@ -249,21 +249,19 @@ import { OwnedProduct, ProductActivity } from '@/types/product';
 ------------------------------ */
 const CreateCollectionModal = dynamic(
   () => import('./modal/CreateCollectionModal'),
-  { ssr: false }
+  { ssr: false },
 );
 const EditCollectionModal = dynamic(
   () => import('./modal/EditCollectionModal'),
-  { ssr: false }
+  { ssr: false },
 );
 const CollectionViewModal = dynamic(
   () => import('./modal/CollectionViewModal'),
-  { ssr: false }
+  { ssr: false },
 );
-const AddProductsModal = dynamic(
-  () => import('./modal/AddProductsModal'),
-  { ssr: false }
-);
-
+const AddProductsModal = dynamic(() => import('./modal/AddProductsModal'), {
+  ssr: false,
+});
 
 /* -----------------------------
     Lazy Image Component
@@ -295,10 +293,9 @@ const CollectionCard: React.FC<{
   onOpenView: (c: Collection) => void;
   onEdit: (c: Collection) => void;
 }> = React.memo(({ collection, onOpenView, onEdit }) => {
-const imageUrl = collection.image
-  ? `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763461854/${collection.image}.png`
-  : null;
-
+  const imageUrl = collection.image
+    ? `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763461854/${collection.image}.png`
+    : null;
 
   return (
     <Card
@@ -364,11 +361,8 @@ interface Props {
 const ROW_HEIGHT = 240;
 const GAP = 5;
 
-const CollectionTab: React.FC<Props> = ({
-  mintedProducts,
-  allActivities,
-}) => {
-  const { data: collections = [] } = useGetAllOwnedCollections();
+const CollectionTab: React.FC<Props> = ({ mintedProducts, allActivities }) => {
+  const { data: collections = [], refetch } = useGetAllOwnedCollections();
 
   const createMutation = useCreateCollection();
   const updateMutation = useUpdateCollection();
@@ -463,12 +457,12 @@ const CollectionTab: React.FC<Props> = ({
   ------------------------------ */
   const onOpenView = useCallback(
     (c: Collection) => setOpenView({ open: true, collection: c }),
-    []
+    [],
   );
 
   const onEdit = useCallback(
     (c: Collection) => setOpenEdit({ open: true, collection: c }),
-    []
+    [],
   );
 
   return (
@@ -553,11 +547,9 @@ const CollectionTab: React.FC<Props> = ({
 
                   {/* filler */}
                   {row.length < columns &&
-                    Array.from({ length: columns - row.length }).map(
-                      (_, i) => (
-                        <Box key={`empty-${i}`} sx={{ width: columnWidth }} />
-                      )
-                    )}
+                    Array.from({ length: columns - row.length }).map((_, i) => (
+                      <Box key={`empty-${i}`} sx={{ width: columnWidth }} />
+                    ))}
                 </Box>
               </Box>
             );
@@ -572,7 +564,10 @@ const CollectionTab: React.FC<Props> = ({
           onClose={() => setOpenCreate(false)}
           onSubmit={(data) =>
             createMutation.mutate(data, {
-              onSuccess: () => setOpenCreate(false),
+              onSuccess: () => {
+                refetch(); // 🔥 Reload data ngay
+                setOpenCreate(false);
+              },
             })
           }
         />
@@ -580,28 +575,32 @@ const CollectionTab: React.FC<Props> = ({
 
       {openEdit.open && openEdit.collection && (
         <EditCollectionModal
-  open={openEdit.open}
-  collection={openEdit.collection}
-  onClose={() => setOpenEdit({ open: false })}
-  onSubmit={(data) =>
-    updateMutation.mutate(data, {
-      onSuccess: () => setOpenEdit({ open: false }),
-    })
-  }
-  onDelete={() =>
-    deleteMutation.mutate(openEdit.collection!.id, {
-      onSuccess: () => setOpenEdit({ open: false }),
-    })
-  }
-  onTogglePublic={(isPublic: boolean) =>
-  updateVisibilityMutation.mutate({
-    id: openEdit.collection!.id, // ✅ FIXED
-    isPublic,
-  })
-}
-
-/>
-
+          open={openEdit.open}
+          collection={openEdit.collection}
+          onClose={() => setOpenEdit({ open: false })}
+          onSubmit={(data) =>
+            updateMutation.mutate(data, {
+              onSuccess: () => {
+                refetch(); // 🔥 Reload data
+                setOpenEdit({ open: false });
+              },
+            })
+          }
+          onDelete={() =>
+            deleteMutation.mutate(openEdit.collection!.id, {
+              onSuccess: () => {
+                refetch(); // 🔥 Reload
+                setOpenEdit({ open: false });
+              },
+            })
+          }
+          onTogglePublic={(isPublic: boolean) =>
+            updateVisibilityMutation.mutate({
+              id: openEdit.collection!.id, // ✅ FIXED
+              isPublic,
+            })
+          }
+        />
       )}
 
       {openView.open && openView.collection && (
@@ -616,11 +615,18 @@ const CollectionTab: React.FC<Props> = ({
             })
           }
           onRemoveProduct={(productId: number) =>
-            updateProductCollectionMutation.mutate({
-              collectionId: openView.collection!.id,
-              productIds: [productId],
-              type: 'remove',
-            })
+            updateProductCollectionMutation.mutate(
+              {
+                collectionId: openView.collection!.id,
+                productIds: [productId],
+                type: 'remove',
+              },
+              {
+                onSuccess: () => {
+                  refetch(); // 🔥 reload lại danh sách collection
+                },
+              },
+            )
           }
         />
       )}
@@ -633,11 +639,19 @@ const CollectionTab: React.FC<Props> = ({
           allActivities={allActivities}
           onClose={() => setOpenAddProducts({ open: false })}
           onAdd={(productIds: number[]) =>
-            updateProductCollectionMutation.mutate({
-              collectionId: openAddProducts.collection!.id,
-              productIds,
-              type: 'add',
-            })
+            updateProductCollectionMutation.mutate(
+              {
+                collectionId: openAddProducts.collection!.id,
+                productIds,
+                type: 'add',
+              },
+              {
+                onSuccess: () => {
+                  refetch(); // 🔥 reload lại danh sách collection
+                  setOpenAddProducts({ open: false }); // 🔥 đóng modal đúng lúc
+                },
+              },
+            )
           }
         />
       )}

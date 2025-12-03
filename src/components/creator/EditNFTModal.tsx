@@ -416,51 +416,64 @@ const EditNFTModal: React.FC<Props> = ({
     //   },
     // });
     updateProductMutation.mutate(payload, {
-  onSuccess: (res) => {
-    const resData = res?.data as string | { tokenURI?: string } | undefined;
+      onSuccess: (res) => {
+        const resData = res?.data as string | { tokenURI?: string } | undefined;
 
-    // Lấy tokenURI từ response
-    const tokenURIFromRes: string | undefined =
-      typeof resData === 'string' ? resData : resData?.tokenURI;
+        // Lấy tokenURI từ response
+        const tokenURIFromRes: string | undefined =
+          typeof resData === 'string' ? resData : resData?.tokenURI;
 
-    // Fallback sang product nếu không có tokenURI mới
-    // const tokenURI: string | undefined =
-    //   tokenURIFromRes ?? product.tokenURI ?? product.ownerships?.[0]?.tokenURI;
-    const tokenURI: string | undefined =
-  tokenURIFromRes ?? product.tokenURI;
+        // Fallback sang product nếu không có tokenURI mới
+        // const tokenURI: string | undefined =
+        //   tokenURIFromRes ?? product.tokenURI ?? product.ownerships?.[0]?.tokenURI;
+        const tokenURI: string | undefined =
+          tokenURIFromRes ?? product.tokenURI;
 
-    if (!tokenURI) {
-      toast.error('Không lấy được tokenURI mới!');
-      return;
-    }
+        if (!tokenURI) {
+          toast.error('Không lấy được tokenURI mới!');
+          return;
+        }
 
-    const imageURL = image ? URL.createObjectURL(image) : product.image;
+        const imageURL = image ? URL.createObjectURL(image) : product.image;
 
-    const metadata: NFTMetadataWithURI = {
-      name,
-      description,
-      image: imageURL,
-      external_url: externalLink,
-      attributes: properties.map((p) => ({ trait_type: p.type, value: p.name })),
-      tokenURI,
-    };
+        const metadata: NFTMetadataWithURI = {
+          name,
+          description,
+          image: imageURL,
+          external_url: externalLink,
+          attributes: properties.map((p) => ({
+            trait_type: p.type,
+            value: p.name,
+          })),
+          tokenURI,
+        };
 
-    setMetadataPreview(metadata);
-    setOpenPreview(true);
+        // setMetadataPreview(metadata);
+        // setOpenPreview(true);
 
-    setOnChainData({
-      tokenId: Number(product.tokenId) || 0,
-      tokenURI,
-      price: price || '0',
-      name,
-      description,
+        if (frozen) {
+          // 🔥 Nếu frozen → chỉ update price, tự động đóng modal
+          toast.success('Cập nhật NFT thành công!');
+          onUpdate?.();
+          onClose();
+        } else {
+          // Nếu chưa frozen → mở preview trước khi on-chain
+          setMetadataPreview(metadata);
+          setOpenPreview(true);
+
+          setOnChainData({
+            tokenId: Number(product.tokenId) || 0,
+            tokenURI,
+            price: price || '0',
+            name,
+            description,
+          });
+        }
+      },
+      onError: (err) => {
+        toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
+      },
     });
-  },
-  onError: (err) => {
-    toast.error(err instanceof Error ? err.message : 'Cập nhật thất bại!');
-  },
-});
-
   };
 
   // ======================== CONFIRM → ON-CHAIN ========================
@@ -498,6 +511,7 @@ const EditNFTModal: React.FC<Props> = ({
         onUpdate?.();
         setOpenConfirm(false);
         setOnChainData({ ...onChainData, tokenId: newTokenId });
+        onClose();
       } else {
         const tx = await updateNFTOnChain(
           onChainData.tokenId,
@@ -508,6 +522,7 @@ const EditNFTModal: React.FC<Props> = ({
         toast.success('Cập nhật NFT trên blockchain thành công!');
         onUpdate?.();
         setOpenConfirm(false);
+        onClose();
       }
     } catch (err: unknown) {
       console.error(err);
@@ -858,13 +873,12 @@ const EditNFTModal: React.FC<Props> = ({
 
       {onChainData && (
         <ConfirmUpdateDialog
-  open={openConfirm}
-  onClose={() => setOpenConfirm(false)}
-  data={onChainData}       // nếu có dữ liệu onChain mới
-  ownedProduct={product}   // fallback nếu onChainData không có
-  onConfirm={handleConfirmOnChain}
-/>
-
+          open={openConfirm}
+          onClose={() => setOpenConfirm(false)}
+          data={onChainData} // nếu có dữ liệu onChain mới
+          ownedProduct={product} // fallback nếu onChainData không có
+          onConfirm={handleConfirmOnChain}
+        />
       )}
     </>
   );

@@ -621,6 +621,7 @@
 //     </Stack>
 //   );
 // };
+
 'use client';
 
 import React, { useState } from 'react';
@@ -638,34 +639,61 @@ import {
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import newsService from '@/services/newsService';
-import { News as NewsType, CategoryNews } from '@/types/news';
+import { News as NewsType } from '@/types/news';
+import { Category } from '@/types/category';
+import categoryService from '@/services/categoryService';
+import { useNews } from '@/hooks/useNews';
+import { useCategories } from '@/hooks/useCategories';
 
 export const News: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  // const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  // const [page, setPage] = useState(1);
+  // const itemsPerPage = 6;
+
+  // const { data: categories, isLoading: loadingCategories } = useQuery<
+  //   Category[],
+  //   Error
+  // >({
+  //   queryKey: ['categories'],
+  //   queryFn: categoryService.getAllCategories,
+  // });
+
+  // const { data: allNews, isLoading: loadingNews } = useQuery<NewsType[], Error>(
+  //   {
+  //     queryKey: ['news'],
+  //     queryFn: newsService.getAllNews,
+  //   },
+  // );
+
+  // const filteredNews = allNews?.filter((n) =>
+  //   selectedCategory ? n.category?.id === selectedCategory : true,
+  // );
+
+  // const totalPages = Math.ceil((filteredNews?.length || 0) / itemsPerPage);
+  // const currentNews = filteredNews?.slice(
+  //   (page - 1) * itemsPerPage,
+  //   page * itemsPerPage,
+  // );
+
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const itemsPerPage = 6;
 
-  const { data: categories, isLoading: loadingCategories } = useQuery<
-    CategoryNews[],
-    Error
-  >({
-    queryKey: ['categories'],
-    queryFn: newsService.getAllCategories,
-  });
+  const { data, isLoading: loadingNews } = useNews();
+  const { data: categories, isLoading: loadingCategories } =
+    useCategories('news');
 
-  const { data: allNews, isLoading: loadingNews } = useQuery<NewsType[], Error>(
-    {
-      queryKey: ['news'],
-      queryFn: newsService.getAllNews,
-    },
-  );
+  // Convert infinite-query pages → 1 mảng
+  const allNews = data?.pages.flatMap((p) => p.data) ?? [];
 
-  const filteredNews = allNews?.filter((n) =>
-    selectedCategory ? n.category?.id === selectedCategory : true,
-  );
+  // Filter news
+  const filteredNews = selectedCategory
+    ? allNews.filter((n) => n.category?.id === selectedCategory)
+    : allNews;
 
-  const totalPages = Math.ceil((filteredNews?.length || 0) / itemsPerPage);
-  const currentNews = filteredNews?.slice(
+  // Paging
+  const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
+  const currentNews = filteredNews.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage,
   );

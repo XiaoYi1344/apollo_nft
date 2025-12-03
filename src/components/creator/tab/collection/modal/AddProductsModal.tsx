@@ -47,8 +47,8 @@ const AddProductsModal: React.FC<Props> = ({
   const handleAdd = () => {
     if (selected.length === 0) return;
     onAdd(selected);
-    setSelected([]);
-    onClose();
+    // setSelected([]);
+    // onClose();
   };
 
   return (

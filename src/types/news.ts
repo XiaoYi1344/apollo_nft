@@ -1,8 +1,5 @@
-export interface CategoryNews {
-  id: number;
-  name: string;
-  description: string;
-}
+// types/news.ts
+import { Category } from "./category";
 
 export interface Author {
   id: number;
@@ -18,10 +15,10 @@ export interface News {
   description: string;
   content: string;
   thumbnail: string;
-  status: string; // 'draft' | 'published' hoặc string
+  status: string; // 'draft' | 'published' | string
   publishedAt: string;
   views: number;
-  category: CategoryNews;
+  category: Category;
   author: Author;
 }
 

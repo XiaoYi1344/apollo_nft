@@ -782,96 +782,254 @@
 // };
 
 
+// 'use client';
+
+// import React, { useState } from 'react';
+// import {
+//   Box,
+//   Button,
+//   Card,
+//   CardContent,
+//   Chip,
+//   Stack,
+//   Typography,
+//   Grid,
+// } from '@mui/material';
+// import Image from 'next/image';
+// import {
+//   events,
+//   timeline,
+//   type as typeOptions,
+//   EventType,
+//   getButtonLabel,
+//   getTimelineColor,
+// } from './data/eventsData';
+// import GroupsIcon from '@mui/icons-material/Groups';
+// import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+// import GavelIcon from '@mui/icons-material/Gavel';
+// import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+// import SchoolIcon from '@mui/icons-material/School';
+
+// const buttonColors: Record<string, string> = {
+//   LIVE: '#9333ea',
+//   UPCOMING: '#1f2937',
+//   ENDED: '#1f2937',
+// };
+
+// const getEventTypeIcon = (type: string) => {
+//   switch (type.toUpperCase()) {
+//     case 'AMA':
+//     case 'MEETUP':
+//       return <GroupsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     case 'DROP':
+//       return <AccessTimeFilledIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     case 'AUCTION':
+//       return <GavelIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     case 'CONTEST':
+//       return <EmojiEventsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     case 'WORKSHOP':
+//       return <SchoolIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//     default:
+//       return <GroupsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
+//   }
+// };
+
+// const getEventTypeText = (type: string, number: string | number) => {
+//   switch (type.toUpperCase()) {
+//     case 'AMA':
+//       return `${number} joined`;
+//     case 'MEETUP':
+//       return `${number} attended`;
+//     case 'DROP':
+//       return `in ${number} days`;
+//     case 'AUCTION':
+//       return `${number} items`;
+//     case 'CONTEST':
+//       return 'Winner announced';
+//     case 'WORKSHOP':
+//       return `${number} spots left`;
+//     default:
+//       return `${number} joined`;
+//   }
+// };
+
+// export const Up_events: React.FC = () => {
+//   const [selectedTimeline, setSelectedTimeline] = useState<number>(1);
+//   const [selectedType, setSelectedType] = useState<number>(1);
+
+//   const filteredEvents = events.filter((e) => {
+//     const timelineName = timeline.find((t) => t.id === selectedTimeline)?.name;
+//     const typeName = typeOptions.find((t) => t.id === selectedType)?.name;
+
+//     const matchTimeline =
+//       selectedTimeline === 1 ||
+//       (e.timeline === 'UPCOMING' && timelineName === 'Upcoming Events') ||
+//       (e.timeline === 'LIVE' && timelineName === 'Live Now') ||
+//       (e.timeline === 'ENDED' && timelineName === 'Past Events');
+
+//     const matchType =
+//       selectedType === 1 || e.type.toLowerCase() === typeName?.toLowerCase();
+
+//     return matchTimeline && matchType;
+//   });
+
+//   return (
+//     <Box sx={{ background: 'linear-gradient(120deg,#111827, #1E3A8A,#581C87)' }}>
+//       <Stack sx={{ color: '#fff', px: { xs: 2, sm: 4, md: 6 }, py: { xs: 3, sm: 5, md: 8 } }}>
+//         <Typography variant="h5" sx={{ fontWeight: 700, textAlign: 'center', fontSize: { xs: '1.3rem', sm: '1.8rem', md: '2.4rem' }, mb: 1 }}>
+//           Event Calendar
+//         </Typography>
+//         <Typography sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', mb: { xs: 5, sm: 8 }, mx: 'auto', fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.3rem' }, lineHeight: 1.6, width: { xs: '95%', sm: 600, md: 750 } }}>
+//           Discover and join exciting events, AMAs, drops, auctions, and workshops in our vibrant community.
+//         </Typography>
+
+//         {/* Filters */}
+//         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 5 }} justifyContent="center" alignItems="center" sx={{ mb: { xs: 4, sm: 5 }, flexWrap: 'wrap' }}>
+//           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', justifyContent: 'center' }}>
+//             {timeline.map((t) => (
+//               <Button key={t.id} onClick={() => setSelectedTimeline(t.id)} sx={{ color: selectedTimeline === t.id ? '#fff' : '#aaa', bgcolor: selectedTimeline === t.id ? '#9333ea' : '#1f2937', textTransform: 'none', borderRadius: 2, px: 2, py: 0.7, fontSize: '0.9rem', '&:hover': { bgcolor: selectedTimeline === t.id ? '#9333ea' : 'rgba(147,51,234,0.2)' } }}>
+//                 {t.name}
+//               </Button>
+//             ))}
+//           </Box>
+
+//           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', justifyContent: 'center' }}>
+//             {typeOptions.map((tp) => (
+//               <Button key={tp.id} onClick={() => setSelectedType(tp.id)} sx={{ bgcolor: selectedType === tp.id ? '#6366F1' : '#1f2937', color: selectedType === tp.id ? '#fff' : '#aaa', textTransform: 'none', borderRadius: 2, px: 2, py: 0.7, fontSize: '0.9rem', '&:hover': { bgcolor: selectedType === tp.id ? '#6366F1' : 'rgba(99,102,241,0.2)' } }}>
+//                 {tp.name}
+//               </Button>
+//             ))}
+//           </Box>
+//         </Stack>
+
+//         {/* Cards */}
+//         <Grid container spacing={3} justifyContent="center">
+//           {filteredEvents.map((e: EventType) => (
+//             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={e.id}>
+//               <Card sx={{ borderRadius: 3, bgcolor: '#141545', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-4px)' } }}>
+//                 <Box sx={{ position: 'relative', height: { xs: 180, sm: 220 } }}>
+//                   <Image src={e.img} alt={e.name} fill style={{ objectFit: 'cover' }} />
+//                   <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.9))' }} />
+//                   <Box sx={{ position: 'absolute', top: 12, left: 12 }}>
+//                     <Chip label={e.timeline} sx={{ bgcolor: getTimelineColor(e.timeline), color: '#fff', textTransform: 'uppercase', fontSize: '0.75rem', borderRadius: '20px', px: 1.5 }} />
+//                   </Box>
+//                 </Box>
+//                 <CardContent sx={{ p: 3, pt: 2 }}>
+//                   <Typography sx={{ color: '#A1A1AA', fontSize: '0.9rem', mb: 1 }}>{e.time}</Typography>
+//                   <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.3rem', mb: 1.2 }}>{e.name}</Typography>
+//                   <Stack direction="row" justifyContent="space-between" spacing={0.7}>
+//                     <Chip label={e.type} sx={{ bgcolor: '#1f2937', color: '#fff', textTransform: 'uppercase', fontSize: '0.7rem', borderRadius: '20px', px: 1 }} />
+//                     <Stack direction="row" alignItems="center" spacing={0.5}>
+//                       {getEventTypeIcon(e.type)}
+//                       <Typography sx={{ color: '#A1A1AA', fontSize: '0.85rem' }}>{getEventTypeText(e.type, e.viewer)}</Typography>
+//                     </Stack>
+//                   </Stack>
+//                   <Box sx={{ mt: 2 }}>
+//                     <Button fullWidth href={e.link} sx={{ bgcolor: buttonColors[e.timeline], color: '#fff', textTransform: 'none', borderRadius: 2, py: 1.2, fontSize: '0.9rem', '&:hover': { opacity: 0.9 } }}>
+//                       {getButtonLabel(e.timeline)}
+//                     </Button>
+//                   </Box>
+//                 </CardContent>
+//               </Card>
+//             </Grid>
+//           ))}
+//         </Grid>
+//       </Stack>
+//     </Box>
+//   );
+// };
+
+
+// Updated Up_events component using new useEvents + new Event structure
 'use client';
 
 import React, { useState } from 'react';
 import {
   Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
   Stack,
   Typography,
+  Button,
+  Chip,
   Grid,
+  CircularProgress,
+  Card,
+  CardContent,
 } from '@mui/material';
 import Image from 'next/image';
-import {
-  events,
-  timeline,
-  type as typeOptions,
-  EventType,
-  getButtonLabel,
-  getTimelineColor,
-} from './data/eventsData';
+import { EventsResponse, useEvents } from '@/hooks/useEvents';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import GavelIcon from '@mui/icons-material/Gavel';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SchoolIcon from '@mui/icons-material/School';
+import { Event } from '@/types/events';
 
 const buttonColors: Record<string, string> = {
-  LIVE: '#9333ea',
-  UPCOMING: '#1f2937',
-  ENDED: '#1f2937',
+  live: '#9333ea',
+  upcoming: '#1f2937',
+  ended: '#1f2937',
 };
 
 const getEventTypeIcon = (type: string) => {
-  switch (type.toUpperCase()) {
-    case 'AMA':
-    case 'MEETUP':
+  switch (type.toLowerCase()) {
+    case 'ama':
+    case 'meetup':
       return <GroupsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
-    case 'DROP':
+    case 'drop':
       return <AccessTimeFilledIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
-    case 'AUCTION':
+    case 'auction':
       return <GavelIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
-    case 'CONTEST':
+    case 'contest':
       return <EmojiEventsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
-    case 'WORKSHOP':
+    case 'workshop':
       return <SchoolIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
     default:
       return <GroupsIcon sx={{ fontSize: 16, color: '#A1A1AA' }} />;
   }
 };
 
-const getEventTypeText = (type: string, number: string | number) => {
-  switch (type.toUpperCase()) {
-    case 'AMA':
-      return `${number} joined`;
-    case 'MEETUP':
-      return `${number} attended`;
-    case 'DROP':
-      return `in ${number} days`;
-    case 'AUCTION':
-      return `${number} items`;
-    case 'CONTEST':
-      return 'Winner announced';
-    case 'WORKSHOP':
-      return `${number} spots left`;
-    default:
-      return `${number} joined`;
+const getTimelineColor = (status: string) => {
+  switch (status) {
+    case 'upcoming': return '#6366F1';
+    case 'live': return '#9333EA';
+    case 'ended': return '#71717A';
+    default: return '#1F2937';
+  }
+};
+
+const getButtonLabel = (status: string) => {
+  switch (status) {
+    case 'upcoming': return 'View Details';
+    case 'live': return 'Join Now';
+    case 'ended': return 'See Summary';
+    default: return 'View';
   }
 };
 
 export const Up_events: React.FC = () => {
-  const [selectedTimeline, setSelectedTimeline] = useState<number>(1);
-  const [selectedType, setSelectedType] = useState<number>(1);
+  const [selectedTimeline, setSelectedTimeline] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const filteredEvents = events.filter((e) => {
-    const timelineName = timeline.find((t) => t.id === selectedTimeline)?.name;
-    const typeName = typeOptions.find((t) => t.id === selectedType)?.name;
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetchingNextPage,
+  } = useEvents();
 
-    const matchTimeline =
-      selectedTimeline === 1 ||
-      (e.timeline === 'UPCOMING' && timelineName === 'Upcoming Events') ||
-      (e.timeline === 'LIVE' && timelineName === 'Live Now') ||
-      (e.timeline === 'ENDED' && timelineName === 'Past Events');
+  // Flatten API pages
+  // InfiniteData has `.pages`, so ensure typing aligns
+  const allEvents: Event[] = (data?.pages ?? []).flatMap((page: EventsResponse) => page.data);
 
-    const matchType =
-      selectedType === 1 || e.type.toLowerCase() === typeName?.toLowerCase();
-
-    return matchTimeline && matchType;
+  // Filter events by status & category
+  const filteredEvents = allEvents.filter((e) => {
+    const matchTimeline = selectedTimeline === 'all' || e.status === selectedTimeline;
+    const matchCategory = selectedCategory === 'all' || e.category?.name?.toLowerCase() === selectedCategory.toLowerCase();
+    return matchTimeline && matchCategory;
   });
+
+  if (isLoading) return <CircularProgress sx={{ display: 'block', mx: 'auto', mt: 10 }} />;
 
   return (
     <Box sx={{ background: 'linear-gradient(120deg,#111827, #1E3A8A,#581C87)' }}>
@@ -880,53 +1038,55 @@ export const Up_events: React.FC = () => {
           Event Calendar
         </Typography>
         <Typography sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', mb: { xs: 5, sm: 8 }, mx: 'auto', fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.3rem' }, lineHeight: 1.6, width: { xs: '95%', sm: 600, md: 750 } }}>
-          Discover and join exciting events, AMAs, drops, auctions, and workshops in our vibrant community.
+          Discover and join exciting events happening in our community.
         </Typography>
 
         {/* Filters */}
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 5 }} justifyContent="center" alignItems="center" sx={{ mb: { xs: 4, sm: 5 }, flexWrap: 'wrap' }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 5 }} justifyContent="center" alignItems="center" sx={{ mb: { xs: 4, sm: 5 } }}>
+          {/* Timeline filter */}
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', justifyContent: 'center' }}>
-            {timeline.map((t) => (
-              <Button key={t.id} onClick={() => setSelectedTimeline(t.id)} sx={{ color: selectedTimeline === t.id ? '#fff' : '#aaa', bgcolor: selectedTimeline === t.id ? '#9333ea' : '#1f2937', textTransform: 'none', borderRadius: 2, px: 2, py: 0.7, fontSize: '0.9rem', '&:hover': { bgcolor: selectedTimeline === t.id ? '#9333ea' : 'rgba(147,51,234,0.2)' } }}>
-                {t.name}
+            {['all','upcoming','live','ended'].map((v) => (
+              <Button key={v} onClick={() => setSelectedTimeline(v)} sx={{ color: selectedTimeline === v ? '#fff' : '#aaa', bgcolor: selectedTimeline === v ? '#9333ea' : '#1f2937', textTransform: 'none', borderRadius: 2, px: 2, py: 0.7, fontSize: '0.9rem' }}>
+                {v === 'all' ? 'All Events' : v.charAt(0).toUpperCase() + v.slice(1)}
               </Button>
             ))}
           </Box>
 
+          {/* Category filter */}
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', justifyContent: 'center' }}>
-            {typeOptions.map((tp) => (
-              <Button key={tp.id} onClick={() => setSelectedType(tp.id)} sx={{ bgcolor: selectedType === tp.id ? '#6366F1' : '#1f2937', color: selectedType === tp.id ? '#fff' : '#aaa', textTransform: 'none', borderRadius: 2, px: 2, py: 0.7, fontSize: '0.9rem', '&:hover': { bgcolor: selectedType === tp.id ? '#6366F1' : 'rgba(99,102,241,0.2)' } }}>
-                {tp.name}
+            {['all','ama','meetup','drop','auction','contest','workshop'].map((c) => (
+              <Button key={c} onClick={() => setSelectedCategory(c)} sx={{ bgcolor: selectedCategory === c ? '#6366F1' : '#1f2937', color: selectedCategory === c ? '#fff' : '#aaa', textTransform: 'none', borderRadius: 2, px: 2, py: 0.7, fontSize: '0.9rem' }}>
+                {c === 'all' ? 'All Types' : c.toUpperCase()}
               </Button>
             ))}
           </Box>
         </Stack>
 
-        {/* Cards */}
+        {/* Event Cards */}
         <Grid container spacing={3} justifyContent="center">
-          {filteredEvents.map((e: EventType) => (
+          {filteredEvents.map((e) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={e.id}>
               <Card sx={{ borderRadius: 3, bgcolor: '#141545', overflow: 'hidden', transition: 'transform 0.3s ease', '&:hover': { transform: 'translateY(-4px)' } }}>
                 <Box sx={{ position: 'relative', height: { xs: 180, sm: 220 } }}>
-                  <Image src={e.img} alt={e.name} fill style={{ objectFit: 'cover' }} />
+                  <Image src={e.image} alt={e.title} fill style={{ objectFit: 'cover' }} />
                   <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.9))' }} />
                   <Box sx={{ position: 'absolute', top: 12, left: 12 }}>
-                    <Chip label={e.timeline} sx={{ bgcolor: getTimelineColor(e.timeline), color: '#fff', textTransform: 'uppercase', fontSize: '0.75rem', borderRadius: '20px', px: 1.5 }} />
+                    <Chip label={e.status} sx={{ bgcolor: getTimelineColor(e.status), color: '#fff', textTransform: 'uppercase', fontSize: '0.75rem' }} />
                   </Box>
                 </Box>
                 <CardContent sx={{ p: 3, pt: 2 }}>
-                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.9rem', mb: 1 }}>{e.time}</Typography>
-                  <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.3rem', mb: 1.2 }}>{e.name}</Typography>
+                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.9rem', mb: 1 }}>{new Date(e.startTime).toLocaleString()}</Typography>
+                  <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.3rem', mb: 1.2 }}>{e.title}</Typography>
                   <Stack direction="row" justifyContent="space-between" spacing={0.7}>
-                    <Chip label={e.type} sx={{ bgcolor: '#1f2937', color: '#fff', textTransform: 'uppercase', fontSize: '0.7rem', borderRadius: '20px', px: 1 }} />
+                    <Chip label={e.category?.name || 'EVENT'} sx={{ bgcolor: '#1f2937', color: '#fff', textTransform: 'uppercase', fontSize: '0.7rem' }} />
                     <Stack direction="row" alignItems="center" spacing={0.5}>
-                      {getEventTypeIcon(e.type)}
-                      <Typography sx={{ color: '#A1A1AA', fontSize: '0.85rem' }}>{getEventTypeText(e.type, e.viewer)}</Typography>
+                      {getEventTypeIcon(e.category?.name || '')}
+                      <Typography sx={{ color: '#A1A1AA', fontSize: '0.85rem' }}>{e.joinCount} joined</Typography>
                     </Stack>
                   </Stack>
                   <Box sx={{ mt: 2 }}>
-                    <Button fullWidth href={e.link} sx={{ bgcolor: buttonColors[e.timeline], color: '#fff', textTransform: 'none', borderRadius: 2, py: 1.2, fontSize: '0.9rem', '&:hover': { opacity: 0.9 } }}>
-                      {getButtonLabel(e.timeline)}
+                    <Button fullWidth sx={{ bgcolor: buttonColors[e.status], color: '#fff', textTransform: 'none', borderRadius: 2, py: 1.2 }}>
+                      {getButtonLabel(e.status)}
                     </Button>
                   </Box>
                 </CardContent>
@@ -934,6 +1094,15 @@ export const Up_events: React.FC = () => {
             </Grid>
           ))}
         </Grid>
+
+        {/* Load More */}
+        {hasNextPage && (
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            <Button onClick={() => fetchNextPage()} disabled={isFetchingNextPage} sx={{ bgcolor: '#6366F1', color: '#fff', px: 4 }}>
+              {isFetchingNextPage ? 'Loading...' : 'Load More'}
+            </Button>
+          </Box>
+        )}
       </Stack>
     </Box>
   );

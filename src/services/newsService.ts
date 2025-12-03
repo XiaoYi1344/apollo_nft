@@ -1,84 +1,153 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+// import axios from "axios";
+// import Cookies from "js-cookie";
+// import {
+//   News,
+//   CategoryNews,
+//   CreateNewsPayload,
+//   UpdateNewsPayload,
+//   UpdateViewPayload,
+// } from "@/types/news";
+
+// const API_URL = process.env.NEXT_PUBLIC_API;
+
+// const getAuthHeader = () => {
+//   const token = Cookies.get("accessToken") || localStorage.getItem("accessToken");
+//   return token ? { Authorization: `Bearer ${token}` } : {};
+// };
+
+// const api = axios.create({
+//   baseURL: API_URL,
+//   headers: { "ngrok-skip-browser-warning": "true" },
+// });
+
+// const newsService = {
+//   // Lấy tất cả category
+//   getAllCategories: async (): Promise<CategoryNews[]> => {
+//     const res = await api.get("/api/category-new/get-all");
+//     return res.data.data;
+//   },
+
+//   // Lấy tất cả news
+//   getAllNews: async (): Promise<News[]> => {
+//     const res = await api.get("/api/news/get-all");
+//     return res.data.data;
+//   },
+
+//   // Lấy tất cả news của user (có token)
+//   getOwnedNews: async (): Promise<News[]> => {
+//     const res = await api.get("/api/news/get-owned-new", {
+//       headers: {
+//         ...getAuthHeader(),
+//         'ngrok-skip-browser-warning': 'true',
+//       },
+//     });
+//     return res.data.data;
+//   },
+
+//   // Tạo news
+//   createNews: async (payload: CreateNewsPayload): Promise<News> => {
+//     const res = await api.post("/api/news", payload, {
+//       headers: {
+//         ...getAuthHeader(),
+//         'ngrok-skip-browser-warning': 'true',
+//       },
+//     });
+//     return res.data.data;
+//   },
+
+//   // Cập nhật news
+//   updateNews: async (payload: UpdateNewsPayload): Promise<News> => {
+//     const res = await api.put("/api/news", payload, {
+//       headers: {
+//         ...getAuthHeader(),
+//         'ngrok-skip-browser-warning': 'true',
+//       },
+//     });
+//     return res.data.data;
+//   },
+
+//   // Xóa news
+//   deleteNews: async (id: number): Promise<void> => {
+//     await api.delete(`/api/news/${id}`, {
+//       headers: {
+//         ...getAuthHeader(),
+//         'ngrok-skip-browser-warning': 'true',
+//       },
+//     });
+//   },
+
+//   // Cập nhật view
+//   updateNewsView: async (payload: UpdateViewPayload): Promise<void> => {
+//     await api.put("/api/news/update-view", payload);
+//   },
+// };
+
+// export default newsService;
+
+// services/newsService.ts
+import axios from 'axios';
+import Cookies from 'js-cookie';
 import {
   News,
-  CategoryNews,
   CreateNewsPayload,
   UpdateNewsPayload,
   UpdateViewPayload,
-} from "@/types/news";
+} from '@/types/news';
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
 const getAuthHeader = () => {
-  const token = Cookies.get("accessToken") || localStorage.getItem("accessToken");
+  const token =
+    Cookies.get('accessToken') || localStorage.getItem('accessToken');
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
 const api = axios.create({
   baseURL: API_URL,
-  headers: { "ngrok-skip-browser-warning": "true" },
+  headers: { 'ngrok-skip-browser-warning': 'true' },
 });
 
 const newsService = {
-  // Lấy tất cả category
-  getAllCategories: async (): Promise<CategoryNews[]> => {
-    const res = await api.get("/api/category-new/get-all");
-    return res.data.data;
+  getAllNews: async (page: number = 1) => {
+    const res = await api.get(`/api/news/get-all?page=${page}`);
+    return res.data;
   },
 
-  // Lấy tất cả news
-  getAllNews: async (): Promise<News[]> => {
-    const res = await api.get("/api/news/get-all");
-    return res.data.data;
-  },
-
-  // Lấy tất cả news của user (có token)
-  getOwnedNews: async (): Promise<News[]> => {
-    const res = await api.get("/api/news/get-owned-new", {
-      headers: {
-        ...getAuthHeader(),
-        'ngrok-skip-browser-warning': 'true',
-      },
+  getOwnedNews: async (page: number = 1) => {
+    const res = await api.get(`/api/news/get-owned-new?page=${page}`, {
+      headers: getAuthHeader(),
     });
-    return res.data.data;
+    return res.data;
   },
 
-  // Tạo news
   createNews: async (payload: CreateNewsPayload): Promise<News> => {
-    const res = await api.post("/api/news", payload, {
-      headers: {
-        ...getAuthHeader(),
-        'ngrok-skip-browser-warning': 'true',
-      },
+    const res = await api.post('/api/news', payload, {
+      headers: getAuthHeader(),
     });
     return res.data.data;
   },
 
-  // Cập nhật news
   updateNews: async (payload: UpdateNewsPayload): Promise<News> => {
-    const res = await api.put("/api/news", payload, {
-      headers: {
-        ...getAuthHeader(),
-        'ngrok-skip-browser-warning': 'true',
-      },
+    const res = await api.put('/api/news', payload, {
+      headers: getAuthHeader(),
     });
     return res.data.data;
   },
 
-  // Xóa news
   deleteNews: async (id: number): Promise<void> => {
-    await api.delete(`/api/news/${id}`, {
-      headers: {
-        ...getAuthHeader(),
-        'ngrok-skip-browser-warning': 'true',
-      },
-    });
+    await api.delete(`/api/news/${id}`, { headers: getAuthHeader() });
   },
 
-  // Cập nhật view
-  updateNewsView: async (payload: UpdateViewPayload): Promise<void> => {
-    await api.put("/api/news/update-view", payload);
+  publishNews: async (id: number) => {
+    await api.put(
+      `/api/news/published-new/${id}`,
+      {},
+      { headers: getAuthHeader() },
+    );
+  },
+
+  updateNewsView: async (payload: UpdateViewPayload) => {
+    await api.put('/api/news/update-view', payload);
   },
 };
 
