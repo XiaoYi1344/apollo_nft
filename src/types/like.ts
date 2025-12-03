@@ -46,6 +46,7 @@ export interface NftDetail {
   }[];
 }
 
+
 // ===== Chi tiết Artist =====
 export interface ArtistDetail {
   id: number;
