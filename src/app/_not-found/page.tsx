@@ -9,7 +9,7 @@
 // app/_not-found/page.tsx
 import ClientPage from './clientpage';
 
-export const dynamic = 'force-dynamic';
+//export const dynamic = 'force-dynamic';
 
 export default function NotFoundPage() {
   return <ClientPage />;

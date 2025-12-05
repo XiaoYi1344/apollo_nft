@@ -14,7 +14,7 @@
 // app/marketplace/page.tsx
 import MarketplaceClientWrapper from './MarketplaceClient';
 
-export const dynamic = 'force-dynamic';
+//export const dynamic = 'force-dynamic';
 
 export default function Page() {
   return <MarketplaceClientWrapper />;

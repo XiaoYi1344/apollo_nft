@@ -1,0 +1,26 @@
+{
+    "workbench.colorCustomizations": {
+  "terminal.background": "#1C1C28",        // tối, sâu hơn
+  "terminal.foreground": "#E0E0E0",        // chữ sáng, rõ nét
+  "terminalCursor.foreground": "#FFA657",  // cam nổi bật hơn
+
+  "terminal.ansiBlack": "#2B2B3B",
+  "terminal.ansiRed": "#FF4C4C",           // đỏ mạnh, vẫn dịu mắt
+  "terminal.ansiGreen": "#4CFF99",         // xanh neon pastel nhưng rõ nét
+  "terminal.ansiYellow": "#FFFF80",        // vàng tươi
+  "terminal.ansiBlue": "#4CA6FF",          // xanh dương nổi bật
+  "terminal.ansiMagenta": "#D95EFF",       // tím neon pastel
+  "terminal.ansiCyan": "#4CFFFF",          // cyan tươi, nổi bật
+  "terminal.ansiWhite": "#F5F5F5",
+
+  "terminal.ansiBrightBlack": "#3E3E4E",
+  "terminal.ansiBrightRed": "#FF6666",
+  "terminal.ansiBrightGreen": "#66FFB3",
+  "terminal.ansiBrightYellow": "#FFFF99",
+  "terminal.ansiBrightBlue": "#66B2FF",
+  "terminal.ansiBrightMagenta": "#E38FFF",
+  "terminal.ansiBrightCyan": "#66FFFF",
+  "terminal.ansiBrightWhite": "#FFFFFF"
+}
+
+}

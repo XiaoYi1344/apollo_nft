@@ -7,11 +7,10 @@
 //   return <News />
 // }
 
-
 // app/view-all/news/page.tsx
 import NewsClientWrapper from './NewsClient';
 
-export const dynamic = 'force-dynamic';
+//export const dynamic = 'force-dynamic';
 
 export default function Page() {
   return <NewsClientWrapper />;

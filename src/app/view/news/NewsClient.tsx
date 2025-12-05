@@ -1,10 +1,10 @@
-// app/view-all/news/NewsClient.tsx
 'use client';
-import dynamicImport from 'next/dynamic';
-import React, { Suspense } from 'react';
 
-const NewsClient = dynamicImport(
-  () => import('@/components/view_all/news/News').then(m => m.News),
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+const NewsClient = dynamic(
+  () => import('@/components/view_all/news/News').then(mod => mod.NewsClient),
   { ssr: false }
 );
 

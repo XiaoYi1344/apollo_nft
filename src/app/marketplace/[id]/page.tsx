@@ -14,7 +14,7 @@
 // app/marketplace/nft-detail/page.tsx
 import NFTDetailClientWrapper from './NFTDetailClient';
 
-export const dynamic = 'force-dynamic';
+//export const dynamic = 'force-dynamic';
 
 export default function Page() {
   return <NFTDetailClientWrapper />;

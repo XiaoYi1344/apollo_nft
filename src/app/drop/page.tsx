@@ -10,7 +10,7 @@
 // app/drop/page.tsx
 import DropClient from './DropClient';
 
-export const dynamic = 'force-dynamic';
+//export const dynamic = 'force-dynamic';
 
 export default function Page() {
   return <DropClient />;

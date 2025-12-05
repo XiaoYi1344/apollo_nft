@@ -10,11 +10,10 @@
 
 // export default page
 
-
 // app/privacy/page.tsx
 import PrivacyClientWrapper from './PrivacyClient';
 
-export const dynamic = 'force-dynamic';
+//export const dynamic = 'force-dynamic';
 
 export default function Page() {
   return <PrivacyClientWrapper />;

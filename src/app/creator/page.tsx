@@ -12,9 +12,8 @@
 // app/creator/creator-detail/page.tsx
 import CreatorClient from './CreatorClient';
 
-export const dynamic = 'force-dynamic';
+//export const dynamic = 'force-dynamic';
 
 export default function Page() {
   return <CreatorClient />;
 }
-

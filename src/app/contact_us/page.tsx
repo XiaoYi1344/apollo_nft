@@ -13,7 +13,7 @@
 // app/contact/page.tsx
 import ContactClient from './ContactClient';
 
-export const dynamic = 'force-dynamic'; // tránh prerender
+//export const dynamic = 'force-dynamic'; // tránh prerender
 
 export default function Page() {
   return <ContactClient />;

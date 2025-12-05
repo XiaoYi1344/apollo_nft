@@ -1,16 +1,3 @@
-// export interface ProductSummary {
-//   id: number;
-//   name: string;
-//   description: string;
-//   image: string;
-//   externalLink: string;
-//   properties: Array<{ type: string; name: string; supply: number; blockchain: string; tokenId: string; contractAddress: string; tokenURI: string; isFreeze: boolean }>;
-//   type: 'buyNow' | 'onAuction';
-//   price: string;
-//   likeCount: number;
-//   isLike: boolean;
-//   listingId: number | null;
-// }
 
 import { UserInfo } from "./product";
 

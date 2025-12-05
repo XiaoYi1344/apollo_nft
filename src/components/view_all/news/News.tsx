@@ -1,630 +1,7 @@
-// 'use client';
-// import React, { useState } from 'react';
-// import {
-//   Box,
-//   Button,
-//   Card,
-//   CardContent,
-//   Chip,
-//   Stack,
-//   Typography,
-//   Grid,
-//   // useTheme,
-//   // useMediaQuery,
-//   Pagination,
-// } from '@mui/material';
-// import Image from 'next/image';
-// import { newss, type, newsType } from './data/newsData';
-
-// export const News: React.FC = () => {
-//   const [selectedType, setSelectedType] = useState<number>(1);
-//   // const theme = useTheme();
-//   // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-//   // ✅ Filter logic (chuẩn khớp với data)
-//   const filterednewss = newss.filter((e) => {
-//     if (selectedType === 1) return true;
-
-//     const selectedName =
-//       type
-//         .find((t) => t.id === selectedType)
-//         ?.name.toLowerCase()
-//         .trim() || '';
-
-//     const newsTypeName = e.type.toLowerCase().trim();
-
-//     // Chuẩn hóa để khớp cả số ít & số nhiều
-//     return (
-//       newsTypeName === selectedName ||
-//       newsTypeName === selectedName.replace(/s$/, '')
-//     );
-//   });
-
-//   // ✅ Pagination setup
-//   const [page, setPage] = useState(1);
-//   const itemsPerPage = 6;
-//   const totalPages = Math.ceil(filterednewss.length / itemsPerPage);
-//   const currentNews = filterednewss.slice(
-//     (page - 1) * itemsPerPage,
-//     page * itemsPerPage,
-//   );
-
-//   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
-//     setPage(value);
-//     window.scrollTo({ top: 0, behavior: 'smooth' });
-//   };
-
-//   return (
-//     <Stack
-//       sx={{
-//         color: '#fff',
-//         px: { xs: 2, sm: 4, md: 8 },
-//         py: { xs: 4, sm: 6, md: 10 },
-//         background: 'linear-gradient(180deg, #0f051d 0%, #12093b 100%)',
-//         minHeight: '100vh',
-//       }}
-//     >
-//       {/* 🏷️ Section Header */}
-//       <Typography
-//         variant="h4"
-//         sx={{
-//           fontWeight: 700,
-//           textAlign: 'center',
-//           fontSize: { xs: '1.6rem', sm: '2rem', md: '2.4rem' },
-//           mb: 1.5,
-//         }}
-//       >
-//         News & Updates
-//       </Typography>
-
-//       <Typography
-//         sx={{
-//           color: 'rgba(255,255,255,0.7)',
-//           textAlign: 'center',
-//           mb: { xs: 5, sm: 7 },
-//           mx: 'auto',
-//           fontSize: { xs: '0.9rem', sm: '1.05rem', md: '1.2rem' },
-//           width: { xs: '95%', sm: '70%', md: '60%' },
-//           lineHeight: 1.6,
-//         }}
-//       >
-//         Stay updated with the latest product releases, artist interviews,
-//         community highlights, and comprehensive guides.
-//       </Typography>
-
-//       {/* 📰 Featured Article */}
-//       {selectedType === 1 &&
-//         (() => {
-//           const featured = newss.find((n) => n.type === 'FEATURED');
-//           if (!featured) return null;
-
-//           return (
-//             <Card
-//               sx={{
-//                 mb: { xs: 5, sm: 8 },
-//                 bgcolor: '#000760',
-//                 border: '1px solid rgba(255,255,255,0.1)',
-//                 borderRadius: 3,
-//                 overflow: 'hidden',
-//                 maxWidth: 900,
-//                 mx: 'auto',
-//               }}
-//             >
-//               <Grid container>
-//                 <Grid size={{ xs: 12, md: 6 }}>
-//                   <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-//                     <Chip
-//                       label={featured.type}
-//                       sx={{
-//                         bgcolor: '#D622DA',
-//                         color: '#fff',
-//                         fontWeight: 600,
-//                         fontSize: '0.7rem',
-//                         mb: 2,
-//                       }}
-//                     />
-//                     <Typography
-//                       sx={{
-//                         fontWeight: 700,
-//                         fontSize: { xs: '1.1rem', sm: '1.6rem' },
-//                         color: '#fff',
-//                         mb: 1.5,
-//                       }}
-//                     >
-//                       {featured.name}
-//                     </Typography>
-//                     <Typography
-//                       sx={{
-//                         color: '#d1d5db',
-//                         fontSize: '0.85rem',
-//                         mb: 2,
-//                         lineHeight: 1.6,
-//                       }}
-//                     >
-//                       {featured.text}
-//                     </Typography>
-//                     <Stack
-//                       direction="row"
-//                       spacing={1.2}
-//                       alignItems="center"
-//                       sx={{ mb: 1 }}
-//                     >
-//                       <Typography
-//                         sx={{
-//                           color: '#9ca3af',
-//                           fontSize: '0.8rem',
-//                         }}
-//                       >
-//                         {featured.date}
-//                       </Typography>
-//                       <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>
-//                         •
-//                       </Typography>
-//                       <Typography
-//                         sx={{
-//                           color: '#9ca3af',
-//                           fontSize: '0.8rem',
-//                         }}
-//                       >
-//                         {featured.time} min read
-//                       </Typography>
-//                     </Stack>
-
-//                     <Button
-//                       variant="contained"
-//                       href={featured.link}
-//                       sx={{
-//                         bgcolor: '#D622DA',
-//                         borderRadius: 2,
-//                         textTransform: 'none',
-//                         fontSize: '0.9rem',
-//                         mt: 1,
-//                         '&:hover': { bgcolor: '#4f46e5' },
-//                       }}
-//                     >
-//                       Read Full Article
-//                     </Button>
-//                   </CardContent>
-//                 </Grid>
-
-//                 <Grid size={{ xs: 12, md: 6 }}>
-//                   <Box
-//                     sx={{
-//                       position: 'relative',
-//                       width: '100%',
-//                       height: { xs: 220, md: 400 },
-//                       overflow: 'hidden',
-//                       p: 3,
-//                     }}
-//                   >
-//                     <Image
-//                       src={featured.img}
-//                       alt={featured.name}
-//                       width={800}
-//                       height={400}
-//                       style={{
-//                         objectFit: 'cover',
-//                         width: '100%',
-//                         height: '100%',
-//                         borderRadius: 10,
-//                       }}
-//                       priority
-//                     />
-//                   </Box>
-//                 </Grid>
-//               </Grid>
-//             </Card>
-//           );
-//         })()}
-
-//       {/* 🎛 Filter Buttons */}
-//       <Stack
-//         direction="row"
-//         justifyContent="center"
-//         flexWrap="wrap"
-//         gap={1.5}
-//         sx={{ mb: { xs: 4, sm: 6 } }}
-//       >
-//         {type.map((tp) => (
-//           <Button
-//             key={tp.id}
-//             onClick={() => {
-//               setSelectedType(tp.id);
-//               setPage(1);
-//             }}
-//             sx={{
-//               bgcolor: selectedType === tp.id ? '#D622DA' : '#1f2937',
-//               color: selectedType === tp.id ? '#fff' : '#9ca3af',
-//               textTransform: 'none',
-//               fontSize: { xs: '0.75rem', sm: '0.9rem' },
-//               borderRadius: '10px',
-//               px: { xs: 1.8, sm: 2.5 },
-//               py: { xs: 0.6, sm: 0.8 },
-//               fontWeight: 500,
-//               '&:hover': {
-//                 bgcolor:
-//                   selectedType === tp.id ? '#6366F1' : 'rgba(99,102,241,0.2)',
-//               },
-//             }}
-//           >
-//             {tp.name}
-//           </Button>
-//         ))}
-//       </Stack>
-
-//       {/* 📚 Grid of Articles */}
-//       <Box>
-//         <Grid
-//           container
-//           spacing={3}
-//           justifyContent="center"
-//           alignItems="stretch"
-//           sx={{ maxWidth: 1300, mx: 'auto' }}
-//         >
-//           {currentNews
-//             .filter((e) => e.id !== '1')
-//             .map((e: newsType) => (
-//               <Grid key={e.id} size={{ xs: 12, sm: 6, md: 4 }}>
-//                 <Card
-//                   sx={{
-//                     bgcolor: '#1B005C',
-//                     borderRadius: 3,
-//                     overflow: 'hidden',
-//                     border: '1px solid rgba(255,255,255,0.1)',
-//                     display: 'flex',
-//                     flexDirection: 'column',
-//                     transition: 'transform 0.3s ease',
-//                     '&:hover': { transform: 'translateY(-4px)' },
-//                     height: 400,
-//                   }}
-//                 >
-//                   {/* 🔹 Image */}
-//                   <Box
-//                     sx={{
-//                       position: 'relative',
-//                       height: { xs: 180, sm: 200 },
-//                       overflow: 'hidden',
-//                     }}
-//                   >
-//                     <Image
-//                       src={e.img}
-//                       alt={e.name}
-//                       width={600}
-//                       height={200}
-//                       style={{
-//                         width: '100%',
-//                         height: '100%',
-//                         objectFit: 'cover',
-//                         display: 'block',
-//                       }}
-//                     />
-
-//                     {/* 🔹 Overlay gradient */}
-//                     <Box
-//                       sx={{
-//                         position: 'absolute',
-//                         inset: 0,
-//                         // background:
-//                         //   'linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.7))',
-//                       }}
-//                     />
-
-//                     {/* 🔹 Category Chip */}
-//                     <Chip
-//                       label={e.type}
-//                       sx={{
-//                         position: 'absolute',
-//                         top: 10,
-//                         left: 10,
-//                         fontSize: '0.7rem',
-//                         color: '#fff',
-//                         textTransform: 'uppercase',
-//                         background:
-//                           'linear-gradient(90deg, #C026D3 0%, #7C3AED 100%)',
-//                         fontWeight: 600,
-//                       }}
-//                     />
-//                   </Box>
-
-//                   {/* 🔹 Content */}
-//                   <CardContent sx={{ p: { xs: 2.5, sm: 3 }, flexGrow: 1 }}>
-//                     <Stack
-//                       direction="row"
-//                       alignItems="center"
-//                       spacing={1.2}
-//                       sx={{ mb: 1 }}
-//                     >
-//                       <Typography
-//                         sx={{
-//                           color: '#A1A1AA',
-//                           fontSize: '0.8rem',
-//                         }}
-//                       >
-//                         {e.date}
-//                       </Typography>
-//                       <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem' }}>
-//                         •
-//                       </Typography>
-//                       <Typography
-//                         sx={{
-//                           color: '#A1A1AA',
-//                           fontSize: '0.8rem',
-//                         }}
-//                       >
-//                         {e.time} min read
-//                       </Typography>
-//                     </Stack>
-
-//                     <Typography
-//                       sx={{
-//                         color: '#fff',
-//                         fontWeight: 700,
-//                         fontSize: { xs: '1rem', sm: '1.1rem' },
-//                         mb: 1.3,
-//                         lineHeight: 1.4,
-//                       }}
-//                     >
-//                       {e.name}
-//                     </Typography>
-
-//                     <Typography
-//                       sx={{
-//                         color: '#d1d5db',
-//                         fontSize: '0.85rem',
-//                         lineHeight: 1.5,
-//                         mb: 2.2,
-//                       }}
-//                     >
-//                       {e.text}
-//                     </Typography>
-
-//                     <Button
-//                       href={e.link}
-//                       sx={{
-//                         color: '#A855F7',
-//                         fontSize: '0.85rem',
-//                         textTransform: 'none',
-//                         fontWeight: 600,
-//                         '&:hover': { textDecoration: 'underline' },
-//                       }}
-//                     >
-//                       Read More →
-//                     </Button>
-//                   </CardContent>
-//                 </Card>
-//               </Grid>
-//             ))}
-//         </Grid>
-
-//         {/* 🔹 Pagination */}
-//         {totalPages > 1 && (
-//           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-//             <Pagination
-//               count={totalPages}
-//               page={page}
-//               onChange={handlePageChange}
-//               color="secondary"
-//               sx={{
-//                 '& .MuiPaginationItem-root': { color: '#fff' },
-//               }}
-//             />
-//           </Box>
-//         )}
-//       </Box>
-//     </Stack>
-//   );
-// };
-
-// 'use client';
-
-// import dynamic from 'next/dynamic';
-// import React, { Suspense, useState } from 'react';
-// import {
-//   Box,
-//   Button,
-//   Card,
-//   CardContent,
-//   Chip,
-//   Stack,
-//   Typography,
-//   Grid,
-//   Pagination,
-// } from '@mui/material';
-// import Image from 'next/image';
-// import { newss, type as filterOptions, newsType } from './data/newsData';
-
-// // Dynamic import, SSR false để tránh prerender error
-// const NewsClient = dynamic(
-//   () => import('./News').then(m => m.News),
-//   { ssr: false }
-// );
-
-// export default function Page() {
-//   return (
-//     <Suspense fallback={<div>Loading...</div>}>
-//       <NewsClient />
-//     </Suspense>
-//   );
-// }
-
-// // ---------------- News component ----------------
-// export const News: React.FC = () => {
-//   const [selectedType, setSelectedType] = useState<number>(1);
-//   const [page, setPage] = useState(1);
-
-//   // Filter chuẩn, map tất cả về uppercase + _ để match
-//   const filterednewss = newss.filter((e) => {
-//     if (selectedType === 1) return true;
-
-//     const selectedName =
-//       filterOptions.find((t) => t.id === selectedType)?.name
-//         .toUpperCase()
-//         .replace(/\s/g, '_') || '';
-
-//     return e.type.toUpperCase() === selectedName;
-//   });
-
-//   const itemsPerPage = 6;
-//   const totalPages = Math.ceil(filterednewss.length / itemsPerPage);
-//   const currentNews = filterednewss.slice(
-//     (page - 1) * itemsPerPage,
-//     page * itemsPerPage
-//   );
-
-//   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
-//     setPage(value);
-//     if (typeof window !== 'undefined') {
-//       window.scrollTo({ top: 0, behavior: 'smooth' });
-//     }
-//   };
-
-//   return (
-//     <Stack
-//       sx={{
-//         color: '#fff',
-//         px: { xs: 2, sm: 4, md: 8 },
-//         py: { xs: 4, sm: 6, md: 10 },
-//         background: 'linear-gradient(180deg, #0f051d 0%, #12093b 100%)',
-//         minHeight: '100vh',
-//       }}
-//     >
-//       {/* Header */}
-//       <Typography
-//         variant="h4"
-//         sx={{
-//           fontWeight: 700,
-//           textAlign: 'center',
-//           fontSize: { xs: '1.6rem', sm: '2rem', md: '2.4rem' },
-//           mb: 1.5,
-//         }}
-//       >
-//         News & Updates
-//       </Typography>
-//       <Typography
-//         sx={{
-//           color: 'rgba(255,255,255,0.7)',
-//           textAlign: 'center',
-//           mb: { xs: 5, sm: 7 },
-//           mx: 'auto',
-//           fontSize: { xs: '0.9rem', sm: '1.05rem', md: '1.2rem' },
-//           width: { xs: '95%', sm: '70%', md: '60%' },
-//           lineHeight: 1.6,
-//         }}
-//       >
-//         Stay updated with the latest product releases, artist interviews, community highlights, and comprehensive guides.
-//       </Typography>
-
-//       {/* Filter Buttons */}
-//       <Stack
-//         direction="row"
-//         justifyContent="center"
-//         flexWrap="wrap"
-//         gap={1.5}
-//         sx={{ mb: { xs: 4, sm: 6 } }}
-//       >
-//         {filterOptions.map((tp) => (
-//           <Button
-//             key={tp.id}
-//             onClick={() => {
-//               setSelectedType(tp.id);
-//               setPage(1);
-//             }}
-//             sx={{
-//               bgcolor: selectedType === tp.id ? '#D622DA' : '#1f2937',
-//               color: selectedType === tp.id ? '#fff' : '#9ca3af',
-//               textTransform: 'none',
-//               fontSize: { xs: '0.75rem', sm: '0.9rem' },
-//               borderRadius: '10px',
-//               px: { xs: 1.8, sm: 2.5 },
-//               py: { xs: 0.6, sm: 0.8 },
-//               fontWeight: 500,
-//               '&:hover': {
-//                 bgcolor:
-//                   selectedType === tp.id ? '#6366F1' : 'rgba(99,102,241,0.2)',
-//               },
-//             }}
-//           >
-//             {tp.name}
-//           </Button>
-//         ))}
-//       </Stack>
-
-//       {/* News Grid */}
-//       <Grid container spacing={3} justifyContent="center">
-//         {currentNews.map((e: newsType) => (
-//           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={e.id}>
-//             <Card
-//               sx={{
-//                 bgcolor: '#1B005C',
-//                 borderRadius: 3,
-//                 overflow: 'hidden',
-//                 border: '1px solid rgba(255,255,255,0.1)',
-//                 display: 'flex',
-//                 flexDirection: 'column',
-//                 transition: 'transform 0.3s ease',
-//                 '&:hover': { transform: 'translateY(-4px)' },
-//                 height: 400,
-//               }}
-//             >
-//               <Box sx={{ position: 'relative', height: { xs: 180, sm: 200 }, overflow: 'hidden' }}>
-//                 <Image
-//                   src={e.img || '/news/news.png'}
-//                   alt={e.name}
-//                   width={600}
-//                   height={200}
-//                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-//                 />
-//                 <Chip
-//                   label={e.type}
-//                   sx={{
-//                     position: 'absolute',
-//                     top: 10,
-//                     left: 10,
-//                     fontSize: '0.7rem',
-//                     color: '#fff',
-//                     textTransform: 'uppercase',
-//                     background: 'linear-gradient(90deg, #C026D3 0%, #7C3AED 100%)',
-//                     fontWeight: 600,
-//                   }}
-//                 />
-//               </Box>
-//               <CardContent sx={{ p: { xs: 2.5, sm: 3 }, flexGrow: 1 }}>
-//                 <Stack direction="row" alignItems="center" spacing={1.2} sx={{ mb: 1 }}>
-//                   <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem' }}>{e.date}</Typography>
-//                   <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem' }}>•</Typography>
-//                   <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem' }}>{e.time} min read</Typography>
-//                 </Stack>
-//                 <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: { xs: '1rem', sm: '1.1rem' }, mb: 1.3, lineHeight: 1.4 }}>
-//                   {e.name}
-//                 </Typography>
-//                 <Typography sx={{ color: '#d1d5db', fontSize: '0.85rem', lineHeight: 1.5, mb: 2.2 }}>
-//                   {e.text}
-//                 </Typography>
-//                 <Button
-//                   href={e.link}
-//                   sx={{ color: '#A855F7', fontSize: '0.85rem', textTransform: 'none', fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
-//                 >
-//                   Read More →
-//                 </Button>
-//               </CardContent>
-//             </Card>
-//           </Grid>
-//         ))}
-//       </Grid>
-
-//       {/* Pagination */}
-//       {totalPages > 1 && (
-//         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-//           <Pagination count={totalPages} page={page} onChange={handlePageChange} color="secondary" sx={{ '& .MuiPaginationItem-root': { color: '#fff' } }} />
-//         </Box>
-//       )}
-//     </Stack>
-//   );
-// };
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -637,61 +14,33 @@ import {
   Pagination,
 } from '@mui/material';
 import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
-import newsService from '@/services/newsService';
-import { News as NewsType } from '@/types/news';
-import { Category } from '@/types/category';
-import categoryService from '@/services/categoryService';
+
+// 🔥 Hooks
 import { useNews } from '@/hooks/useNews';
 import { useCategories } from '@/hooks/useCategories';
 
-export const News: React.FC = () => {
-  // const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  // const [page, setPage] = useState(1);
-  // const itemsPerPage = 6;
-
-  // const { data: categories, isLoading: loadingCategories } = useQuery<
-  //   Category[],
-  //   Error
-  // >({
-  //   queryKey: ['categories'],
-  //   queryFn: categoryService.getAllCategories,
-  // });
-
-  // const { data: allNews, isLoading: loadingNews } = useQuery<NewsType[], Error>(
-  //   {
-  //     queryKey: ['news'],
-  //     queryFn: newsService.getAllNews,
-  //   },
-  // );
-
-  // const filteredNews = allNews?.filter((n) =>
-  //   selectedCategory ? n.category?.id === selectedCategory : true,
-  // );
-
-  // const totalPages = Math.ceil((filteredNews?.length || 0) / itemsPerPage);
-  // const currentNews = filteredNews?.slice(
-  //   (page - 1) * itemsPerPage,
-  //   page * itemsPerPage,
-  // );
-
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+export const NewsClient: React.FC = () => {
+  const [selectedType, setSelectedType] = useState<string>('all');
   const [page, setPage] = useState(1);
+
+  // ---------- API CALL ----------
+  const { data: newsPages, isLoading: newsLoading } = useNews();
+  const { data: categories } = useCategories('news');
+
+  // Convert infinite pages → single list
+  const allNews =
+    newsPages?.pages
+      .flatMap((p) => p.data)
+      .filter((item) => item.id !== undefined) || [];
+
+  // ---------- FILTER ----------
+  const filteredNews = allNews.filter((item) => {
+    if (selectedType === 'all') return true;
+    return item.category?.id === selectedType;
+  });
+
+  // ---------- PAGINATION ----------
   const itemsPerPage = 6;
-
-  const { data, isLoading: loadingNews } = useNews();
-  const { data: categories, isLoading: loadingCategories } =
-    useCategories('news');
-
-  // Convert infinite-query pages → 1 mảng
-  const allNews = data?.pages.flatMap((p) => p.data) ?? [];
-
-  // Filter news
-  const filteredNews = selectedCategory
-    ? allNews.filter((n) => n.category?.id === selectedCategory)
-    : allNews;
-
-  // Paging
   const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
   const currentNews = filteredNews.slice(
     (page - 1) * itemsPerPage,
@@ -700,14 +49,11 @@ export const News: React.FC = () => {
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (loadingNews || loadingCategories) {
-    return <Typography sx={{ color: '#fff' }}>Loading...</Typography>;
-  }
+  // ---------- FEATURED ----------
+  const featured = filteredNews[0];
 
   return (
     <Stack
@@ -715,139 +61,151 @@ export const News: React.FC = () => {
         color: '#fff',
         px: { xs: 2, sm: 4, md: 8 },
         py: { xs: 4, sm: 6, md: 10 },
+        background: 'linear-gradient(180deg, #0f051d 0%, #12093b 100%)',
+        minHeight: '130vh',
+        
       }}
     >
       {/* Header */}
-      <Typography
-        variant="h4"
-        sx={{ fontWeight: 700, textAlign: 'center', mb: 3 }}
-      >
+      <Typography variant="h4" sx={{ fontWeight: 700, textAlign: 'center', my: 5 }}>
         News & Updates
       </Typography>
 
-      {/* Featured News */}
-      {currentNews && currentNews.length > 0 && (
-        <Grid container spacing={3} justifyContent="center" sx={{ mb: 4 }}>
-          <Grid size={{ xs: 12 }}>
-            {(() => {
-              const featured = currentNews[0];
-              const thumbnailUrl = featured.thumbnail
-                ? `https://res.cloudinary.com/dr6cnnvma/image/upload/${featured.thumbnail}.png`
-                : '/news/news.png';
+      {/* 🔄 Loading */}
+      {newsLoading && (
+        <Typography sx={{ textAlign: 'center', mt: 4 }}>
+          Loading news...
+        </Typography>
+      )}
 
-              return (
-                <Card
-                  sx={{
-                    bgcolor: '#1B005C',
-                    borderRadius: 3,
-                    overflow: 'hidden',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    transition: 'transform 0.3s ease',
-                    '&:hover': { transform: 'translateY(-4px)' },
-                    height: { xs: 300, sm: 400 },
-                  }}
-                >
-                  <Box
-                    sx={{ position: 'relative', height: { xs: 180, sm: 250 } }}
-                  >
-                    <Image
-                      src={thumbnailUrl}
-                      alt={featured.title}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                      sizes="100vw"
-                    />
+      {/* Featured */}
+      {selectedType === 'all' &&
+        (() => {
+          const featured = allNews.find((cat) => cat.id === 1); // categoryId 5 là Featured
+          if (!featured) return null;
+
+          return (
+            <Card
+              sx={{
+                mb: { xs: 5, sm: 8 },
+                bgcolor: '#000760',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 3,
+                overflow: 'hidden',
+                maxWidth: 900,
+                mx: 'auto',
+              }}
+            >
+              <Grid container>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <CardContent sx={{ p: { xs: 3, md: 4 } }}>
                     <Chip
-                      label={featured.category?.name || 'Unknown'}
+                      label={featured.category?.name}
                       sx={{
-                        position: 'absolute',
-                        top: 10,
-                        left: 10,
-                        fontSize: '0.7rem',
+                        bgcolor: '#D622DA',
                         color: '#fff',
-                        textTransform: 'uppercase',
-                        background:
-                          'linear-gradient(90deg, #C026D3 0%, #7C3AED 100%)',
                         fontWeight: 600,
+                        fontSize: '0.7rem',
+                        mb: 2,
                       }}
                     />
-                  </Box>
-                  <CardContent sx={{ p: 3, flexGrow: 1 }}>
                     <Typography
                       sx={{
-                        color: '#fff',
                         fontWeight: 700,
-                        fontSize: '1.2rem',
-                        mb: 1.3,
+                        fontSize: { xs: '1.1rem', sm: '1.6rem' },
+                        color: '#fff',
+                        mb: 1.5,
                       }}
                     >
                       {featured.title}
                     </Typography>
                     <Typography
-                      sx={{ color: '#d1d5db', fontSize: '0.9rem', mb: 2.2 }}
-                    >
-                      {featured.description}
-                    </Typography>
-                    <Button
-                      href={`/news/${featured.id}`}
                       sx={{
-                        color: '#A855F7',
+                        color: '#d1d5db',
                         fontSize: '0.85rem',
+                        mb: 2,
+                        lineHeight: 1.6,
+                      }}
+                      dangerouslySetInnerHTML={{ __html: featured.description }}
+                    />
+                    <Button
+                      variant="contained"
+                      sx={{
+                        bgcolor: '#D622DA',
+                        borderRadius: 2,
                         textTransform: 'none',
-                        fontWeight: 600,
-                        '&:hover': { textDecoration: 'underline' },
+                        fontSize: '0.9rem',
+                        mt: 1,
+                        '&:hover': { bgcolor: '#4f46e5' },
                       }}
                     >
-                      Read More →
+                      Read Full Article
                     </Button>
                   </CardContent>
-                </Card>
-              );
-            })()}
-          </Grid>
-        </Grid>
-      )}
+                </Grid>
 
-      {/* Filter Buttons */}
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      width: '100%',
+                      height: { xs: 220, md: 400 },
+                      overflow: 'hidden',
+                      p: 3,
+                    }}
+                  >
+                    <Image
+                      src={
+                        featured.thumbnail
+                          ? `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763370298/${featured.thumbnail}.png`
+                          : '/placeholder.png'
+                      }
+                      alt={featured.title}
+                      fill
+                      style={{ objectFit: 'cover', borderRadius: 10 }}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            </Card>
+          );
+        })()}
+
+      {/* Filter */}
       <Stack
         direction="row"
         justifyContent="center"
         flexWrap="wrap"
         gap={1.5}
-        sx={{ mb: 5 }}
+        sx={{ mb: 6 }}
       >
+        {/* Default filter */}
         <Button
           onClick={() => {
-            setSelectedCategory(null);
+            setSelectedType('all');
             setPage(1);
           }}
           sx={{
-            bgcolor: selectedCategory === null ? '#D622DA' : '#1f2937',
-            color: selectedCategory === null ? '#fff' : '#9ca3af',
-            textTransform: 'none',
+            bgcolor: selectedType === 'all' ? '#D622DA' : '#1f2937',
+            color: selectedType === 'all' ? '#fff' : '#9ca3af',
             borderRadius: '10px',
-            px: 2.5,
-            py: 0.8,
           }}
         >
           All
         </Button>
+
+        {/* Dynamic category filter from API */}
         {categories?.map((cat) => (
           <Button
             key={cat.id}
             onClick={() => {
-              setSelectedCategory(cat.id);
+              setSelectedType(cat.id);
               setPage(1);
             }}
             sx={{
-              bgcolor: selectedCategory === cat.id ? '#D622DA' : '#1f2937',
-              color: selectedCategory === cat.id ? '#fff' : '#9ca3af',
-              textTransform: 'none',
+              bgcolor: selectedType === cat.id ? '#D622DA' : '#1f2937',
+              color: selectedType === cat.id ? '#fff' : '#9ca3af',
               borderRadius: '10px',
-              px: 2.5,
-              py: 0.8,
             }}
           >
             {cat.name}
@@ -855,100 +213,87 @@ export const News: React.FC = () => {
         ))}
       </Stack>
 
-      {/* Remaining News Grid */}
-      <Grid container spacing={3} justifyContent="center">
-        {currentNews?.slice(1).map((e) => {
-          const thumbnailUrl = e.thumbnail
-            ? `https://res.cloudinary.com/dr6cnnvma/image/upload/${e.thumbnail}.png`
-            : '/news/news.png';
-
-          return (
-            <Grid key={e.id} size={{ xs: 12, sm: 6, md: 4 }}>
+      {/* News Grid */}
+      <Box>
+        <Grid container spacing={3} justifyContent="center">
+          {currentNews.map((item, index) => (
+            <Grid
+              key={item.id ?? `${item.title}-${index}`}
+              size={{ xs: 12, sm: 6, md: 4 }}
+            >
               <Card
                 sx={{
                   bgcolor: '#1B005C',
                   borderRadius: 3,
                   overflow: 'hidden',
                   border: '1px solid rgba(255,255,255,0.1)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'transform 0.3s ease',
-                  '&:hover': { transform: 'translateY(-4px)' },
                   height: 400,
                 }}
               >
-                <Box
-                  sx={{ position: 'relative', height: { xs: 180, sm: 200 } }}
-                >
+                <Box sx={{ position: 'relative', height: 180 }}>
                   <Image
-                    src={thumbnailUrl}
-                    alt={e.title}
+                    src={
+                      item.thumbnail
+                        ? `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763370298/${item.thumbnail}.png`
+                        : '/placeholder.png'
+                    }
+                    alt={item.title}
                     fill
                     style={{ objectFit: 'cover' }}
-                    sizes="(max-width:600px) 100vw, (max-width:900px) 50vw, 33vw"
                   />
                   <Chip
-                    label={e.category?.name || 'Unknown'}
+                    label={item.category?.name}
                     sx={{
                       position: 'absolute',
                       top: 10,
                       left: 10,
-                      fontSize: '0.7rem',
+                      background: 'linear-gradient(90deg, #C026D3, #7C3AED)',
                       color: '#fff',
-                      textTransform: 'uppercase',
-                      background:
-                        'linear-gradient(90deg, #C026D3 0%, #7C3AED 100%)',
-                      fontWeight: 600,
                     }}
                   />
                 </Box>
-                <CardContent sx={{ p: 3, flexGrow: 1 }}>
+
+                <CardContent sx={{ p: 3 }}>
+                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem' }}>
+                    {item.publishedAt}
+                  </Typography>
+
+                  <Typography sx={{ fontWeight: 700, color: '#fff', mt: 1 }}>
+                    {item.title}
+                  </Typography>
+
                   <Typography
                     sx={{
-                      color: '#fff',
-                      fontWeight: 700,
-                      fontSize: '1.1rem',
-                      mb: 1.3,
+                      color: '#d1d5db',
+                      fontSize: '0.9rem',
+                      mt: 1,
+                      mb: 2,
                     }}
                   >
-                    {e.title}
+                    {item.description}
                   </Typography>
-                  <Typography
-                    sx={{ color: '#d1d5db', fontSize: '0.85rem', mb: 2.2 }}
-                  >
-                    {e.description}
-                  </Typography>
-                  <Button
-                    href={`/news/${e.id}`}
-                    sx={{
-                      color: '#A855F7',
-                      fontSize: '0.85rem',
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      '&:hover': { textDecoration: 'underline' },
-                    }}
-                  >
+
+                  <Button sx={{ color: '#A855F7', textTransform: 'none' }}>
                     Read More →
                   </Button>
                 </CardContent>
               </Card>
             </Grid>
-          );
-        })}
-      </Grid>
+          ))}
+        </Grid>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handlePageChange}
-            color="secondary"
-            sx={{ '& .MuiPaginationItem-root': { color: '#fff' } }}
-          />
-        </Box>
-      )}
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+              color="secondary"
+            />
+          </Box>
+        )}
+      </Box>
     </Stack>
   );
 };
@@ -1003,38 +348,38 @@ export const News: React.FC = () => {
 //         Stay updated with the latest product releases, artist interviews, community highlights, and comprehensive guides.
 //       </Typography>
 
-//       {/* Featured */}
-//       {selectedType === 1 && (() => {
-//         const featured = newss.find((n) => n.type === 'FEATURED');
-//         if (!featured) return null;
+// {/* Featured */}
+// {selectedType === 1 && (() => {
+//   const featured = newss.find((n) => n.type === 'FEATURED');
+//   if (!featured) return null;
 
-//         return (
-//           <Card sx={{ mb: { xs: 5, sm: 8 }, bgcolor: '#000760', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden', maxWidth: 900, mx: 'auto' }}>
-//             <Grid container>
-//               <Grid size={{ xs: 12, md: 6 }}>
-//                 <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-//                   <Chip label={featured.type} sx={{ bgcolor: '#D622DA', color: '#fff', fontWeight: 600, fontSize: '0.7rem', mb: 2 }} />
-//                   <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.1rem', sm: '1.6rem' }, color: '#fff', mb: 1.5 }}>{featured.name}</Typography>
-//                   <Typography sx={{ color: '#d1d5db', fontSize: '0.85rem', mb: 2, lineHeight: 1.6 }}>{featured.text}</Typography>
-//                   <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: 1 }}>
-//                     <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>{featured.date}</Typography>
-//                     <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>•</Typography>
-//                     <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>{featured.time} min read</Typography>
-//                   </Stack>
-//                   <Button variant="contained" href={featured.link} sx={{ bgcolor: '#D622DA', borderRadius: 2, textTransform: 'none', fontSize: '0.9rem', mt: 1, '&:hover': { bgcolor: '#4f46e5' } }}>
-//                     Read Full Article
-//                   </Button>
-//                 </CardContent>
-//               </Grid>
-//               <Grid size={{ xs: 12, md: 6 }}>
-//                 <Box sx={{ position: 'relative', width: '100%', height: { xs: 220, md: 400 }, overflow: 'hidden', p: 3 }}>
-//                   <Image src={featured.img} alt={featured.name} width={800} height={400} style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: 10 }} priority />
-//                 </Box>
-//               </Grid>
-//             </Grid>
-//           </Card>
-//         );
-//       })()}
+//   return (
+//     <Card sx={{ mb: { xs: 5, sm: 8 }, bgcolor: '#000760', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden', maxWidth: 900, mx: 'auto' }}>
+//       <Grid container>
+//         <Grid size={{ xs: 12, md: 6 }}>
+//           <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+//             <Chip label={featured.type} sx={{ bgcolor: '#D622DA', color: '#fff', fontWeight: 600, fontSize: '0.7rem', mb: 2 }} />
+//             <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.1rem', sm: '1.6rem' }, color: '#fff', mb: 1.5 }}>{featured.name}</Typography>
+//             <Typography sx={{ color: '#d1d5db', fontSize: '0.85rem', mb: 2, lineHeight: 1.6 }}>{featured.text}</Typography>
+//             <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: 1 }}>
+//               <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>{featured.date}</Typography>
+//               <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>•</Typography>
+//               <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>{featured.time} min read</Typography>
+//             </Stack>
+//             <Button variant="contained" href={featured.link} sx={{ bgcolor: '#D622DA', borderRadius: 2, textTransform: 'none', fontSize: '0.9rem', mt: 1, '&:hover': { bgcolor: '#4f46e5' } }}>
+//               Read Full Article
+//             </Button>
+//           </CardContent>
+//         </Grid>
+//         <Grid size={{ xs: 12, md: 6 }}>
+//           <Box sx={{ position: 'relative', width: '100%', height: { xs: 220, md: 400 }, overflow: 'hidden', p: 3 }}>
+//             <Image src={featured.img} alt={featured.name} width={800} height={400} style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: 10 }} priority />
+//           </Box>
+//         </Grid>
+//       </Grid>
+//     </Card>
+//   );
+// })()}
 
 //       {/* Filter */}
 //       <Stack direction="row" justifyContent="center" flexWrap="wrap" gap={1.5} sx={{ mb: { xs: 4, sm: 6 } }}>

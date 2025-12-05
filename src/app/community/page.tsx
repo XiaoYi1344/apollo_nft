@@ -10,11 +10,10 @@
 
 // export default page
 
-
 // app/community/page.tsx
 import CommunityClient from './CommunityClient';
 
-export const dynamic = 'force-dynamic'; // tránh prerender
+//export const dynamic = 'force-dynamic'; // tránh prerender
 
 export default function Page() {
   return <CommunityClient />;

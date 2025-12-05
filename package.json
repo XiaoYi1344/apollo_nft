@@ -55,6 +55,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/react-easy-crop": "^1.16.0",
+    "baseline-browser-mapping": "^2.8.32",
     "eslint": "^9.37.0",
     "eslint-config-next": "15.5.5",
     "eslint-config-prettier": "^10.1.8",
