@@ -1930,7 +1930,7 @@ export default function NFTDetail() {
                 objectFit: 'cover',
               }}
               placeholder="blur"
-              blurDataURL="/placeholder.png"
+              blurDataURL="/placeholder.jpg"
               priority
             />
 

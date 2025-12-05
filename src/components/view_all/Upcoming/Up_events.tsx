@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -81,21 +80,18 @@ export const Up_events: React.FC = () => {
 
   // Flatten API pages
   // InfiniteData has `.pages`, so ensure typing aligns
-const allEvents: Event[] = (data?.pages ?? [])
-  .flatMap((page) =>
-    (page.data ?? []).filter((item): item is Event => 'id' in item)
+  const allEvents: Event[] = (data?.pages ?? []).flatMap((page) =>
+    (page.data ?? []).filter((item): item is Event => 'id' in item),
   );
 
-
-const filteredEvents = allEvents.filter((e) => {
-  const matchTimeline =
-    selectedTimeline === 'all' || e.status === selectedTimeline;
-  const matchCategory =
-    selectedCategory === 'all' ||
-    e.category?.name?.toLowerCase() === selectedCategory.toLowerCase();
-  return matchTimeline && matchCategory;
-});
-
+  const filteredEvents = allEvents.filter((e) => {
+    const matchTimeline =
+      selectedTimeline === 'all' || e.status === selectedTimeline;
+    const matchCategory =
+      selectedCategory === 'all' ||
+      e.category?.name?.toLowerCase() === selectedCategory.toLowerCase();
+    return matchTimeline && matchCategory;
+  });
 
   if (isLoading)
     return <CircularProgress sx={{ display: 'block', mx: 'auto', mt: 10 }} />;
@@ -215,7 +211,10 @@ const filteredEvents = allEvents.filter((e) => {
         {/* Event Cards */}
         <Grid container spacing={3} justifyContent="center">
           {filteredEvents.map((e) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={e.id ?? `${e.title}-${e.startTime}`}>
+            <Grid
+              size={{ xs: 12, sm: 6, md: 4 }}
+              key={e.id ?? `${e.title}-${e.startTime}`}
+            >
               <Card
                 sx={{
                   borderRadius: 3,
@@ -229,12 +228,10 @@ const filteredEvents = allEvents.filter((e) => {
                   sx={{ position: 'relative', height: { xs: 180, sm: 220 } }}
                 >
                   <Image
-                   
-
                     src={
                       e.image
                         ? `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763370298/${e.image}.png`
-                        : '/placeholder.png'
+                        : '/placeholder.jpg'
                     }
                     alt={e.title}
                     fill

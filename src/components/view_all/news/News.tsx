@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -63,11 +62,13 @@ export const NewsClient: React.FC = () => {
         py: { xs: 4, sm: 6, md: 10 },
         background: 'linear-gradient(180deg, #0f051d 0%, #12093b 100%)',
         minHeight: '130vh',
-        
       }}
     >
       {/* Header */}
-      <Typography variant="h4" sx={{ fontWeight: 700, textAlign: 'center', my: 5 }}>
+      <Typography
+        variant="h4"
+        sx={{ fontWeight: 700, textAlign: 'center', my: 5 }}
+      >
         News & Updates
       </Typography>
 
@@ -158,7 +159,7 @@ export const NewsClient: React.FC = () => {
                       src={
                         featured.thumbnail
                           ? `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763370298/${featured.thumbnail}.png`
-                          : '/placeholder.png'
+                          : '/placeholder.jpg'
                       }
                       alt={featured.title}
                       fill
@@ -235,7 +236,7 @@ export const NewsClient: React.FC = () => {
                     src={
                       item.thumbnail
                         ? `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763370298/${item.thumbnail}.png`
-                        : '/placeholder.png'
+                        : '/placeholder.jpg'
                     }
                     alt={item.title}
                     fill
