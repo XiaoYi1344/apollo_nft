@@ -29,6 +29,8 @@ import dynamic from 'next/dynamic';
 import Cookies from 'js-cookie';
 import userApi from '@/services/userService';
 
+import WidgetsIcon from '@mui/icons-material/Widgets';
+
 interface EthereumProvider {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
 }
@@ -339,12 +341,13 @@ const WalletModal: React.FC<WalletModalProps> = ({
                         '&:hover': { bgcolor: '#2A1C52' },
                       }}
                     >
-                      <Image
-                        src="/icons/wallet.svg"
+                      {/* <Image
+                        src="<WidgetsIcon/>"
                         alt="all-wallets"
                         width={28}
                         height={28}
-                      />
+                      /> */}
+                      <WidgetsIcon sx={{ fontSize: 28, color: '#aaa' }} />
                       All Wallets
                     </Button>
                   </Stack>
