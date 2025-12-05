@@ -2101,84 +2101,9 @@ export default function NFTDetail() {
             )}
           </Box>
 
-          {/* Price section */}
-          {/* Price / Auction Section */}
+
           {nft.auctionId ? (
-            //             <Box
-            //               sx={{
-            //                 bgcolor: 'rgba(17,24,39,0.5)',
-            //                 p: 3,
-            //                 borderRadius: 3,
-            //                 mt: 3,
-            //                 border: '1px solid #2D155A',
-            //               }}
-            //             >
-            //               <Box
-            //                 sx={{
-            //                   display: 'flex',
-            //                   justifyContent: 'space-between',
-            //                   cursor: 'pointer',
-            //                 }}
-            //                 onClick={() => toggleSection('auction')}
-            //               >
-            //                 <Typography variant="h6">Auction</Typography>
-            //                 {openSections.auction ? (
-            //                   <ExpandLess sx={{ color: '#B983FF' }} />
-            //                 ) : (
-            //                   <ExpandMore sx={{ color: '#B983FF' }} />
-            //                 )}
-            //               </Box>
-
-            //               <Collapse in={openSections.auction}>
-
-            //                 <Box mt={2}>
-            //   <Typography sx={{ mb: 1 }}>Time Left: {formatCountdown()}</Typography>
-            //   <Typography sx={{ mb: 1 }}>Min Bid: {nft.price} ETH</Typography>
-
-            //   <Button
-            //     variant="contained"
-            //     sx={{ bgcolor: '#9333ea', mb: 2 }}
-            //     onClick={handlePlaceBid}
-            //     disabled={isLoading}
-            //   >
-            //     {isLoading ? 'Placing...' : 'Place Bid'}
-            //   </Button>
-
-            //   <Typography sx={{ mb: 1, opacity: 0.6 }}>Top Bids</Typography>
-            //   {topBidders.length > 0 ? (
-            //     topBidders.map((bid, i) => (
-            //       <Box key={i} display="flex" justifyContent="space-between" p={1} bgcolor="rgba(31,41,55,0.5)" borderRadius={1} mb={1}>
-            //         <Typography>{i + 1}. {bid.address}</Typography>
-            //         <Typography>{bid.amount} ETH</Typography>
-            //       </Box>
-            //     ))
-            //   ) : (
-            //     <Box>
-            //                     <Typography sx={{ mb: 1, opacity: 0.6 }}>
-            //                       Top Bids
-            //                     </Typography>
-            //                     {topBidders.map((bid, i) => (
-            //                       <Box
-            //                         key={i}
-            //                         display="flex"
-            //                         justifyContent="space-between"
-            //                         p={1}
-            //                         bgcolor="rgba(31,41,55,0.5)"
-            //                         borderRadius={1}
-            //                         mb={1}
-            //                       >
-            //                         <Typography>
-            //                           {i + 1}. {bid.address}
-            //                         </Typography>
-            //                         <Typography>{bid.amount} ETH</Typography>
-            //                       </Box>
-            //                     ))}
-            //                   </Box>
-            //   )}
-            // </Box>
-
-            //               </Collapse>
-            //             </Box>
+            
             <AuctionPanel nft={nft} />
           ) : (
             <Box
