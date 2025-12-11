@@ -167,7 +167,8 @@ const Community: React.FC = () => {
       </Typography>
       <Spotlight />
 
-      <NewsUpdate />
+      <NewsUpdate spaceName="Apollo Space Center" spaceLink="/news/apollo" />
+
       <Upcoming />
     </Box>
   );
