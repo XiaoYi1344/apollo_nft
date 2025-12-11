@@ -176,11 +176,11 @@ const NewsManagement: React.FC = () => {
           <TableBody>
             {ownedNews.map((news) => (
               <TableRow key={news.id} hover>
-                <TableCell>{news.title}</TableCell>
-                <TableCell>{news.status}</TableCell>
-                <TableCell>{news.category?.name || '-'}</TableCell>
-                <TableCell>{news.views}</TableCell>
-                <TableCell>{news.publishedAt || '-'}</TableCell>
+                <TableCell sx={{ color: '#fff' }}>{news.title}</TableCell>
+                <TableCell sx={{ color: '#fff' }}>{news.status}</TableCell>
+                <TableCell sx={{ color: '#fff' }}>{news.category?.name || '-'}</TableCell>
+                <TableCell sx={{ color: '#fff' }}>{news.views}</TableCell>
+                <TableCell sx={{ color: '#fff' }}>{news.publishedAt || '-'}</TableCell>
                 <TableCell>
                   {news.status === 'draft' && (
                     <Button
