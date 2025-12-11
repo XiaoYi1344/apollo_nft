@@ -2,7 +2,7 @@
 // components/community/Community.tsx
 'use client';
 
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import React from 'react';

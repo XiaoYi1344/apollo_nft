@@ -1,7 +1,7 @@
 'use client';
 
 import HomePage from '@/components/home/homePage';
-import AvatarCustomizerAdvanced from '@/components/AvatarCustomizerAdvanced';
+// import AvatarCustomizerAdvanced from '@/components/AvatarCustomizerAdvanced';
 
 export default function Home() {
   return (

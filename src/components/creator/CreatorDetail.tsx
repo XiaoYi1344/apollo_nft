@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -34,7 +34,7 @@ import { getWallet } from '@/services/LikeFollowService';
 import UserHeader from './UserHeader';
 
 import { ProductSummary } from '@/types/user';
-import { useAllProducts, useUpdateListing } from '@/hooks/useProduct';
+import { useAllProducts } from '@/hooks/useProduct';
 import { getProductsByCollection } from '@/services/productService';
 import { useQueries } from '@tanstack/react-query';
 import { useToggleLike } from '@/hooks/useLike';
@@ -95,7 +95,7 @@ const CreatorDetail: React.FC<CreatorDetailProps> = ({
     }
   }, [user, followed]);
 
-  const updateListing = useUpdateListing();
+  // const updateListing = useUpdateListing();
 
   const shortenAddress = (addr: string) =>
     addr ? addr.slice(0, 6) + '...' + addr.slice(-4) : '';
