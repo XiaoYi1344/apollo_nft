@@ -16,25 +16,7 @@ export default function PartnersMarquee() {
 
   return (
     <Box sx={{ overflow: 'hidden', mt: -3 }}>
-      {/* Partners row */}
-      {/* <Stack direction="row" spacing={4} justifyContent="center" sx={{ py: 3, mt: 4 }}>
-        {partners.map((p, i) => (
-          <Typography
-            key={i}
-            sx={{
-              color: '#D0D1CC',
-              fontSize: '0.8rem',
-              letterSpacing: 0.5,
-              opacity: 0.9,
-              transition: 'all 0.3s ease',
-              '&:hover': { opacity: 1, transform: 'scale(1.05)' },
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {p.text}
-          </Typography>
-        ))}
-      </Stack> */}
+      
       <Grid container spacing={4} justifyContent="center" sx={{ py: 3, mt: 4 }}>
         {partners.map((p, i) => (
           <Grid size={{ xs: 6, md: 'auto' }} key={i}>

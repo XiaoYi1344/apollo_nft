@@ -31,7 +31,7 @@ export default function NewsUpdate() {
     return thumbnail;
   } catch {
     // Nếu thumbnail là tên file trên Cloudinary hoặc relative path
-    return `https://res.cloudinary.com/dr6cnnvma/image/upload/v1763370298/${thumbnail}.png`;
+    return `https://res.cloudinary.com/dr6=cnnvma/image/upload/v1763370298/${thumbnail}.png`;
   }
 };
 

@@ -23,6 +23,7 @@ import {
   Ownership,
   RawProduct,
 } from '../types/product';
+import toast from 'react-hot-toast';
 
 const API_URL = process.env.NEXT_PUBLIC_API?.replace(/\/$/, '') + '/api';
 
@@ -217,16 +218,37 @@ const axiosInstance = axios.create({
   headers: { 'ngrok-skip-browser-warning': 'true' },
 });
 
+// axiosInstance.interceptors.response.use(
+//   response => response,
+//   error => {
+//     if (error.response?.status === 401) {
+//       console.error('Unauthorized! Token missing or expired.');
+//       // if (typeof window !== 'undefined') window.location.href = '/login';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+
 axiosInstance.interceptors.response.use(
   response => response,
   error => {
-    if (error.response?.status === 401) {
-      console.error('Unauthorized! Token missing or expired.');
-      // if (typeof window !== 'undefined') window.location.href = '/login';
+    const url = error.config?.url;
+    const status = error.response?.status;
+
+    // Bỏ qua lỗi 401 cho API public
+    if (url?.includes('/product/get-all-owned')) {
+      return Promise.reject(error);
     }
+
+    if (status === 401) {
+      toast.error('Bạn chưa đăng nhập');
+      // window.location.href = '/login';
+    }
+
     return Promise.reject(error);
   }
 );
+
 
 export const getAllOwnedProducts = async (
   page: number = 1,

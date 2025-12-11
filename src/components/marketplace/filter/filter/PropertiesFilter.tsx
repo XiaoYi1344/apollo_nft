@@ -9,6 +9,7 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  Tooltip,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -29,6 +30,7 @@ const PROPERTIES = [
     ],
   },
 ];
+const ALL_ITEM_NAMES = PROPERTIES.flatMap((p) => p.items.map((i) => i.name));
 
 interface PropertiesProps {
   selected: Record<string, string[]>;
@@ -47,6 +49,10 @@ export default function PropertiesFilter({
     setOpenStates((prev) => ({ ...prev, [category]: !prev[category] }));
 
   const handleToggle = (category: string, item: string) => {
+    if (ALL_ITEM_NAMES.includes(item)) {
+      alert('Đây là set cứng. Bạn không thể chọn.');
+      return;
+    }
     const current = selected[category] || [];
     const updated = current.includes(item)
       ? current.filter((i) => i !== item)
@@ -93,20 +99,57 @@ export default function PropertiesFilter({
           <Collapse in={openStates[prop.category]} sx={{ mt: 1 }}>
             <FormGroup sx={{ ml: 1 }}>
               {prop.items.map((item) => (
+                // <FormControlLabel
+                //   key={item.name}
+                //   control={
+                //     <Checkbox
+                //       checked={(selected[prop.category] || []).includes(
+                //         item.name,
+                //       )}
+                //       onChange={() => handleToggle(prop.category, item.name)}
+                //       sx={{
+                //         transform: 'scale(0.9)',
+                //         color: '#a78bfa',
+                //         '&.Mui-checked': { color: '#a78bfa' },
+                //       }}
+                //     />
+                //   }
+                //   label={`${item.name} (${item.percent}%)`}
+                //   sx={{
+                //     '& .MuiFormControlLabel-label': {
+                //       color: '#ffffff',
+                //       fontSize: '0.95rem',
+                //     },
+                //   }}
+                // />
                 <FormControlLabel
                   key={item.name}
                   control={
-                    <Checkbox
-                      checked={(selected[prop.category] || []).includes(
-                        item.name,
-                      )}
-                      onChange={() => handleToggle(prop.category, item.name)}
-                      sx={{
-                        transform: 'scale(0.9)',
-                        color: '#a78bfa',
-                        '&.Mui-checked': { color: '#a78bfa' },
-                      }}
-                    />
+                    <Tooltip
+                      title={
+                        ALL_ITEM_NAMES.includes(item.name)
+                          ? 'Đây là sản phẩm mẫu'
+                          : ''
+                      }
+                      placement="right"
+                    >
+                      <span>
+                        <Checkbox
+                          checked={(selected[prop.category] || []).includes(
+                            item.name,
+                          )}
+                          disabled={ALL_ITEM_NAMES.includes(item.name)}
+                          onChange={() =>
+                            handleToggle(prop.category, item.name)
+                          }
+                          sx={{
+                            transform: 'scale(0.9)',
+                            color: '#a78bfa',
+                            '&.Mui-checked': { color: '#a78bfa' },
+                          }}
+                        />
+                      </span>
+                    </Tooltip>
                   }
                   label={`${item.name} (${item.percent}%)`}
                   sx={{

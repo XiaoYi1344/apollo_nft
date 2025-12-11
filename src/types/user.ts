@@ -74,3 +74,29 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+export interface ApiProduct {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  externalLink?: string;
+  properties?: Array<{
+    type: string;
+    name: string;
+    supply?: number;
+    blockchain?: string;
+    tokenId?: string;
+    contractAddress?: string;
+    tokenURI?: string | null;
+    isFreeze?: boolean;
+  }>;
+  type?: 'buyNow' | 'onAuction';
+  price: string;
+  likeCount: number;
+  isLike: boolean;
+  listingId?: number | null;
+  tokenURI?: string | null;
+  isFreeze?: boolean;
+  creator?: UserInfo; // API trả object
+}
+

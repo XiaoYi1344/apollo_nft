@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   Divider,
+  Tooltip,
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
@@ -63,6 +64,14 @@ export default function SuperHotDrop() {
       setDirection(newIndex > currentIndex ? 1 : -1);
       setSelected(cat);
     }
+  };
+
+  //Tooltip
+  const [openTooltipIndex, setOpenTooltipIndex] = useState<number | null>(null);
+
+  const handleBidClick = (index: number) => {
+    setOpenTooltipIndex(index);
+    setTimeout(() => setOpenTooltipIndex(null), 2000); // tự tắt sau 2 giây
   };
 
   return (
@@ -154,30 +163,29 @@ export default function SuperHotDrop() {
                   >
                     {/* === IMAGE === */}
                     <Box
-  sx={{
-    position: 'relative',
-    height: 320,
-    mx: 1,
-    mt: 1,
-    borderRadius: 3,
-    overflow: 'hidden',
-    transition: 'transform 0.4s ease, box-shadow 0.4s ease',
-  }}
->
-  <Image
-    src={item.img}
-    alt={item.name}
-    fill
-    sizes="(max-width: 600px) 100vw, 
+                      sx={{
+                        position: 'relative',
+                        height: 320,
+                        mx: 1,
+                        mt: 1,
+                        borderRadius: 3,
+                        overflow: 'hidden',
+                        transition: 'transform 0.4s ease, box-shadow 0.4s ease',
+                      }}
+                    >
+                      <Image
+                        src={item.img}
+                        alt={item.name}
+                        fill
+                        sizes="(max-width: 600px) 100vw, 
            (max-width: 1200px) 50vw, 
            25vw"
-    style={{
-      objectFit: 'cover',
-      transition: 'transform 0.6s ease',
-    }}
-  />
-</Box>
-
+                        style={{
+                          objectFit: 'cover',
+                          transition: 'transform 0.6s ease',
+                        }}
+                      />
+                    </Box>
 
                     {/* === CARD CONTENT === */}
                     <CardContent>
@@ -268,17 +276,28 @@ export default function SuperHotDrop() {
                             borderRadius: '10',
                           }}
                         />
-                        <Typography
-                          sx={{
-                            color: '#0522FF',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            transition: '0.2s',
-                            '&:hover': { textDecoration: 'underline' },
-                          }}
+                        <Tooltip
+                          title="Đây là sản phẩm mẫu – không thể đấu giá"
+                          placement="top"
+                          open={openTooltipIndex === i}
+                          onClose={() => setOpenTooltipIndex(null)}
+                          disableFocusListener
+                          disableHoverListener
+                          disableTouchListener
                         >
-                          Place a bid
-                        </Typography>
+                          <Typography
+                            onClick={() => handleBidClick(i)}
+                            sx={{
+                              color: '#0522FF',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              transition: '0.2s',
+                              '&:hover': { textDecoration: 'underline' },
+                            }}
+                          >
+                            Place a bid
+                          </Typography>
+                        </Tooltip>
                       </Box>
                     </CardContent>
                   </Card>
@@ -293,7 +312,7 @@ export default function SuperHotDrop() {
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <Button
           variant="contained"
-          onClick={() => router.push('/explore')}
+          onClick={() => router.push('/marketplace')}
           sx={{
             px: 4,
             py: 1.5,
